@@ -1,192 +1,94 @@
-Este documento serve de exemplo da utilização da classe \unbcic\ para escrever
-um texto cujo objetivo é apresentar os resultados de um trabalho científico. A
-sequência de ideias apresentada deve fluir claramente, de modo que o leitor
-consiga compreender os principais conceitos e resultados apresentados, bem como
-encontrar informações sobre conceitos secundários.
+% Motivação Social
+%   - Melhora na qualidade de vida;
+%   - Economia de gasolina;
+%   - Diminuição do impacto ambiental
+Controle de congestionamento é um assunto que merece cada vez mais atenção nos grandes centros urbanos. Uma vez que o volume de carros tem aumentado rapidamente ao longo dos últimos anos e as vias públicas não tem conseguido acompanhar esse crescimento, engarrafamentos tem se tornado mais e mais frequentes. Utilizando de predição de tráfego, podemos amenizar os efeitos destes engarrafamentos. Caso essas predições e seus resultados sejam disponibilizados para cidadãos e empresas de mobilidade urbana por meio de alguma aplicação, como o \textit{Uber}, ou \textit{Waze}, os motoristas podem tomar decisões de rotas mais inteligentes, reduzindo o congestionamento. Com engarrafamentos menos severos, vem também uma diminuição do tempo gasto no trânsito, assim como uma redução da gasolina utilizada e, consequentemente, a quantidade de Co2 emitido na atmosfera (reduzindo o impacto ambiental).
 
-%\url{http://www.escritacientifica.com/}
+% Motivação Científica
+%   - Explica um pouco da área
+%   - Mostra o estado da arte
+%   - Mostra o que te atraiu para fazer
+Visto os benefícios, existem diversos trabalhos nessa área (\textit{traffic flow prediction}). As metodologias usadas giram em torno de predições baseadas em \textit{Deep Learning} e predições heurísticas. Os heurísticos levam em conta que os dados dos veículos podem ser vistos como séries temporais para fazer as previsões e normalmente são variações do \acrfull{ARIMA}. Já o estado da arte está entre os métodos que utilizam \textit{Deep Learning} usam \acrfull{SLSTM}) e \acrfull{SAE}. Porém os resultados, embora muito bons, ainda tem espaço para melhora.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Trabalho de Conclusão de Curso}%
-Todos os cursos do \acrfull{CIC} da \acrfull{UnB} exigem a produção de um
-texto científico como requisito para formação. %(veja \refAnexo{NormasGerais} para mais detalhes)
-As etapas desta monografia/dissertação/tese devem seguir o \emph{método científico}.
+% Justificativa
+%   - O que justifica fazer esse trabalho
+Uma nova metodologia de \textit{Deep Learning} vêm trazendo resultados promissores em diversas áreas: \acrfull{GAN}. Até o momento da escrita de artigo não foram encontrados pesquisas na área de \textit{traffic flow prediction}. Porém existem trabalhos em áreas que utilizam dados semelhantes aos usados em \textit{traffic flow prediction} que trouxeram resultados promissores. 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Metodologia Científica}%
-Ciência (do Latim \emph{scientia}, traduzido como ``conhecimento'') é uma forma
-sistemática de produzir conhecimento (via método científico), ou o nome dado a
-estrutura organizada do conhecimento obtido.
+% Hipótese
+% TALVEZ: criar mais hipóteses que sejam mais fáceis de provar
+% TALVEZ: comparar as duas quando se adiciona chuva
+% TALVEZ: tentar prever até um dia na frente
+% TALVEZ: avaliar a importância dos atributos que eu tenho
+% TALVEZ: pegar mais fontes de dados e ver como reage
+% TALVEZ: avaliar melhores janelas de tempo para o algoritmo
+Queremos então verificar se utilizarmos variações de \acrshort{GAN}, seria uma abordagem melhor que é o estado da arte atualmente (\acrshort{LSTM}). Além disso, pretendemos verificar a performance da arquitetura tanto para \textit{short-time prediction} (15, 30, 45 e 60 minutos) quanto \textit{medium-time prediction} (2, 4 e 6 horas).
 
-O método científico é um conjunto de regras básicas de como proceder para produzir
-conhecimento, criando algo novo ou corrigindo/incrementando conhecimentos
-pré-existentes. Consiste em juntar evidências empíricas verificáveis baseadas na
-observação sistemática e controlada, geralmente resultantes de experiências ou
-pesquisa de campo, e analisá-las logicamente.
+\section{Metodologia}
 
-Esta ideia foi formalizada por Newton em sua obra \emph{Philosophiae Naturalis
-Principia Mathematica}~\cite{newton1833philosophiae} da seguinte forma:
+% Metodologia
+%   - Como coleta os dados
+%   - Características dos dados
+%   - Como pretendemos superar o estado da arte
+Todas essas técnicas de predição de tráfego utilizam de dados do passado para extrair um padrão. E para se extrair esses dados é preciso utilizar uma infraestrutura local nas vias, como uma fiscalização eletrônica, ou uma infraestrutura global, como atualização da sua posição atual pelo celular. No nosso trabalho utilizaremos de dados da infraestrutura local, mais especificamente a fiscalização eletrônica local coletada diretamente do \acrfull{DETRAN} do \acrfull{DF}. Os dados são de maio de 2018 até junho de 2018 e eles possuem os seguintes parâmetros:
 \begin{enumerate}
-	\item Não se deve admitir causas das coisas naturais além daquelas
-	que sejam verdadeiras e sejam suficientes para explicar seus fenômenos.
-	\item Efeitos naturais do mesmo gênero devem ser atribuídos as mesmas causas.
-	\item Características de corpos são consideradas universais.
-	\item Proposições deduzidas da observação de fenômenos são
-	consideradas corretas até que outro fenômeno mostre o contrário.
-\end{enumerate}%
+    \item Velocidade Limite
+    \item Velocidade
+    \item Tempo
+    \item Via
+    \item Tamanho do Carro
+\end{enumerate}
 
-Uma abordagem para esta metodologia é seguir os seguintes passos:
-\begin{description}
-	\item[Caracterização do Problema:] Qual a pergunta a ser respondida? Quais
-informações/recursos necessários na investigação?
-	\item[Formulação da Hípotese:] Quais explicações possíveis para o que foi observado?
-	\item[Previsão:] Dadas explicações [corretas] para as observações, quais os
-	resultados previstos?
-	\item[Experimentos:] \ \\\vspace{-2em}
-		\begin{enumerate}
-			\item Execute testes [reproduzíveis] da hipótese, coletando dados.
-			\item Analise os dados.
-			\item Interprete os dados e tire conclusões:
-				\begin{itemize}
-				\item que comprovam a hipótese;
-				\item que invalidam a hipótese \emph{ou levam a uma nova hipótese}.
-				\end{itemize}
-		\end{enumerate}
-	\item[Documentação:] Registre e divulgue os resultados.
-	\item[Revisão de Resultados:] Validação dos resultados por outras pessoas
-	[capacitadas].
-\end{description}%
-
-Geralmente se começa com a revisão sistemática, uma metodologia de pesquisa
-específica para juntar e avaliar material relevante a determinado tópico~\cite{Biolchini_2005_Systematicreviewin}.
-
-\subsection{Veja Também}
+O tráfego é afetado por variáveis temporais (hora do dia influencia o fluxo), espaciais (vias de alta movimentação) e aleatórias (acidentes, chuvas). Geralmente, só são usados os dados temporais e espaciais, visto que é muito difícil coletar e tentar prever os dados aleatórios, assim assumindo que:
 \begin{itemize}
-	\item Google Acadêmico
-		\\\url{http://scholar.google.com.br/}%
-	\item ACM Digital Library
-		\\\url{http://dl.acm.org/}%
-	\item Portal \acrshort{CAPES}
-		\\\url{http://www.periodicos.capes.gov.br/}%
-	\item IEEE Xplore
-		\\\url{http://ieeexplore.ieee.org/Xplore/home.jsp}%
-	\item ScienceDirect
-		\\\url{http://www.sciencedirect.com/}%
-	\item Springer Link
-		\\\url{http://link.springer.com/}%
+    \item \textbf{A história vai se repetir}, isto é, existem tendências nos dados.
+    \item \textbf{Eventos aleatórios não afetam a tendência}, isto é, é normal que existam eventos randômicos que alterem o fluxo, porém estes não vão mudar o comportamento de forma global.
 \end{itemize}
 
-Para buscar referências, \emph{The DBLP Computer Science Bibliography}\footnote{\url{http://dblp.uni-trier.de/}}
-é um ótimo recurso. Veja o \refApendice{Apendice_Fichamento} para instruções
-sobre como organizar as informações de artigos científicos.
+Porém existem pesquisas que tentam aprimorar o estado da arte tentando coletar e utilizar das variáveis aleatórias provindas de redes sociais como o Twitter \cite{he2013improving} ou utilizam de dados meteorológicos \cite{wang_2018}. Mas no geral, essas variáveis são ignoradas.
 
+Para tentar superar o estado da arte vamos utilizar de uma variação da \acrshort{GAN} com \acrshort{LSTM} como gerador e um \acrshort{CNN} como discriminador para tentar gerar uma série da dados cronológicos (\textit{time series}) que seriam a predição dos próximos 15, 45, 60 minutos.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{\LaTeX}%
+\section{Objetivos}
 
-\TeX\ é ``\emph{a typesetting system intended for the creation of beautiful books
- - and especially for books that contain a lot of mathematics}''~\cite{Knuth_1986_texbook},
- um sistema de tipografia muito utilizado na produção de textos técnicos devido
- a qualidade final, principalmente das fórmulas e símbolos matemáticos gerados.
+% Objetivos Gerais
+Este artigo tem como objetivo introduzir o conceito de \acrshort{GAN} aos estudos de \textit{traffic flow prediction} e mostrar seu desempenho em relação aos métodos mais utilizados atualmente. Além da introdução de uma nova metodologia na área, também deve ser possível avaliar o desempenho e a qualidade da predição para diferentes janelas de tempo, mostrando assim, qual o melhor intervalo. Paralelamente, também serão realizados testes para verificar se há a possibilidade de se utilizar um modelo baseado em uma infraestrutura de captação de dados local com dados globais. 
 
-\LaTeX\ é um conjunto de macros para facilitar o uso de \TeX~\cite{lamport_latex:_1994},
-cujos pacotes (a maioria centralizada na rede \acrshort{CTAN}~\cite{greenwade93}), oferecem
-inúmeras possibilidades. Este sistema tipográfico visa explorar as potencialidades
-da impressão digital, sem que o resultado seja alterado em função de diferenças
-entre plataformas/sistemas.
+% Objetivos específicos
+Levando em conta que o estado da arte de predição de tráfego utiliza LSTM's, é natural afirmar que um dos principais pontos desse trabalho é demonstrar a eficácia dessa nova metodologia (GAN com LSTM e CNN) se comparada ao LSTM puro, mais especificamente se a GAN tem uma capacidade de previsão superior.
 
-Em uma publicação, um \emph{autor} entrega o texto a uma editor que define a
-formatação do documento (tamanho da fonte, largura de colunas, espaçamento, etc.)
-e passa as instruções (e o manuscrito) ao tipógrafo, que as executa. Neste processo,
-\LaTeX\ assume os papéis de editor e tipógrafo, mas por ser ``apenas'' um programa
-de computador, o autor deve prover algumas informações adicionais ~\cite{Oetiker_1995_notsoshort},
-geralmente por meio de marcações (comandos).
+\section{Resultados Esperados}
+Para avaliar as abordagens, serão usados três funções de comparação, sendo elas \acrfull{MAE}, \acrfull{RMSE}, \acrfull{MRE}. Essas são três das mais famosas funções para se medir a acurácia de dados provindos de variáveis contínuas. 
 
-Esta abordagem de linguagem de marcação (em que se indica como o texto deve ser
-formatado) é diferente da abordagem OQVVEOQVO (``o que você vê é o que você
-obtém\footnote{Do inglês WYSIWYG - ``What You See Is What You Get''.}'') de programas
-para edição de texto tradicionais (como MS Word, LibreOffice Write, etc.).
-Apesar destes programas serem extremamente úteis para gerar textos simples, que
-são a grande maioria dos documentos, eles geralmente não têm a capacidade de lidar
-corretamente com documentos complexos (como dissertações ou teses), conforme ilustrado
-na \refFig{latexvsword}.%
+%TODO: this looks a lot like another paper, this is a problem?
 
-\figuraBib{miktex}{\LaTeX\ vs MS Word}{pinteric_latex_2004}{latexvsword}{width=.45\textwidth}%
+\begin{equation}
+\arcshort{MAE} = \frac{1}{n} \times \sum_{i=1}^{n} \quad \abs{result_i - expected_i}
+\end{equation}
 
-Existem diversas discussões quanto ao uso de editores de texto\footnote{Por exemplo:
-\emph{Word Processors: Stupid and Inefficient} \url{http://ricardo.ecn.wfu.edu/~cottrell/wp.html}},
-não há um consenso quanto a melhor forma de se gerar um documento de qualidade,
-e a maioria das mídias científicas disponibiliza modelos para ambas.
+\begin{equation}
+\arcshort{MRE} = \frac{1}{n} \times \sum_{i=1}^{n} \quad \frac{\abs{result_i - expected_i}}{result_i}
+\end{equation}
 
-Mas pode-se dizer que \LaTeX\ é mais indicado para:
+\begin{equation}
+\arcshort{RMSE} = \sqrt{ \frac{1}{n} \times \sum_{i=1}^{n} \quad (result_i - expected_i) ^ 2}
+\end{equation}
+
+Elas serão utilizadas nos resultados obtidos pelas arquiteturas para que possamos compará-las. Espera-se que a nossa abordagem se saia significativamente melhor que a abordagem que usa um \acrshort{LSTM} simples em todas essas categorias.
+    
+\section{Limitações}
+% Quantidade de dados, Qualidade e incertezas nos dados
+Para se fazer a previsão serão desconsiderados certos cenários que são muito difíceis de capturar os dados e relaciona-los. Entre eles estão:
 \begin{itemize}
-	\item notação matemática;
-	\item referências cruzadas;
-	\item separação clara entre conteúdo e formatação.
+    \item Perda de dados pela manutenção da infraestrutura analisada (falhas no equipamento ou bloqueio em vias)
+    \item Semáforos
+    \item Acidentes de trânsitos
+    \item Greves e movimentações
+    \item Incapacidade de registrar uma velocidade média (visto que não há registro de placas)
+    \item Carros andando em velocidades ilegais na falta de presença de fiscalização eletrônica.
 \end{itemize}
+Todos esses eventos podem influenciar nos resultados obtidos e dependendo da escala do evento, podem causar uma disparidade significante entre a predição e a realidade.
 
-Enquanto os editores tradicionais são indicados para:
-\begin{itemize}
-	\item edição colaborativa (são mais populares);
-	\item produção imediata (leve curva de aprendizado).
-\end{itemize}
+% Classe de aplicação
+Além disso, o modelo está sendo treinado com dados de uma só localidade, recolhidos de sensores instalados em locais específicos. Logo, os resultados podem não ser os mesmos quando a metodologia for usada em outros locais. O modo como os cidadãos dirigem e como as vias são feitas também vão influenciar nisso.
 
-\subsection{Veja Também}
-\begin{itemize}
-	\item Introdução ao \LaTeX
-		\\\url{http://latexbr.blogspot.com.br/2010/04/introducao-ao-latex.html}
-	\item \LaTeX\ - A document preparation system
-		\\\url{http://www.latex-project.org/}
-	\item The \acrlong{CTAN}
-		\\\url{http://ctan.org}
-	\item \TeX Users Group
-		\\\url{http://tug.org}
-	\item \TeX\ - \LaTeX\ Stack Exchange
-		\\\url{http://tex.stackexchange.com}
-	\item \LaTeX\ Wikibook
-		\\\url{http://en.wikibooks.org/wiki/LaTeX}
-	\item write\LaTeX
-		\\\url{http://www.writelatex.com}
-\end{itemize}
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Plágio}%
-O JusBrasil\footnote{\url{http://www.jusbrasil.com.br}} define plágio como
-``reprodução, total ou parcial, da propriedade intelectual de alguém, inculcando-se
-o criador da idéia ou da forma. Constitui crime contra a propriedade imaterial
-violar direito de autor de obra literária, científica ou artística.''
-
-
-A \acrfull{CEP} da Presidência da República decidiu  ``pela
-aplicação de sanção ética aos servidores públicos que incorrerem na prática de
-plágio"\footnote{\url{http://www.comissaodeetica.unb.br/index.php?view=article&id=8:plagio-academico}},
-e a \acrfull{CAPES} recomenda que se adote políticas de conscientização e informação
-sobre a propriedade intelectual, baseando-se na Proposição 2010.19.07379-01,
-referente ao plágio nas instituições de ensino\footnote{\url{https://www.capes.gov.br/images/stories/download/diversos/OrientacoesCapes_CombateAoPlagio.pdf}}.
-
-
-\subsection{Veja Também}
-\begin{itemize}
-	\item IEEE Plagiarism FAQ
-		\\\url{http://www.ieee.org/publications_standards/publications/rights/plagiarism_FAQ.html}
-	\item Relatório da Comissão de Integridade de Pesquisa do CNPq
-		\\\url{http://www.cnpq.br/web/guest/documentos-do-cic}
-\end{itemize}
-
-
-
-%\section{Normas CIC}
-% \href{http://monografias.cic.unb.br/dspace/normasGerais.pdf}{Política de Publicação de Monografias e Dissertações no Repositório Digital do CIC}%
-% \href{http://monografias.cic.unb.br/dspace/}{Repositório do Departamento de Ciência da Computação da UnB}
-
-% \href{http://bdm.bce.unb.br/}{Biblioteca Digital de Monografias de Graduação e Especialização}
+Para a previsão perfeita seriam necessárias muitas variáveis as quais não estão disponíveis. Então vamos tentar simplificar o problema e tentar ver as tendências.

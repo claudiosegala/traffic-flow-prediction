@@ -1,0 +1,48 @@
+\acrshort{GAN} foi introduzida em 2014 no artigo \cite{NIPS2014_5423} e é possível encontrar pesquisas na área de geração de imagens a partir de textos \cite{reed2016generative} e até previsão de ações \cite{zhou_2018} \cite{banushev_2019} que também utilizam \textit{time series} e 
+
+
+% falar do paper que a gente se baseou do stack autoencoders
+
+
+
+
+% falar do paper semelhante do LSTM (dos dois)
+
+% falar das semelhanças com stock prediction
+
+% falar das tentivas com GAN (mencionar os artigos que encontrei)
+
+
+% falar da otimização (MH-GAN)
+
+
+Visto que existem algumas similaridades entre previsão de ações e previsão de tráfego. Queremos verificar se treinar uma \acrshort{LSTM} usando \acrshort{MH-GAN} tem um desempenho melhor que treinar ela sozinha.
+
+\section{Fundamentação Teórica}
+
+\subsection{LSTM}
+
+\subsection{GAN}
+
+\subsection{RNN}
+
+\subsection{MH-GAN}
+
+
+% Explicar CNN
+
+% Explicar LSTM
+Redes neurais recorrentes são um tipo de rede neural aonde a saída depende não somente da entrada, mas também dos estados anteriores da rede, o que acaba por agir como um tipo de memória. Neste trabalho, utilizamos uma variação desse tipo de rede neural chamada \arcfull{LSTM}. A arquitetura de uma \arcshort{LSTM} possui basicamente três camadas:
+
+
+%    - Entrada: Camada que recebe os dados 
+%    - \arcshort{LSTM}: (camada aonde ocorre a recursão dos dados e as células de memória são atualizadas, %decidindo o que continua na rede e o que é esquecido)
+%    - Saída:  
+
+% Explicar GAN    
+Para fazer a previsão será utilizada \acrfull{GAN}. \acrshort{GAN} é um método que utiliza dois modelos para serem o gerador e o discriminador. O trabalho do gerador é tentar reproduzir algo. O trabalho do discriminador é avaliar o que o gerador fez e decidir se é bom o suficiente. \acrshort{GAN} põe dois modelos para treinarem juntos como rivais. Neste trabalho escolhemos como modelo gerador a \acrshort{LSTM} e como modelo discriminador o --indefinido--
+
+
+% Explicar Avanços em GAN (MH-GAN)
+No caso, o artigo de previsão de ações utilizou uma variação da \acrshort{GAN} desenvolvida pela \textit{Uber} e tiveram resultados que superaram o estado da arte. A empresa estadunidense introduziu a \acrfull{MH-GAN} em \cite{turner2018metropolis} que tem como objetivo fazer com que a \acrshort{GAN} sirva para treinar o gerador. 
+
