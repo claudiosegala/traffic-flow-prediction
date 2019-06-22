@@ -1,35 +1,22 @@
 % Motivação Social
-%   - Melhora na qualidade de vida;
-%   - Economia de gasolina;
-%   - Diminuição do impacto ambiental
-Controle de congestionamento é um assunto que merece cada vez mais atenção nos grandes centros urbanos. Uma vez que o volume de carros tem aumentado rapidamente ao longo dos últimos anos e as vias públicas não tem conseguido acompanhar esse crescimento, engarrafamentos tem se tornado mais e mais frequentes. Utilizando de predição de tráfego, podemos amenizar os efeitos destes engarrafamentos. Caso essas predições e seus resultados sejam disponibilizados para cidadãos e empresas de mobilidade urbana por meio de alguma aplicação, como o \textit{Uber}, ou \textit{Waze}, os motoristas podem tomar decisões de rotas mais inteligentes, reduzindo o congestionamento. Com engarrafamentos menos severos, vem também uma diminuição do tempo gasto no trânsito, assim como uma redução da gasolina utilizada e, consequentemente, a quantidade de Co2 emitido na atmosfera (reduzindo o impacto ambiental).
+% TODO: adicionar mais problemas com o crescimento dos carros
+% TODO: adicionar os fatores externos
+O volume de carros tem aumentado rapidamente ao longo dos últimos anos e as vias públicas não tem conseguido acompanhar esse crescimento. Com esse crescimento vêm problemas como congestionamentos que iram se tornar mais frequentes. Sendo assim, o controle de congestionamento é um assunto que merece cada vez mais atenção nos grandes centros urbanos. Visto que com engarrafamentos menos severos, vem também uma diminuição do tempo gasto no trânsito, assim como uma redução da gasolina utilizada e, consequentemente, a quantidade de Co2 emitido na atmosfera (reduzindo o impacto ambiental).
+
+Um dos meios de amenizar o congestionamento é através da predição de tráfego nas vias. Caso as predições sejam disponibilizados para cidadãos e empresas de mobilidade urbana por meio de alguma aplicação, como o \textit{Uber}, ou \textit{Waze}, os motoristas podem tomar decisões de rotas mais inteligentes. Reduzindo assim os congestionamento, visto uma melhor distribuição dos carros na malha viária.
 
 % Motivação Científica
-%   - Explica um pouco da área
-%   - Mostra o estado da arte
-%   - Mostra o que te atraiu para fazer
-Visto os benefícios, existem diversos trabalhos nessa área (\textit{traffic flow prediction}). As metodologias usadas giram em torno de predições baseadas em \textit{Deep Learning} e predições heurísticas. Os heurísticos levam em conta que os dados dos veículos podem ser vistos como séries temporais para fazer as previsões e normalmente são variações do \acrfull{ARIMA}. Já o estado da arte está entre os métodos que utilizam \textit{Deep Learning} usam \acrfull{SLSTM}) e \acrfull{SAE}. Porém os resultados, embora muito bons, ainda tem espaço para melhora.
+% TODO: adicionar referências para artigos que utilizam metodologias heurísticas
+Visto os benefícios, existem diversos trabalhos nessa área (predição de tráfego). As metodologias usadas giram em torno de predições baseadas em aprendizagem profunda \cite{Xiaolei_2015} \cite{Zainab_2018} \cite{he2013improving} \cite{wang_2018} \cite{lv_6894591} e predições heurísticas. Os heurísticos levam em conta que os dados dos veículos podem ser vistos como séries temporais para fazer as previsões e normalmente são variações do \acrfull{ARIMA}. Já o estado da arte está entre os métodos que utilizam aprendizagem profunda usam \acrfull{SLSTM}) e \acrfull{SAE}. Porém os resultados, embora muito bons, ainda tem espaço para melhora.
 
 % Justificativa
-%   - O que justifica fazer esse trabalho
-Uma nova metodologia de \textit{Deep Learning} vêm trazendo resultados promissores em diversas áreas: \acrfull{GAN}. Até o momento da escrita de artigo não foram encontrados pesquisas na área de \textit{traffic flow prediction}. Porém existem trabalhos em áreas que utilizam dados semelhantes aos usados em \textit{traffic flow prediction} que trouxeram resultados promissores. 
-
-% Hipótese
-% TALVEZ: criar mais hipóteses que sejam mais fáceis de provar
-% TALVEZ: comparar as duas quando se adiciona chuva
-% TALVEZ: tentar prever até um dia na frente
-% TALVEZ: avaliar a importância dos atributos que eu tenho
-% TALVEZ: pegar mais fontes de dados e ver como reage
-% TALVEZ: avaliar melhores janelas de tempo para o algoritmo
-Queremos então verificar se utilizarmos variações de \acrshort{GAN}, seria uma abordagem melhor que é o estado da arte atualmente (\acrshort{LSTM}). Além disso, pretendemos verificar a performance da arquitetura tanto para \textit{short-time prediction} (15, 30, 45 e 60 minutos) quanto \textit{medium-time prediction} (2, 4 e 6 horas).
+% TODO: descobrir características positivas da GAN e negativas da LSTM para fazer uma melhor justificativa.
+Uma nova metodologia de aprendizagem profunda vêm trazendo resultados promissores em diversas áreas: \acrfull{GAN}. Até o momento da escrita de artigo não foram encontrados pesquisas na área de previsão de tráfego. Porém existem trabalhos em áreas que utilizam dados semelhantes aos usados em previsão de tráfego que trouxeram resultados promissores. 
 
 \section{Metodologia}
-
-% Metodologia
-%   - Como coleta os dados
-%   - Características dos dados
-%   - Como pretendemos superar o estado da arte
 Todas essas técnicas de predição de tráfego utilizam de dados do passado para extrair um padrão. E para se extrair esses dados é preciso utilizar uma infraestrutura local nas vias, como uma fiscalização eletrônica, ou uma infraestrutura global, como atualização da sua posição atual pelo celular. No nosso trabalho utilizaremos de dados da infraestrutura local, mais especificamente a fiscalização eletrônica local coletada diretamente do \acrfull{DETRAN} do \acrfull{DF}. Os dados são de maio de 2018 até junho de 2018 e eles possuem os seguintes parâmetros:
+
+% TODO: transformar isso numa tabela
 \begin{enumerate}
     \item Velocidade Limite
     \item Velocidade
@@ -37,6 +24,8 @@ Todas essas técnicas de predição de tráfego utilizam de dados do passado par
     \item Via
     \item Tamanho do Carro
 \end{enumerate}
+
+% TODO: [LATER] adicionar uma gráfico que mostra como estão os dados (fluxo por tempo, por exemplo).
 
 O tráfego é afetado por variáveis temporais (hora do dia influencia o fluxo), espaciais (vias de alta movimentação) e aleatórias (acidentes, chuvas). Geralmente, só são usados os dados temporais e espaciais, visto que é muito difícil coletar e tentar prever os dados aleatórios, assim assumindo que:
 \begin{itemize}
@@ -46,31 +35,43 @@ O tráfego é afetado por variáveis temporais (hora do dia influencia o fluxo),
 
 Porém existem pesquisas que tentam aprimorar o estado da arte tentando coletar e utilizar das variáveis aleatórias provindas de redes sociais como o Twitter \cite{he2013improving} ou utilizam de dados meteorológicos \cite{wang_2018}. Mas no geral, essas variáveis são ignoradas.
 
-Para tentar superar o estado da arte vamos utilizar de uma variação da \acrshort{GAN} com \acrshort{LSTM} como gerador e um \acrshort{CNN} como discriminador para tentar gerar uma série da dados cronológicos (\textit{time series}) que seriam a predição dos próximos 15, 45, 60 minutos.
+Para tentar superar o estado da arte vamos utilizar de uma variação da \acrshort{GAN} com \acrshort{LSTM} como gerador e um \acrshort{CNN} como discriminador para tentar gerar a série temporal que seriam a predição do tráfego.
+
+% TODO: [LATER] adicionar uma subseção de modelagem do problema da parte de metodologia (lembrar Geraldo)
+
+\section{Hipótese}
+% TALVEZ: criar mais hipóteses que sejam mais fáceis de provar
+% TALVEZ: comparar as duas quando se adiciona chuva
+% TALVEZ: tentar prever até um dia na frente
+% TALVEZ: avaliar a importância dos atributos que eu tenho
+% TALVEZ: pegar mais fontes de dados e ver como reage
+% TALVEZ: avaliar melhores janelas de tempo para o algoritmo
+Queremos então verificar se utilizarmos variações de \acrshort{GAN}, seria uma abordagem melhor que é o estado da arte atualmente (\acrshort{LSTM}). Além disso, pretendemos verificar a performance da arquitetura tanto para predição de curto período (15, 30, 45 e 60 minutos) quanto médio período (2, 4 e 6 horas).
 
 \section{Objetivos}
 
-% Objetivos Gerais
-Este artigo tem como objetivo introduzir o conceito de \acrshort{GAN} aos estudos de \textit{traffic flow prediction} e mostrar seu desempenho em relação aos métodos mais utilizados atualmente. Além da introdução de uma nova metodologia na área, também deve ser possível avaliar o desempenho e a qualidade da predição para diferentes janelas de tempo, mostrando assim, qual o melhor intervalo. Paralelamente, também serão realizados testes para verificar se há a possibilidade de se utilizar um modelo baseado em uma infraestrutura de captação de dados local com dados globais. 
+% Gerais
+Este artigo tem como objetivo introduzir o conceito de \acrshort{GAN} aos estudos de previsão de tráfego e mostrar seu desempenho em relação aos métodos mais utilizados atualmente. Além da introdução de uma nova metodologia na área, também deve ser possível avaliar o desempenho e a qualidade da predição para diferentes janelas de tempo, mostrando assim, qual o melhor intervalo. Paralelamente, também serão realizados testes para verificar se há a possibilidade de se utilizar um modelo baseado em uma infraestrutura de captação de dados local com dados globais. 
 
-% Objetivos específicos
-Levando em conta que o estado da arte de predição de tráfego utiliza LSTM's, é natural afirmar que um dos principais pontos desse trabalho é demonstrar a eficácia dessa nova metodologia (GAN com LSTM e CNN) se comparada ao LSTM puro, mais especificamente se a GAN tem uma capacidade de previsão superior.
+% Específicos
+Levando em conta que o estado da arte de predição de tráfego utiliza \acrshort{LSTM}, é natural afirmar que um dos principais pontos desse trabalho é demonstrar a eficácia dessa nova metodologia (\acrshort{GAN} com \acrshort{LSTM} e \acrshort{CNN}) se comparada ao \acrshort{LSTM} puro, mais especificamente se a \acrshort{GAN} tem uma capacidade de previsão superior.
 
 \section{Resultados Esperados}
 Para avaliar as abordagens, serão usados três funções de comparação, sendo elas \acrfull{MAE}, \acrfull{RMSE}, \acrfull{MRE}. Essas são três das mais famosas funções para se medir a acurácia de dados provindos de variáveis contínuas. 
 
-%TODO: this looks a lot like another paper, this is a problem?
+% TODO: this looks a lot like another paper, this is a problem?
+% TODO: adicionar métricas de acurácia (MAE, MRE e RMSE não são métricas de acurácia)
 
 \begin{equation}
-\arcshort{MAE} = \frac{1}{n} \times \sum_{i=1}^{n} \quad \abs{result_i - expected_i}
+\acrshort{MAE} = \frac{1}{n} \times \sum_{i=1}^{n} \quad \abs{result_i - expected_i}
 \end{equation}
 
 \begin{equation}
-\arcshort{MRE} = \frac{1}{n} \times \sum_{i=1}^{n} \quad \frac{\abs{result_i - expected_i}}{result_i}
+\acrshort{MRE} = \frac{1}{n} \times \sum_{i=1}^{n} \quad \frac{\abs{result_i - expected_i}}{result_i}
 \end{equation}
 
 \begin{equation}
-\arcshort{RMSE} = \sqrt{ \frac{1}{n} \times \sum_{i=1}^{n} \quad (result_i - expected_i) ^ 2}
+\acrshort{RMSE} = \sqrt{ \frac{1}{n} \times \sum_{i=1}^{n} \quad (result_i - expected_i) ^ 2}
 \end{equation}
 
 Elas serão utilizadas nos resultados obtidos pelas arquiteturas para que possamos compará-las. Espera-se que a nossa abordagem se saia significativamente melhor que a abordagem que usa um \acrshort{LSTM} simples em todas essas categorias.
