@@ -1,66 +1,38 @@
-% Motivação Social
-% TODO: adicionar mais problemas com o crescimento dos carros
-% TODO: adicionar os fatores externos
-O volume de carros tem aumentado rapidamente ao longo dos últimos anos e as vias públicas não tem conseguido acompanhar esse crescimento. Com esse crescimento vêm problemas como congestionamentos que iram se tornar mais frequentes. Sendo assim, o controle de congestionamento é um assunto que merece cada vez mais atenção nos grandes centros urbanos. Visto que com engarrafamentos menos severos, vem também uma diminuição do tempo gasto no trânsito, assim como uma redução da gasolina utilizada e, consequentemente, a quantidade de Co2 emitido na atmosfera (reduzindo o impacto ambiental).
+\section{Motivação}
 
-Um dos meios de amenizar o congestionamento é através da predição de tráfego nas vias. Caso as predições sejam disponibilizados para cidadãos e empresas de mobilidade urbana por meio de alguma aplicação, como o \textit{Uber}, ou \textit{Waze}, os motoristas podem tomar decisões de rotas mais inteligentes. Reduzindo assim os congestionamento, visto uma melhor distribuição dos carros na malha viária.
+% TODO: mencionar manifestações e greves como mais um fator de causa de congestionamento
+O volume de carros tem aumentado ao longo dos últimos anos e as vias públicas não tem conseguido acompanhar este crescimento \cite{sindipecas_2019}. Com isso, os congestionamentos tendem a piorar, aumentando a emissão de gases poluentes na atmosfera, poluição sonora e o tempo gasto pelos motoristas no trânsito, diminuindo assim a qualidade de vida do habitantes de uma cidade.
 
-% Motivação Científica
-% TODO: adicionar referências para artigos que utilizam metodologias heurísticas
-Visto os benefícios, existem diversos trabalhos nessa área (predição de tráfego). As metodologias usadas giram em torno de predições baseadas em aprendizagem profunda \cite{Xiaolei_2015} \cite{Zainab_2018} \cite{he2013improving} \cite{wang_2018} \cite{lv_6894591} e predições heurísticas. Os heurísticos levam em conta que os dados dos veículos podem ser vistos como séries temporais para fazer as previsões e normalmente são variações do \acrfull{ARIMA}. Já o estado da arte está entre os métodos que utilizam aprendizagem profunda usam \acrfull{SLSTM}) e \acrfull{SAE}. Porém os resultados, embora muito bons, ainda tem espaço para melhora.
+Um dos meios de amenizar o congestionamento é tentar prever quando ele irá acontecer. Uma vez que os cidadãos saibam que um engarrafamento irá ocorrer, eles podem se planejar melhor e tomar rotas alternativas, distribuindo melhor os carros na malha viária.
 
-% Justificativa
-% TODO: descobrir características positivas da GAN e negativas da LSTM para fazer uma melhor justificativa.
-Uma nova metodologia de aprendizagem profunda vêm trazendo resultados promissores em diversas áreas: \acrfull{GAN}. Até o momento da escrita de artigo não foram encontrados pesquisas na área de previsão de tráfego. Porém existem trabalhos em áreas que utilizam dados semelhantes aos usados em previsão de tráfego que trouxeram resultados promissores. 
+Em razão do exposto anteriormente, diversas pesquisas na área em questão foram desenvolvidas. As metodologias usadas nessas pesquisas giram em torno de predições baseadas em aprendizagem profunda \cite{Xiaolei_2015} \cite{Zainab_2018} \cite{he2013improving} \cite{wang_2018} \cite{lv_6894591} e predições heurísticas \cite{levin_forecast_1980} \cite{hamed_prediction_1995} \cite{voort_series_1996}.As metodologias heurísticas utilizam de regressões, tais como \acrfull{ARIMA}. Já as de aprendizagem profunda utilizam de arquiteturas mais complexas, tais como \acrfull{SLSTM} e \acrfull{SAE}. 
+%Sendo que o estado da arte é \acrshort{SLSTM}.
 
-\section{Metodologia}
-Todas essas técnicas de predição de tráfego utilizam de dados do passado para extrair um padrão. E para se extrair esses dados é preciso utilizar uma infraestrutura local nas vias, como uma fiscalização eletrônica, ou uma infraestrutura global, como atualização da sua posição atual pelo celular. No nosso trabalho utilizaremos de dados da infraestrutura local, mais especificamente a fiscalização eletrônica local coletada diretamente do \acrfull{DETRAN} do \acrfull{DF}. Os dados são de maio de 2018 até junho de 2018 e eles possuem os seguintes parâmetros:
+Essas pesquisas tem como objetivo gerar uma série temporal sobre o comportamento de uma via nos próximos t minutos, baseados em seu comportamento passado. Apesar de utilizarem os mais diversos e sofisticados métodos, nenhum destes trabalhos se dispõe do \acrfull{GAN}, uma arquitetura muito utilizada para gerar dados que se assemelham a outros previamente vistos.
 
-% TODO: transformar isso numa tabela
-\begin{enumerate}
-    \item Velocidade Limite
-    \item Velocidade
-    \item Tempo
-    \item Via
-    \item Tamanho do Carro
-\end{enumerate}
+\section{Justificativa}
 
-% TODO: [LATER] adicionar uma gráfico que mostra como estão os dados (fluxo por tempo, por exemplo).
+\acrshort{GAN} é uma arquitetura de aprendizagem profunda que vem trazendo resultados promissores em diversas áreas \cite{christian}. Ela é uma arquitetura excelente para reproduzir os dados de entrada, aprendendo a distribuição dos mesmos. Visto que queremos gerar uma série temporal, \arcshort{GAN} deve ser capaz de aprender a distribuição das séries temporais que representam o passado em t minutos para gerar uma série temporal que corresponda a uma previsão de t minutos no futuro.
 
-O tráfego é afetado por variáveis temporais (hora do dia influencia o fluxo), espaciais (vias de alta movimentação) e aleatórias (acidentes, chuvas). Geralmente, só são usados os dados temporais e espaciais, visto que é muito difícil coletar e tentar prever os dados aleatórios, assim assumindo que:
-\begin{itemize}
-    \item \textbf{A história vai se repetir}, isto é, existem tendências nos dados.
-    \item \textbf{Eventos aleatórios não afetam a tendência}, isto é, é normal que existam eventos randômicos que alterem o fluxo, porém estes não vão mudar o comportamento de forma global.
-\end{itemize}
 
-Porém existem pesquisas que tentam aprimorar o estado da arte tentando coletar e utilizar das variáveis aleatórias provindas de redes sociais como o Twitter \cite{he2013improving} ou utilizam de dados meteorológicos \cite{wang_2018}. Mas no geral, essas variáveis são ignoradas.
-
-Para tentar superar o estado da arte vamos utilizar de uma variação da \acrshort{GAN} com \acrshort{LSTM} como gerador e um \acrshort{CNN} como discriminador para tentar gerar a série temporal que seriam a predição do tráfego.
-
-% TODO: [LATER] adicionar uma subseção de modelagem do problema da parte de metodologia (lembrar Geraldo)
-
-\section{Hipótese}
-% TALVEZ: criar mais hipóteses que sejam mais fáceis de provar
-% TALVEZ: comparar as duas quando se adiciona chuva
-% TALVEZ: tentar prever até um dia na frente
-% TALVEZ: avaliar a importância dos atributos que eu tenho
-% TALVEZ: pegar mais fontes de dados e ver como reage
-% TALVEZ: avaliar melhores janelas de tempo para o algoritmo
-Queremos então verificar se utilizarmos variações de \acrshort{GAN}, seria uma abordagem melhor que é o estado da arte atualmente (\acrshort{LSTM}). Além disso, pretendemos verificar a performance da arquitetura tanto para predição de curto período (15, 30, 45 e 60 minutos) quanto médio período (2, 4 e 6 horas).
+Essa arquitetura, no entanto, trabalha com dados independentes entre si, mas existem variações capazes de lidar com séries temporais, que são dependentes entre si, como mostrado em \cite{zhou_2018}, \cite{banushev_2019} e \cite{esteban2017real}, que obtiveram resultados promissores.
 
 \section{Objetivos}
 
-% Gerais
-Este artigo tem como objetivo introduzir o conceito de \acrshort{GAN} aos estudos de previsão de tráfego e mostrar seu desempenho em relação aos métodos mais utilizados atualmente. Além da introdução de uma nova metodologia na área, também deve ser possível avaliar o desempenho e a qualidade da predição para diferentes janelas de tempo, mostrando assim, qual o melhor intervalo. Paralelamente, também serão realizados testes para verificar se há a possibilidade de se utilizar um modelo baseado em uma infraestrutura de captação de dados local com dados globais. 
+Este trabalho tem como objetivo propor uma arquitetura capaz de realizar predições de tráfego de curto e médio período (5, 10, 15, 30, 60, 120 e 150 minutos) utilizando GAN.
 
-% Específicos
-Levando em conta que o estado da arte de predição de tráfego utiliza \acrshort{LSTM}, é natural afirmar que um dos principais pontos desse trabalho é demonstrar a eficácia dessa nova metodologia (\acrshort{GAN} com \acrshort{LSTM} e \acrshort{CNN}) se comparada ao \acrshort{LSTM} puro, mais especificamente se a \acrshort{GAN} tem uma capacidade de previsão superior.
+Para tal, serão utilizados os dados de fiscalização eletrônica do \acrfull{DF} para treinar uma variação da arquitetura \acrshort{GAN}, usando uma \acrshort{LSTM} como gerador e como discriminador. Sendo assim, os objetivos específicos desta proposta são:
+
+\begin{itemize}
+    \item Implementar uma arquitetura capaz de gerar séries temporais que simulem os próximos t minutos dado um intervalo de série temporal.
+    \item Treinar a arquitetura de forma a evitar erros comuns no treinamento de \acrshort{GAN}, como \textit{overfitting}.
+    \item Avaliar o desempenho desta metodologia se comparada ao estado da arte nos períodos propostos.
+\end{itemize}
 
 \section{Resultados Esperados}
-Para avaliar as abordagens, serão usados três funções de comparação, sendo elas \acrfull{MAE}, \acrfull{RMSE}, \acrfull{MRE}. Essas são três das mais famosas funções para se medir a acurácia de dados provindos de variáveis contínuas. 
+% LATER: adicionar métricas de acurácia
 
-% TODO: this looks a lot like another paper, this is a problem?
-% TODO: adicionar métricas de acurácia (MAE, MRE e RMSE não são métricas de acurácia)
+É esperado que a arquitetura proposta tenha um desempenho similar ou superior ao estado da arte, que também usa de \acrshort{LSTM}. Para tal, serão usados três métricas, sendo elas \acrfull{MAE}, \acrfull{RMSE} e \acrfull{MRE}. 
 
 \begin{equation}
 \acrshort{MAE} = \frac{1}{n} \times \sum_{i=1}^{n} \quad \abs{result_i - expected_i}
@@ -73,23 +45,37 @@ Para avaliar as abordagens, serão usados três funções de comparação, sendo
 \begin{equation}
 \acrshort{RMSE} = \sqrt{ \frac{1}{n} \times \sum_{i=1}^{n} \quad (result_i - expected_i) ^ 2}
 \end{equation}
-
-Elas serão utilizadas nos resultados obtidos pelas arquiteturas para que possamos compará-las. Espera-se que a nossa abordagem se saia significativamente melhor que a abordagem que usa um \acrshort{LSTM} simples em todas essas categorias.
     
 \section{Limitações}
-% Quantidade de dados, Qualidade e incertezas nos dados
-Para se fazer a previsão serão desconsiderados certos cenários que são muito difíceis de capturar os dados e relaciona-los. Entre eles estão:
+Para se fazer a previsão serão desconsiderados certos cenários em que a captura e o relacionamentos dos dados obtidos são muito imprecisos e/ou pontuais. Esses eventos podem influenciar nos resultados obtidos e dependendo da escala do evento, podem causar uma disparidade significante entre a predição e a realidade. Entre eles estão:
 \begin{itemize}
-    \item Perda de dados pela manutenção da infraestrutura analisada (falhas no equipamento ou bloqueio em vias)
+    \item Falhas no equipamento ou bloqueio em vias
     \item Semáforos
     \item Acidentes de trânsitos
     \item Greves e movimentações
     \item Incapacidade de registrar uma velocidade média (visto que não há registro de placas)
-    \item Carros andando em velocidades ilegais na falta de presença de fiscalização eletrônica.
+    \item Carros transitando em velocidades ilegais na falta de presença de fiscalização eletrônica.
 \end{itemize}
-Todos esses eventos podem influenciar nos resultados obtidos e dependendo da escala do evento, podem causar uma disparidade significante entre a predição e a realidade.
+Além disso, o modelo será treinado com dados de uma só cidade, recolhidos de sensores instalados em locais específicos. Logo, os resultados podem não ser os mesmos quando a metodologia for utilizada em outras localidades. O modo como os cidadãos dirigem e como as vias são feitas também vão influenciar. Para a previsão perfeita seriam necessárias muitas variáveis, as quais não estão disponíveis.
 
-% Classe de aplicação
-Além disso, o modelo está sendo treinado com dados de uma só localidade, recolhidos de sensores instalados em locais específicos. Logo, os resultados podem não ser os mesmos quando a metodologia for usada em outros locais. O modo como os cidadãos dirigem e como as vias são feitas também vão influenciar nisso.
+\section{Metodologia}
+Visto o objetivo dessa proposta, o trabalho será divido em 4 partes:
 
-Para a previsão perfeita seriam necessárias muitas variáveis as quais não estão disponíveis. Então vamos tentar simplificar o problema e tentar ver as tendências.
+\begin{itemize}
+    \item Coleta de dados: Adquirir dados de fiscalização eletrônica local, no caso \acrshort{DETRAN};
+    \item Pré-processamento: verificar e retirar dados que possuem inconsistências, ou que não importam no treinamento da arquitetura;
+    \item Implementação: programar todas as arquiteturas necessárias para a comparação e treinar utilizando os mesmos dados;
+    \item Avaliação: utilizar das métricas capturadas durante a execução de ambas arquiteturas para avaliar o desempenho.
+\end{itemize}
+
+%Porém existem pesquisas que tentam aprimorar o estado da arte tentando coletar e utilizar das variáveis aleatórias provindas de redes sociais como o Twitter \cite{he2013improving} ou utilizam de dados meteorológicos \cite{wang_2018}. Mas no geral, essas variáveis são ignoradas.
+
+\section{Hipótese}
+% TALVEZ: criar mais hipóteses que sejam mais fáceis de provar
+% TALVEZ: comparar as duas quando se adiciona chuva
+% TALVEZ: tentar prever até um dia na frente
+% TALVEZ: avaliar a importância dos atributos que eu tenho
+% TALVEZ: pegar mais fontes de dados e ver como reage
+% TALVEZ: avaliar melhores janelas de tempo para o algoritmo
+
+Queremos verificar se a arquitetura \acrshort{GAN} proposta nesse trabalho é capaz de gerar séries temporais para previsão do tráfego melhor que o estado da arte, isto é, uma arquitetura \acrshort{SLSTM}.
