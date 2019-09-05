@@ -9,6 +9,7 @@ Original file is located at
 # TODO
 
 + Discover why the result are being inconsistent
++ Discover if there are negative predictions and NaNs
 + Discover why some results came negative (that does not make sense, but the evaluation with log is getting errors)
 
 # Install Dependencies
@@ -45,6 +46,7 @@ import time as tm # to convert to seconds
 import sklearn as skl # regression templates library
 import sklearn.metrics as sklm # metrics
 import random as rnd # random
+import statistics as st # statistics
 
 from keras.models import Sequential
 from keras.layers import LSTM, GRU, SimpleRNN, Dense, Dropout
@@ -123,7 +125,7 @@ data_analysis(data)
 
 VALIDATION_SPLIT = 0.25
 
-DATA_SPLIT = 10
+TRAIN_SPLIT = 0.8
 
 SEEABLE_PAST = 100 # in minutes
 
@@ -131,7 +133,7 @@ PREDICT_IN_FUTURE = 60 # in minutes
 
 FLOW_INTERVAL = 150 # the interval size for each flow
 
-MULTIVARIATE = True # if we are gonna use multiple data or not
+MULTIVARIATE = False # if we are gonna use multiple data or not
 
 # Derivated
 
@@ -140,6 +142,10 @@ N_STEPS = SEEABLE_PAST * 60 // FLOW_INTERVAL # the number of flows to see in the
 N_FUTURE = PREDICT_IN_FUTURE * 60 // FLOW_INTERVAL # how much in the future we want to predict (0 = predict the flow on the next 5 minutes)
 
 N_FEATURES = 9 if MULTIVARIATE else 1
+
+DAY_SIZE = (24 * 3600) // FLOW_INTERVAL  
+
+WEEK_SIZE = 7 * DAY_SIZE
 
 """# Get Flow
 
@@ -168,8 +174,8 @@ def get_flow (data):
   flowData = []
 
   for i in range(len(speed)):
-    if pd.to_datetime(date[i], format='%Y/%m/%d') == pd.to_datetime('2016-05-22', format='%Y/%m/%d'):
-        break
+    #if pd.to_datetime(date[i], format='%Y/%m/%d') == pd.to_datetime('2016-05-22', format='%Y/%m/%d'):
+    #    break
     if time[i] >= timeBlock: # init a new time block
       w0, w1, w2, w3, w4, w5, w6 = get_weekday(weekDay[i])
       avgSpeed = accSpeed // countFlow if countFlow else 0
@@ -244,85 +250,57 @@ def reshape_flow (raw_seq):
 
 X, Y = reshape_flow(raw_seq)
 
-TEST_SIZE = len(X) // K_FOLD_SIZE
-
-X_train, Y_train, X_test, Y_test = X[:TEST_SIZE], Y[:TEST_SIZE], X[TEST_SIZE:], Y[TEST_SIZE:]
-
-print(X_train.shape)
-print(X_test.shape)
-print(Y_train.shape)
-print(Y_test.shape)
-
 """# Baseline: Random"""
 
-def base_rand (X_test, Y_test):
-  Y_hat = [rnd.randint(0, 100) for i in range(len(X_test))]
+def base_rand (Y):
+  Y_hat = [rnd.randint(0, 100) for i in range(len(Y))]
     
-  print_metrics(Y_hat, Y_test)
+  print_metrics(Y_hat, Y)
   
   
-base_rand(X_test, Y_test)
+base_rand(Y)
 
 """# Baseline: Default"""
 
-def base_default (X_test, Y_test):
-  Y_hat = [sum(v[0] for v in x) // len(X_test)  for x in X_test]
+def base_default (X, Y):
+  Y_hat = [st.mean([v[0] for v in x]) for x in X]
     
-  print_metrics(Y_hat, Y_test)
+  print_metrics(Y_hat, Y)
   
   
-base_default(X_test, Y_test)
+base_default(X, Y)
 
 """# Baseline: ARIMA"""
 
-def base_arima (X_train, X_test):
-  print(X_train.shape)
-  print(X_train[:10])
-  series = read_csv('shampoo-sales.csv', header=0, parse_dates=[0], index_col=0, squeeze=True, date_parser=parser)
-  X = series.values
-  size = int(len(X) * 0.66)
-  train, test = X[:size], X[size:]
-  history = [x for x in X_train]
-  predictions = list()
-  for t in range(len(X_test)):
-    model = ARIMA(history, order=(5,1,0))
+# TODO: check if this ARIMA is ok
+def base_arima (X):
+  size = int(len(X) * TRAIN_SPLIT)
+  acc = X[:size]
+  Y = X[size+N_FUTURE:]
+  Y_hat = []
+  
+  for t in range(len(Y)):
+    model = ARIMA(acc)
     model_fit = model.fit(disp=0)
-    output = model_fit.forecast()
-    yhat = output[0]
-    predictions.append(yhat)
-    obs = X_test[t]
-    history.append(obs)
-    print('predicted=%f, expected=%f' % (yhat, obs))
-  error = mean_squared_error(X_test, predictions)
-  print('Test MSE: %.3f' % error)
+    
+    start = len(acc)
+    end = start + N_FUTURE
+    
+    prediction = model_fit.forecast(start=start, end=end+1)
+    
+    Y_hat.append(prediction[-1])    
+    acc.append(X[size + t])
+
+  mse = np.sqrt(sklm.mean_squared_error(Y_hat, Y))
+  print(f"MSE: {mse}")
   
-  
-base_arima(X_train[:, :1], Y_test)
+base_arima([e[0] for e in raw_seq])
 
 """# GRU"""
 
-def gru (X_train, Y_train, X_test, Y_test): 
-  # define model
-  model = Sequential()
-  model.add(GRU(50, activation='relu', input_shape=(N_STEPS, N_FEATURES)))
-  model.add(Dense(1))
+def gru (X, Y): 
+  n_weeks = len(X) // WEEK_SIZE
   
-  # compile model
-  model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])
-  
-  # fit model
-  hist = model.fit(X_train, Y_train, validation_split=VALIDATION_SPLIT, batch_size=64, epochs=25, verbose=0) # verbose = 2
-  
-  Y_hat = model.predict(X_test, verbose=0) # verbose = 2
-  
-  print_metrics(Y_hat.round().flatten().tolist(), Y_test.tolist())
-  plot_history(hist, "GRU")
-
-gru(X_train, Y_train, X_test, Y_test)
-
-"""# GRU with K-fold"""
-
-def gru_k (X, Y): 
   # define model
   model = Sequential()
   model.add(GRU(50, activation='relu', input_shape=(N_STEPS, N_FEATURES)))
@@ -334,48 +312,34 @@ def gru_k (X, Y):
   # fit model
   res = 0.0
 
-  # https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html
-  for i in range(1, K_FOLD_SIZE):
+  for i in range(n_weeks - 4):
+    X_train = X[(WEEK_SIZE*i):(WEEK_SIZE*(i+3))]
+    Y_train = Y[(WEEK_SIZE*i):(WEEK_SIZE*(i+3))]
+    X_test = X[(WEEK_SIZE*(i+3)):(WEEK_SIZE*(i+4))]
+    Y_test = Y[(WEEK_SIZE*(i+3)):(WEEK_SIZE*(i+4))]
+    
     train_sz = TEST_SIZE * i
     test_sz = train_sz + TEST_SIZE
 
-    hist = model.fit(X[:train_sz], Y[:train_sz], validation_split=VALIDATION_SPLIT, batch_size=64, epochs=15, verbose=0) # verbose = 2
+    hist = model.fit(X_train, Y_train, validation_split=VALIDATION_SPLIT, batch_size=64, epochs=15, verbose=0) # verbose = 2
     
-    Y_hat = model.predict(X[train_sz:test_sz], verbose=0) # verbose = 2
+    Y_hat = model.predict(X_test, verbose=0) # verbose = 2
         
-    res += np.sqrt(sklm.mean_squared_error(Y[train_sz:test_sz], Y_hat))
+    res += np.sqrt(sklm.mean_squared_error(Y_test, Y_hat))
 
-  print(f"K-validated RMSE: {res / (K_FOLD_SIZE-1)}")
+    #plot_history(hist, "lstm")
+    #print_metrics(Y_hat.round().flatten().tolist(), Y_test.tolist())
+
+  print(f"K-validated RMSE: {res / (n_weeks - 4) }")
 
 
-gru_k(X, Y)
+gru(X, Y)
 
 """# LSTM"""
 
-def lstm (X_train, Y_train, X_test, Y_test): 
-  # define model
-  model = Sequential()
-  model.add(LSTM(50, activation='relu', input_shape=(N_STEPS, N_FEATURES)))
-  model.add(Dense(1))
+def lstm (X, Y): 
+  n_weeks = len(X) // WEEK_SIZE
   
-  # compile model
-  model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])
-  
-  # fit model
-  hist = model.fit(X_train, Y_train, validation_split=VALIDATION_SPLIT, batch_size=64, epochs=15, verbose=0) # verbose = 2
-  
-  Y_hat = model.predict(X_test, verbose=2) # verbose = 2
-
-  plot_history(hist, "LSTM")
-  print_metrics(Y_hat.round().flatten().tolist(), Y_test.tolist())
-  
-  
-
-lstm(X_train, Y_train, X_test, Y_test)
-
-"""# LSTM with K-Fold"""
-
-def lstm_k (X, Y): 
   # define model
   model = Sequential()
   model.add(LSTM(50, activation='relu', input_shape=(N_STEPS, N_FEATURES)))
@@ -387,48 +351,34 @@ def lstm_k (X, Y):
   # fit model
   res = 0.0
 
-  # https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html
-  for i in range(1, K_FOLD_SIZE):
+  for i in range(n_weeks - 4):
+    X_train = X[(WEEK_SIZE*i):(WEEK_SIZE*(i+3))]
+    Y_train = Y[(WEEK_SIZE*i):(WEEK_SIZE*(i+3))]
+    X_test = X[(WEEK_SIZE*(i+3)):(WEEK_SIZE*(i+4))]
+    Y_test = Y[(WEEK_SIZE*(i+3)):(WEEK_SIZE*(i+4))]
+    
     train_sz = TEST_SIZE * i
     test_sz = train_sz + TEST_SIZE
 
-    hist = model.fit(X[:train_sz], Y[:train_sz], validation_split=VALIDATION_SPLIT, batch_size=64, epochs=25, verbose=0) # verbose = 2
+    hist = model.fit(X_train, Y_train, validation_split=VALIDATION_SPLIT, batch_size=64, epochs=15, verbose=0) # verbose = 2
     
-    Y_hat = model.predict(X[train_sz:test_sz], verbose=0) # verbose = 2
+    Y_hat = model.predict(X_test, verbose=0) # verbose = 2
         
-    res += np.sqrt(sklm.mean_squared_error(Y[train_sz:test_sz], Y_hat))
+    res += np.sqrt(sklm.mean_squared_error(Y_test, Y_hat))
+    
+    #plot_history(hist, "lstm")
+    #print_metrics(Y_hat.round().flatten().tolist(), Y_test.tolist())
 
-  print(f"K-validated RMSE: {res / (K_FOLD_SIZE-1)}")
+  print(f"K-validated RMSE: {res / (n_weeks - 4) }")
 
 
-
-lstm_k(X, Y)
+lstm(X, Y)
 
 """# RNN"""
 
-def rnn (X_train, Y_train, X_test, Y_test): 
-  # define model
-  model = Sequential()
-  model.add(SimpleRNN(50, activation='relu', input_shape=(N_STEPS, N_FEATURES)))
-  model.add(Dense(1))
+def rnn (X, Y): 
+  n_weeks = len(X) // WEEK_SIZE
   
-  # compile model
-  model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])
-  
-  # fit model
-  hist = model.fit(X_train, Y_train, validation_split=VALIDATION_SPLIT, batch_size=64, epochs=25, verbose=0) # verbose = 2
-  
-  Y_hat = model.predict(X_test, verbose=0) # verbose = 2
-  
-  plot_history(hist, "rnn")
-  print_metrics(Y_hat.round().flatten().tolist(), Y_test.tolist())
-
-
-rnn(X_train, Y_train, X_test, Y_test)
-
-"""# RNN with K-fold"""
-
-def rnn_k (X, Y): 
   # define model
   model = Sequential()
   model.add(SimpleRNN(50, activation='relu', input_shape=(N_STEPS, N_FEATURES)))
@@ -440,18 +390,25 @@ def rnn_k (X, Y):
   # fit model
   res = 0.0
 
-  # https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.TimeSeriesSplit.html
-  for i in range(1, K_FOLD_SIZE):
+  for i in range(n_weeks - 4):
+    X_train = X[(WEEK_SIZE*i):(WEEK_SIZE*(i+3))]
+    Y_train = Y[(WEEK_SIZE*i):(WEEK_SIZE*(i+3))]
+    X_test = X[(WEEK_SIZE*(i+3)):(WEEK_SIZE*(i+4))]
+    Y_test = Y[(WEEK_SIZE*(i+3)):(WEEK_SIZE*(i+4))]
+    
     train_sz = TEST_SIZE * i
     test_sz = train_sz + TEST_SIZE
 
-    hist = model.fit(X[:train_sz], Y[:train_sz], validation_split=VALIDATION_SPLIT, batch_size=64, epochs=25, verbose=0) # verbose = 2
+    hist = model.fit(X_train, Y_train, validation_split=VALIDATION_SPLIT, batch_size=64, epochs=15, verbose=0) # verbose = 2
     
-    Y_hat = model.predict(X[train_sz:test_sz], verbose=0) # verbose = 2
+    Y_hat = model.predict(X_test, verbose=0) # verbose = 2
         
-    res += np.sqrt(sklm.mean_squared_error(Y[train_sz:test_sz], Y_hat))
+    res += np.sqrt(sklm.mean_squared_error(Y_test, Y_hat))
+    
+    #plot_history(hist, "lstm")
+    #print_metrics(Y_hat.round().flatten().tolist(), Y_test.tolist())
 
-  print(f"K-validated RMSE: {res / (K_FOLD_SIZE-1)}")
+  print(f"K-validated RMSE: {res / (n_weeks - 4) }")
 
 
-rnn_k(X, Y)
+rnn(X, Y)
