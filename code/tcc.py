@@ -11,6 +11,17 @@ Original file is located at
 + Discover why the result are being inconsistent
 + Discover if there are negative predictions and NaNs
 + Discover why some results came negative (that does not make sense, but the evaluation with log is getting errors)
++ Normalize RMSE
+
++ Implement SVM/SVC [[1]](https://gist.github.com/ledmaster/031e531ea35494d2357926405532e254#file-multipletimeseriesforecasting-ipynb)
++ Implement Random Forest[[1]](https://pythondata.com/forecasting-with-random-forests/) [[2]](https://stats.stackexchange.com/questions/384924/using-a-random-forest-for-time-series-data)
++ Implement Clipping for the Machine Learning Models [[1]](https://machinelearningmastery.com/how-to-avoid-exploding-gradients-in-neural-networks-with-gradient-clipping/)
+
+
+## READ
+
++ [Time Series Forecasting as Supervised Learning](https://machinelearningmastery.com/time-series-forecasting-supervised-learning/)
++ [Why LSTM performs worse in information latching than vanilla recurrent neuron network](https://stats.stackexchange.com/questions/340898/why-lstm-performs-worse-in-information-latching-than-vanilla-recurrent-neuron-ne)
 
 # Install Dependencies
 
@@ -23,14 +34,7 @@ In this phase we have to download all the dependencies that our code will need
 !pip install numpy
 !pip install sklearn
 !pip install keras
-
-"""# Mount Drive
-
-Connect to Google Drive of 'alfredcoinworth'
-"""
-
-import google as g # To connect with google drive
-g.colab.drive.mount('/content/drive')
+!pip install statsmodels
 
 """# Define headers
 
@@ -47,15 +51,11 @@ import sklearn as skl # regression templates library
 import sklearn.metrics as sklm # metrics
 import random as rnd # random
 import statistics as st # statistics
-
-from keras.models import Sequential
-from keras.layers import LSTM, GRU, SimpleRNN, Dense, Dropout
+import statsmodels as sm # statistical models
+import statsmodels.api as sma # statistical models api
+import keras # keras
 
 """# Plot & Print Functions"""
-
-def plot_flow (seq):
-  plt.figure(figsize=(80, 10))
-  plt.plot(raw_seq)
 
 def plot_history (history, name):
   plt.plot(history.history['loss'])
@@ -82,44 +82,12 @@ def print_metrics (Y_hat, Y_test):
   #print(f"MSLE: {msle}")
   print(f"Max Error: {me}")
 
-"""# Data Retrieval & Transformation
+"""# Statistical Functions"""
 
-In this phase we have to get the data stored in Google Drive and remove the columns that we won't need. Also, convert some of them to other types.
-"""
-
-def data_analysis (data):
-  print(f"This data is from <{data['Date'].min()}> to <{data['Date'].max()}>")
-  print(f"It contains {len(data['Date'])} entries")
-
-def prepare_data(data):
-  """ Prepare the data
+def rmse (actual, expectation):
+  mse = sklm.mean_squared_error(actual, expectations)
   
-  This will fix types of the dataframe to use time as seconds instead of string,
-  use week day instead of date as string, use speed as float instead of string. 
-  Also, will drop columns that are not necessary.
-  """
-   
-  data['Time'] = data['Time'].apply(lambda x : tm.strptime(x, '%H:%M:%S'))
-  data['Time'] = data['Time'].apply(lambda x : dt.timedelta(hours=x.tm_hour,minutes=x.tm_min,seconds=x.tm_sec).total_seconds())
-  data['Time'] = data['Time'].apply(lambda x : int(x))
-
-  data['Date'] = pd.to_datetime(data['Date'], format='%Y/%m/%d')
-  
-  data['WeekDay'] = data['Date'].apply(lambda x : x.weekday())
-
-  data['Speed'].apply(lambda x : float(x))
-  
-  return data
-
-
-# Get data from Google Drive
-col_names = ['Sensor', 'Date', 'Time', 'Lane', 'Speed', 'Max Speed', 'Size']
-all_data = pd.read_csv('/content/drive/My Drive/TCC/chunks/all_data_sorted.csv', ';', header=None, names=col_names)
-data = all_data[all_data['Sensor'] == 'RSI128']
-data = data.drop(columns=['Sensor','Lane','Max Speed','Size'])
-data = prepare_data(data)
-
-data_analysis(data)
+  return np.sqrt(mse)
 
 """# Configure Hyperparameters"""
 
@@ -147,9 +115,64 @@ DAY_SIZE = (24 * 3600) // FLOW_INTERVAL
 
 WEEK_SIZE = 7 * DAY_SIZE
 
-"""# Get Flow
+"""# Mount Drive
 
-This will transform the time series of register cars that passed in a array of flow per 5 minute.
+Connect to Google Drive of 'alfredcoinworth'
+"""
+
+import google as g # To connect with google drive
+g.colab.drive.mount('/content/drive')
+
+"""# Data Retrieval
+
+This phase we have to get the data stored in Google Drive.
+"""
+
+col_names = ['Sensor', 'Date', 'Time', 'Lane', 'Speed', 'Max Speed', 'Size']
+all_data = pd.read_csv('/content/drive/My Drive/TCC/chunks/all_data_sorted.csv', ';', header=None, names=col_names)
+all_data.head()
+
+"""# Data Pre-processing"""
+
+def adjust_data(data):
+  # Extract data from just one sensor
+  data = data[data['Sensor'] == 'RSI128']
+  
+  # Remove unnecessary columns
+  data = data.drop(columns=['Sensor','Lane','Max Speed','Size'])
+   
+  # Adjust type
+  data['Time'] = data['Time'].apply(lambda x : tm.strptime(x, '%H:%M:%S'))
+  data['Time'] = data['Time'].apply(lambda x : dt.timedelta(hours=x.tm_hour,minutes=x.tm_min,seconds=x.tm_sec).total_seconds())
+  data['Time'] = data['Time'].apply(lambda x : int(x))
+  data['Date'] = pd.to_datetime(data['Date'], format='%Y/%m/%d')
+  data['Speed'].apply(lambda x : float(x))
+  
+  # Create week day from date
+  data['WeekDay'] = data['Date'].apply(lambda x : x.weekday())
+  
+  return data
+
+
+data = adjust_data(all_data)
+data.head()
+
+"""# Data Analysis"""
+
+print(f"This data is from <{data['Date'].min()}> to <{data['Date'].max()}>\n")
+
+print(f"It contains {len(data['Date'])} entries\n")
+
+for col, cont in data.iteritems():
+    print(f"Column {col} has {cont.isnull().sum()} null elements and {cont.isna().sum()} nan elements")
+    
+print()
+
+data.describe()
+
+"""# Flow Retrieval
+
+This will transform the time series of register cars that passed in a array of flow per k minute.
 """
 
 def get_weekday(n):
@@ -199,13 +222,25 @@ def get_flow (data):
 
 raw_seq = get_flow(data)
 
-plot_flow(raw_seq)
+"""# Flow Analysis
 
-"""# Prepare for dataset for training
+This is based on [A Guide to Time Series Visualization with Python 3](https://www.digitalocean.com/community/tutorials/a-guide-to-time-series-visualization-with-python-3).
 
-+ Adjust the dataset
-+ Split the dataset
-+ Create storage for the results
+## TODO
+
+- Discover why 30 of freq [[1]](https://stackoverflow.com/questions/40794282/value-error-in-python-statsmodels-tsa-seasonal)
+"""
+
+# TODO: why 30?
+decomposition = sm.tsa.seasonal.seasonal_decompose(raw_seq, model='additive', freq=30)
+fig = decomposition.plot()
+
+plt.rcParams["figure.figsize"] = (80,15)
+plt.plot()
+
+"""# Prepare Dataset
+
+This phase will form the input (X) and the output (Y)
 """
 
 def split_sequence(sequence):
@@ -250,7 +285,10 @@ def reshape_flow (raw_seq):
 
 X, Y = reshape_flow(raw_seq)
 
-"""# Baseline: Random"""
+"""# Baseline: Random
+
+This implementation just guess a random number in the [0, 100] interval for every output.
+"""
 
 def base_rand (Y):
   Y_hat = [rnd.randint(0, 100) for i in range(len(Y))]
@@ -260,7 +298,10 @@ def base_rand (Y):
   
 base_rand(Y)
 
-"""# Baseline: Default"""
+"""# Baseline: Default
+
+This implementation just get the mean of every flow value in the input and place it as output.
+"""
 
 def base_default (X, Y):
   Y_hat = [st.mean([v[0] for v in x]) for x in X]
@@ -270,64 +311,91 @@ def base_default (X, Y):
   
 base_default(X, Y)
 
-"""# Baseline: ARIMA"""
+"""# Baseline: ARIMA
 
-# TODO: check if this ARIMA is ok
+This implementation was based on the article [How to Create an ARIMA Model for Time Series Forecasting in Python](https://machinelearningmastery.com/arima-for-time-series-forecasting-with-python/).
+
+## TODO
+
+- Improve training speed
+- Check if I need to improve
+- Check stationarity
+- Use Seasonal ARIMA
+- Use grid search for optimal results
+
+## Resources
+
++ [A Guide to Time Series Forecasting with ARIMA in Python 3](https://www.digitalocean.com/community/tutorials/a-guide-to-time-series-forecasting-with-arima-in-python-3)
++ [Summary of rules for identifying ARIMA models](http://people.duke.edu/~rnau/arimrule.htm)
+"""
+
 def base_arima (X):
   size = int(len(X) * TRAIN_SPLIT)
-  acc = X[:size]
+  acc = X[size-(2*WEEK_SIZE):size]
   Y = X[size+N_FUTURE:]
   Y_hat = []
   
   for t in range(len(Y)):
-    model = ARIMA(acc)
+    print(t, len(Y))
+    
+    model = sm.tsa.arima_model.ARIMA(acc, order=(5, 1, 0))
     model_fit = model.fit(disp=0)
     
     start = len(acc)
     end = start + N_FUTURE
     
-    prediction = model_fit.forecast(start=start, end=end+1)
+    prediction = model_fit.predict(start=start, end=end+1)
     
     Y_hat.append(prediction[-1])    
     acc.append(X[size + t])
+    acc.pop(0)
 
-  mse = np.sqrt(sklm.mean_squared_error(Y_hat, Y))
-  print(f"MSE: {mse}")
+  res = rmse(Y_hat, Y)
+  print(f"RMSE: {res}")
   
-base_arima([e[0] for e in raw_seq])
+
+#if MULTIVARIATE:
+  #base_arima([e[0] for e in raw_seq])
+#else:
+  #base_arima(raw_seq)
 
 """# GRU"""
 
 def gru (X, Y): 
+  res = 0.0
   n_weeks = len(X) // WEEK_SIZE
   
   # define model
-  model = Sequential()
-  model.add(GRU(50, activation='relu', input_shape=(N_STEPS, N_FEATURES)))
-  model.add(Dense(1))
+  model = keras.models.Sequential()
+  model.add(keras.layers.GRU(50, activation='relu', input_shape=(N_STEPS, N_FEATURES)))
+  model.add(keras.layers.Dense(1))
   
   # compile model
   model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])
-  
-  # fit model
-  res = 0.0
 
-  for i in range(n_weeks - 4):
-    X_train = X[(WEEK_SIZE*i):(WEEK_SIZE*(i+3))]
-    Y_train = Y[(WEEK_SIZE*i):(WEEK_SIZE*(i+3))]
-    X_test = X[(WEEK_SIZE*(i+3)):(WEEK_SIZE*(i+4))]
-    Y_test = Y[(WEEK_SIZE*(i+3)):(WEEK_SIZE*(i+4))]
+  for k in range(n_weeks - 4):
+    # Get training of 3 weeks
+    i = WEEK_SIZE * (k)
+    j = WEEK_SIZE * (k + 3)
+    X_train = X[i:j]
+    Y_train = Y[i:j]
     
-    train_sz = TEST_SIZE * i
-    test_sz = train_sz + TEST_SIZE
-
+    # Get test of 1 week
+    i = WEEK_SIZE * (k + 3)
+    j = WEEK_SIZE * (k + 4)
+    X_test = X[i:j]
+    Y_test = Y[i:j]
+    
+    # Fit the model
     hist = model.fit(X_train, Y_train, validation_split=VALIDATION_SPLIT, batch_size=64, epochs=15, verbose=0) # verbose = 2
     
-    Y_hat = model.predict(X_test, verbose=0) # verbose = 2
+    # Predict for all x
+    Y_hat = model.predict(X_test, verbose=2) # verbose = 2
         
+    # Accumulate the RMSE
     res += np.sqrt(sklm.mean_squared_error(Y_test, Y_hat))
 
-    #plot_history(hist, "lstm")
+    #plot_history(hist, "gru")
     #print_metrics(Y_hat.round().flatten().tolist(), Y_test.tolist())
 
   print(f"K-validated RMSE: {res / (n_weeks - 4) }")
@@ -338,32 +406,37 @@ gru(X, Y)
 """# LSTM"""
 
 def lstm (X, Y): 
+  res = 0.0
   n_weeks = len(X) // WEEK_SIZE
   
   # define model
-  model = Sequential()
-  model.add(LSTM(50, activation='relu', input_shape=(N_STEPS, N_FEATURES)))
-  model.add(Dense(1))
+  model = keras.models.Sequential()
+  model.add(keras.layers.LSTM(50, activation='relu', input_shape=(N_STEPS, N_FEATURES)))
+  model.add(keras.layers.Dense(1))
   
   # compile model
   model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])
-  
-  # fit model
-  res = 0.0
 
-  for i in range(n_weeks - 4):
-    X_train = X[(WEEK_SIZE*i):(WEEK_SIZE*(i+3))]
-    Y_train = Y[(WEEK_SIZE*i):(WEEK_SIZE*(i+3))]
-    X_test = X[(WEEK_SIZE*(i+3)):(WEEK_SIZE*(i+4))]
-    Y_test = Y[(WEEK_SIZE*(i+3)):(WEEK_SIZE*(i+4))]
+  for k in range(n_weeks - 4):
+    # Get training of 3 weeks
+    i = WEEK_SIZE * (k)
+    j = WEEK_SIZE * (k + 3)
+    X_train = X[i:j]
+    Y_train = Y[i:j]
     
-    train_sz = TEST_SIZE * i
-    test_sz = train_sz + TEST_SIZE
-
+    # Get test of 1 week
+    i = WEEK_SIZE * (k + 3)
+    j = WEEK_SIZE * (k + 4)
+    X_test = X[i:j]
+    Y_test = Y[i:j]
+    
+    # Fit the model
     hist = model.fit(X_train, Y_train, validation_split=VALIDATION_SPLIT, batch_size=64, epochs=15, verbose=0) # verbose = 2
     
-    Y_hat = model.predict(X_test, verbose=0) # verbose = 2
+    # Predict for all x
+    Y_hat = model.predict(X_test, verbose=2) # verbose = 2
         
+    # Accumulate the RMSE
     res += np.sqrt(sklm.mean_squared_error(Y_test, Y_hat))
     
     #plot_history(hist, "lstm")
@@ -377,38 +450,48 @@ lstm(X, Y)
 """# RNN"""
 
 def rnn (X, Y): 
+  res = 0.0
   n_weeks = len(X) // WEEK_SIZE
   
   # define model
-  model = Sequential()
-  model.add(SimpleRNN(50, activation='relu', input_shape=(N_STEPS, N_FEATURES)))
-  model.add(Dense(1))
+  model = keras.models.Sequential()
+  model.add(keras.layers.SimpleRNN(50, activation='relu', input_shape=(N_STEPS, N_FEATURES)))
+  model.add(keras.layers.Dense(1))
   
   # compile model
   model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])
-  
-  # fit model
-  res = 0.0
 
-  for i in range(n_weeks - 4):
-    X_train = X[(WEEK_SIZE*i):(WEEK_SIZE*(i+3))]
-    Y_train = Y[(WEEK_SIZE*i):(WEEK_SIZE*(i+3))]
-    X_test = X[(WEEK_SIZE*(i+3)):(WEEK_SIZE*(i+4))]
-    Y_test = Y[(WEEK_SIZE*(i+3)):(WEEK_SIZE*(i+4))]
+  for k in range(n_weeks - 4):
+    # Get training of 3 weeks
+    i = WEEK_SIZE * (k)
+    j = WEEK_SIZE * (k + 3)
+    X_train = X[i:j]
+    Y_train = Y[i:j]
     
-    train_sz = TEST_SIZE * i
-    test_sz = train_sz + TEST_SIZE
-
+    # Get test of 1 week
+    i = WEEK_SIZE * (k + 3)
+    j = WEEK_SIZE * (k + 4)
+    X_test = X[i:j]
+    Y_test = Y[i:j]
+    
+    # Fit the model
     hist = model.fit(X_train, Y_train, validation_split=VALIDATION_SPLIT, batch_size=64, epochs=15, verbose=0) # verbose = 2
     
-    Y_hat = model.predict(X_test, verbose=0) # verbose = 2
+    # Predict for all x
+    Y_hat = model.predict(X_test, verbose=2) # verbose = 2
         
+    # Accumulate the RMSE
     res += np.sqrt(sklm.mean_squared_error(Y_test, Y_hat))
     
-    #plot_history(hist, "lstm")
+    #plot_history(hist, "rnn")
     #print_metrics(Y_hat.round().flatten().tolist(), Y_test.tolist())
 
   print(f"K-validated RMSE: {res / (n_weeks - 4) }")
 
 
 rnn(X, Y)
+
+"""# Observations:
+
++ For the evaluation of the RNN and it's variations was used the Walking Forward methodology so that we had many test sessions and all training sessions where the same size [[1]](https://towardsdatascience.com/time-series-nested-cross-validation-76adba623eb9)
+"""
