@@ -4,7 +4,7 @@ Monografia do Claudio Segala e do Pedro Gonzaga
 
 ## Qual o problema?
 
-Congestionamento.
+Prever o fluxo em cruzamentos usando três meses de resgistro de passagem de carros provindos de fiscalizadores eletrônicos de trânsito.
 
 ## Porquê os outros deveriam se importar?
 
