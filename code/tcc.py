@@ -277,102 +277,72 @@ print(X.shape)
 
 print(Y.shape)
 
-"""# Preparation for Statistical Methods"""
-
-def evaluate_method (Y, Y_hat, start):
-  time = tm.time() - start
-  rmse = np.sqrt(sklm.mean_squared_error(Y, Y_hat))
-  nrmse = rmse / np.std(Y)
-  mae = sklm.mean_absolute_error(Y, Y_hat)
-  
-  print(f"Training Time: {int(time)}s, RMSE: {rmse}, NRMSE: {nrmse}, MAE: {mae}")
-  
-  return (time, rmse, nrmse, mae)
-
-"""# Baseline: Random
-
-This implementation just guess a random number in the [0, 100] interval for every output.
-"""
-
-import random as rnd # random
-
-def random_guess (Y):
-  start = tm.time()
-  m = max(Y)
-  
-  Y_hat = [rnd.randint(0, m) for i in range(len(Y))]
-  
-  plot_prediction(Y, Y_hat)
-  
-  return evaluate_method(Y, Y_hat, start)
-
-"""# Baseline: Default
-
-This implementation just get the mean of every flow value in the input and place it as output.
-"""
-
-def default_mean (X, Y):
-  start = tm.time()
-  
-  Y_hat = [np.mean([v[0] for v in x]) for x in X]
-  
-  plot_prediction(Y, Y_hat)
-  
-  return evaluate_method(Y, Y_hat, start)
-
-"""# Random Forest
-
-This implementation is based on [Random Forest Algorithm with Python and Scikit-Learn](https://stackabuse.com/random-forest-algorithm-with-python-and-scikit-learn/)
-"""
-
-from sklearn.ensemble.forest import RandomForestRegressor
-
-def random_forest(X, Y):
-  X = X.reshape(X.shape[0], X.shape[1])
-  
-  train_sz = int(len(Y) * 0.8)
-  
-  X_train, X_test, Y_train, Y_test = skl.model_selection.train_test_split(X, Y, test_size=0.2, random_state=0)
-  
-  model = skl.ensemble.RandomForestRegressor(n_estimators=100, max_features='auto', random_state=0)
-  
-  start = tm.time()
-  
-  model.fit(X_train, Y_train)
-  
-  Y_hat = model.predict(X_test)
-  
-  plot_prediction(Y_test, Y_hat)
-  
-  return evaluate_method(Y_test, Y_hat, start)
-
-"""# Support Vector Machine"""
-
-from sklearn import svm
-
-def support_vector_machine(X,Y):
-  X_train, X_test, Y_train, Y_test = skl.model_selection.train_test_split(X, Y, test_size=0.2, random_state=0)
-  
-  X_train = X_train.reshape((X_train.shape[0], X_train.shape[1]))
-
-  X_test = X_test.reshape((X_test.shape[0], X_test.shape[1]))
-
-  clf = svm.SVR(gamma='scale', C=1.0, epsilon=0.2)
-  
-  start = tm.time()
-  
-  model.fit(X_train, Y_train)
-  
-  Y_hat = model.predict(X_test)
-  
-  plot_prediction(Y_test, Y_hat)
-  
-  return evaluate_method(Y_test, Y_hat, start)
-
-"""# Preparation for Deep Learning"""
+"""# Util"""
 
 from keras.models import Sequential
 from keras.layers import SimpleRNN, Dense
+
+def split (n, window_size, test_split):
+  test_size = int(window_size * test_split)
+  jump_size = test_size
+  train_size = window_size - tes_size
+  
+  i, j, k = 0, train_size, min(n, train_size + test_size)
+  
+  res = []
+  
+  while j < size:
+    res.append((i, j, k))
+    
+    i = i + jump_size
+    j = i + train_size
+    k = min(size, j + test_size)
+    
+  return res
+
+def evaluate (expected, observed, times, verbose=0):
+  n = len(expected)
+  RMSE = [0] * n
+  NRMSE = [0] * n
+  MAE = [0] * n
+  
+  for i in range(n):
+    Y = expected[i]
+    Y_hat = observed[i]
+    time = times[i]
+    
+    MAE[i] = sklm.mean_absolute_error(Y, Y_hat)
+    RMSE[i] = np.sqrt(sklm.mean_squared_error(Y, Y_hat))
+    NRMSE[i] = rmse / np.std(Y)
+    
+    if verbose > 0:
+      print(f"({i}/{n}) ({time}s) - RMSE: {RMSE[i]}, NRMSE: {NRMSE[i]}, MAE: {MAE[i]}")
+      
+  if verbose > 0:
+    flatten = lambda l: [i for sl in l for i in sl]
+    plot_prediction(flatten(expected), flatten(observed))
+      
+  time = sum(times)
+  rmse = sum(RMSE) / n
+  nrmse = sum(NRMSE) / n
+  mae = sum(MAE) / n
+  
+  return (time, rmse, nrmse, mae)
+
+def run(model, X, Y):
+  expected, observed, times = [], [], []
+  pointers = split(len(X), 24000, 0.2)
+  
+  for i, j, k in pointers:
+    start = tm.time()
+    
+    model.fit(X[i:j], Y[i:j])
+    
+    expected.append(Y[j:k])
+    observed.append(model.predict(X[j:k]))
+    times.append(tm.time() - start)
+    
+  return evaluate(expected, observed, times)
 
 def evaluate_model (model, X, Y, train_size=20000, test_size=2000, validation_split=0.25, batch_size=64, epochs=15, verbose=0):
   RMSE, NRMSE, MAE = [], [], []
@@ -421,6 +391,91 @@ def evaluate_model (model, X, Y, train_size=20000, test_size=2000, validation_sp
 
 results = {}
 
+"""# Baseline: Random
+
+This implementation just guess a random number in the [0, 100] interval for every output.
+"""
+
+import random as rnd # random
+
+def random_guess (Y):
+  m = max(Y)
+  
+  expected, observed, times = [], [], []
+  pointers = split(len(X), 24000, 0.2)
+  
+  for i, j, k in pointers:
+    start = tm.time()
+    
+    expected.append(Y[j:k])
+    observed.append([rnd.randint(0, m) for i in range(k - j)])
+    times.append(tm.time() - start)
+    
+  return evaluate(expected, observed, times)
+
+"""# Baseline: Default
+
+This implementation just get the mean of every flow value in the input and place it as output.
+"""
+
+def default_mean (X, Y):
+  expected, observed, times = [], [], []
+  pointers = split(len(X), 24000, 0.2)
+  
+  for i, j, k in pointers:
+    start = tm.time()
+    
+    expected.append(Y[j:k])
+    observed.append([np.mean([v[0] for v in x]) for x in X[j:k]])
+    times.append(tm.time() - start)
+    
+  return evaluate(expected, observed, times)
+
+"""# Random Forest
+
+This implementation is based on [Random Forest Algorithm with Python and Scikit-Learn](https://stackabuse.com/random-forest-algorithm-with-python-and-scikit-learn/)
+"""
+
+from sklearn.ensemble.forest import RandomForestRegressor
+
+def random_forest(X, Y):
+  model = skl.ensemble.RandomForestRegressor(n_estimators=100, max_features='auto', random_state=0)
+
+  expected, observed, times = [], [], []
+  pointers = split(len(X), 24000, 0.2)
+  
+  for i, j, k in pointers:
+    start = tm.time()
+    
+    model.fit(X[i:j], Y[i:j])
+    
+    expected.append(Y[j:k])
+    observed.append(model.predict(X[j:k]))
+    times.append(tm.time() - start)
+    
+  return evaluate(expected, observed, times)
+
+"""# Support Vector Machine"""
+
+from sklearn import svm
+
+def support_vector_machine(X,Y):
+  model = svm.SVR(gamma='scale', C=1.0, epsilon=0.2)
+
+  expected, observed, times = [], [], []
+  pointers = split(len(X), 24000, 0.2)
+  
+  for i, j, k in pointers:
+    start = tm.time()
+    
+    model.fit(X[i:j], Y[i:j])
+    
+    expected.append(Y[j:k])
+    observed.append(model.predict(X[j:k]))
+    times.append(tm.time() - start)
+    
+  return evaluate(expected, observed, times)
+
 """# RNN"""
 
 from keras.layers import SimpleRNN
@@ -433,7 +488,19 @@ def rnn (X, Y):
   
   model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])
   
-  return evaluate_model(model, X, Y)
+  expected, observed, times = [], [], []
+  pointers = split(len(X), 24000, 0.2)
+  
+  for i, j, k in pointers:
+    start = tm.time()
+    
+    model.fit(X[i:j], Y[i:j], validation_split=0.2, batch_size=64, epochs=15, verbose=0)
+    
+    expected.append(Y[j:k])
+    observed.append(model.predict(X[j:k]))
+    times.append(tm.time() - start)
+    
+  return evaluate(expected, observed, times)
 
 """# LSTM"""
 
@@ -446,8 +513,20 @@ def lstm (X, Y):
   model.add(Dense(1))
   
   model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])
-
-  return evaluate_model(model, X, Y)
+  
+  expected, observed, times = [], [], []
+  pointers = split(len(X), 24000, 0.2)
+  
+  for i, j, k in pointers:
+    start = tm.time()
+    
+    model.fit(X[i:j], Y[i:j], validation_split=0.2, batch_size=64, epochs=15, verbose=0)
+    
+    expected.append(Y[j:k])
+    observed.append(model.predict(X[j:k]))
+    times.append(tm.time() - start)
+    
+  return evaluate(expected, observed, times)
 
 """# GRU"""
 
@@ -461,7 +540,19 @@ def gru (X, Y):
   
   model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])
 
-  return evaluate_model(model, X, Y)
+  expected, observed, times = [], [], []
+  pointers = split(len(X), 24000, 0.2)
+  
+  for i, j, k in pointers:
+    start = tm.time()
+    
+    model.fit(X[i:j], Y[i:j], validation_split=0.2, batch_size=64, epochs=15, verbose=0)
+    
+    expected.append(Y[j:k])
+    observed.append(model.predict(X[j:k]))
+    times.append(tm.time() - start)
+    
+  return evaluate(expected, observed, times)
 
 """# Running"""
 
