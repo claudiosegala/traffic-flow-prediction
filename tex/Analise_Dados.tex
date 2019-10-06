@@ -1,46 +1,49 @@
+% TODO: Devemos explicar como o fiscalizador eletrônico funciona? (https://industriahoje.com.br/como-funcionam-os-radares-de-velocidade)
+
 Esse capítulo tem como objetivo mostrar uma análise dos tipos de dados que estamos lidando. Mostrando os desafios e obstáculos que esse dados possuem. Além disso, iremos especificar melhor os dados que usamos para esse trabalho.
 
-\section{Dados de Tráfego}
+\section{Características do Tráfego}
 
-Para se coletar dados de tráfego é comumente utilizado câmeras e sensores para registrar a passagem de carros numa via. Esse equipamento é utilizado bastante para fiscalizar se os carros estão obedecendo a velocidade máxima de via, sendo assim chamados de Fiscalizadores Eletrônicos.
+É importante notar que o tráfego é afetado por fatores temporais, espaciais e aleatórios. Os fatores temporais são, por exemplo, o horário de entrada e saída dos trabalhadores. Os fatores espaciais são, por exemplo, como a malha rodoviário se distribui em uma localização ou a quantidade de empresas em uma área. Já fatores aleatórios são, por exemplo, acidentes e a meteorologia do dia. Sendo assim, modelos de previsões podem ter desempenhos diferentes dependendo de onde e quando os dados forem coletados. Isso, sem levar em conta a impossibilidade de se prever os fatores aleatórios.
 
-\section{Tráfego}
-
-É importante notar que o tráfego é afetado por fatores temporais, espaciais e aleatórios. Os fatores temporais são, por exemplo, o horário de entrada e saída dos trabalhadores. Os fatores espaciais são, por exemplo, como a grade rodoviário se distribui em uma localização ou a quantidade de empresas em uma área. Já fatores aleatórios são, por exemplo, acidentes e a meteorologia do dia. Sendo assim, modelos de previsões podem ter desempenhos diferentes dependendo de onde e quando os dados forem coletados. Isso, sem levar em conta a impossibilidade de se prever os fatores aleatórios.
-
-Assim, é comum ver que os 
-
-
-
-Como as variáveis aleatórias são muito difíceis de prever, a literatura opta por usar apenas dados com variáveis espaciais e temporais. Assim, fazendo uma suposição de que exista uma tendência no fluxo que pode ser prevista e que embora as variáveis aleatórias afetem o fluxo, elas não afetam o bastante para mudar a tendência do fluxo no longo prazo. Seguindo a literatura, esse artigo utilizará variáveis temporais e espaciais.
-
-O tráfego pode ser visto de várias formas diferentes. Pode ser visto pela quantidade de veículos que passaram um ponto em um intervalo de tempo, o fluxo. Também pode ser visto como a média de velocidade dos veículos em uma certo espaço, a densidade. Ou como uma média de velocidade em um intervalo de tempo, a velocidade média.
-
-% TODO: conferir isso
-Para o nosso trabalho escolhemos utilizar o fluxo, pois seus valores estão inclusos no conjunto dos números inteiros positivos. Já os outros jeitos de ver o tráfego tem seus valores inclusos no conjunto dos números naturais. Como o domínio do fluxo é menor que os outros, os modelos tem uma maior facilidade de fazer a previsão.
-
-\section{Dados de Tráfego}
+Assim, é comum na literatura optar por usar apenas dados com fatores espaciais e temporais. Assim, fazendo uma suposição de que exista uma tendência no fluxo que pode ser previsto e que embora as variáveis aleatórias possam afetar o fluxo, elas não afetam o bastante para mudar a tendência no longo prazo. Seguindo a literatura, esse artigo utilizará variáveis temporais e espaciais.
 
 \section{Aquisição}
 
 Os dados\footnote{http://bit.ly/processed-data-2l5MaAG} provêm de dois cruzamentos na avenida Hélio Prates que cruza a Taguatinga e Ceilândia, duas cidades satélites do Distrito Federal (DF). Estes dados foram coletados e fornecidos pelo Departamento de Trânsito (DETRAN\footnote{http://www.detran.df.gov.br/}) do DF. Sendo a coleta feita por fiscalizadores eletrônicos localizados nos cruzamentos.
 
-% FIX: nos recebemos um intervalo maior dos dados, apenas pegamos e selecionamos o melhor intervalo
-Nesses dados estão inclusos registros de todos os veículos que passaram pelo local nos meses de maio a junho de 2016 em forma de uma série temporal. Para cada registro se tem uma identificação do fiscalizador eletrônico, data, hora, faixa de via, velocidade e limite de velocidade da via, assim como mostrado na tabela \ref{table:sampleDETRAN}.
+% TODO: colocar todos os fiscalizadores eletronicos
+% TODO: consertar o intervalo que recebemos
+Nesses dados estão inclusos registros de todos os veículos que passaram pelo local nos meses de maio a junho de 2016 em forma de uma série temporal. Para cada registro se tem uma identificação do fiscalizador eletrônico, data, hora, faixa de via, velocidade, limite de velocidade da via e tamanho do veículo, assim como mostrado na tabela {table:data}.
 
 \begin{table}[h]
-    \caption{Amostra dos dados recebidos coletados pelo DETRAN}
-    \label{table:sampleDETRAN}
-    \begin{center}
     \begin{tabular}{ccccccc}
-    \hline
-    \multicolumn{1}{l}{\textbf{Equip.}} & \multicolumn{1}{l}{\textbf{Data}} & \multicolumn{1}{l}{\textbf{Hora}} & \multicolumn{1}{l}{\textbf{Faixa}} & \multicolumn{1}{l}{\textbf{Vel.}} & \multicolumn{1}{l}{\textbf{Lim. Vel.}}\\ 
-    \hline
-    RSI128 & 2016/05/01 & 00:00:09 & 1 & 20 & 60 \\
-    RSI131 & 2016/05/01 & 00:00:09 & 2 & 45 & 60 \\
-    RSI132 & 2016/05/01 & 00:00:09 & 1 & 40 & 60 \\
-    RSI131 & 2016/05/01 & 00:00:10 & 1 & 35 & 60 \\ 
-    \hline
+    \toprule
+    \multicolumn{1}{l}{\textbf{Id Equipamento}} & \multicolumn{1}{l}{\textbf{Data}} & \multicolumn{1}{l}{\textbf{Hora}} & \multicolumn{1}{l}{\textbf{Faixa}} & \multicolumn{1}{l}{\textbf{km/h}} & \multicolumn{1}{l}{\textbf{km/h Max}} & \multicolumn{1}{l}{\textbf{Tamanho}} \\ 
+    \midrule
+    RSI128 & 2016/05/01 & 00:00:09 & 1 & 20 & 60 & 0 \\
+    RSI131 & 2016/05/01 & 00:00:09 & 2 & 45 & 60 & 1.1 \\
+    RSI132 & 2016/05/01 & 00:00:09 & 1 & 40 & 60 & 0 \\
+    RSI131 & 2016/05/01 & 00:00:10 & 1 & 35 & 60 & 0.5 \\ 
+    \bottomrule
     \end{tabular}
-    \end{center}
+    \label{table:data}
+    \caption{Exemplo dos dados recebidos coletados pelo \acrshort{DETRAN}}
 \end{table}
+
+Os dados foram obtidos do equipamento de fiscalização eletrônica, os quais estão instalados em vias semafóricas. Por este motivo, é possível identificar momentos curtos onde não há fluxo de carros. Além disso, alguns dos equipamentos sofreram manutenção, resultando em alguns momentos mais longos sem registro de tráfego.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.5]{street.png}
+    \label{figure:eixo}
+    \caption{Visão espacial do eixo monumental em Brasília}
+\end{figure}
+
+
+\section{Observações}
+
+% TODO: colocar referencia do tráfego piorando durante a Copa do Mundo
+Vale notar que os dados adquiridos foram de uma época com um tráfego mais intenso nas cidades do Brasil. Visto que a Copa do Mundo foi durante o intervalo adquirido. 
+
+Também vale notar que os fiscalizadores eletrônicos utilizados ficam próximos de semáforos, ou seja, existe momentos que o fluxo diminui bastante.

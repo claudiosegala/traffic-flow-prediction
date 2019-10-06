@@ -1,34 +1,26 @@
-% LATER: adicionar subseção de modelagem do problema
-% LATER: adicionar gráfico (fluxo por tempo) em tratamento de dados.
+% TODO: adicionar subseção de modelagem do problema
+% TODO: adicionar gráfico (fluxo por tempo) em tratamento de dados.
 
-Como visto anteriormente, congestionamentos nas cidades tendem a piorar com o aumento de carros. Sendo assim, é importante pensar em métodos para evitar ou aliviar o alto fluxo de carros. Neste contexto, este trabalho propõe uma arquitetura de predição de tráfego baseado em \acrshort{GAN} com \acrshort{LSTM} para prever, utilizando dados de fiscalização eletrônica, o fluxo futuro das vias monitoradas. No caso, a previsão seria para curto e médio período (5, 10, 15, 30, 60, 120, 150 minutos). No intuito de fornecer essa informação para os cidadãos, para que estes possam se organizar melhor e se distribuir na malha rodoviária. No restante deste capítulo serão detalhados as etapas da metodologia.
+Como visto anteriormente, congestionamentos nas cidades tendem a piorar com o aumento de carros. Sendo assim, é importante pensar em métodos para evitar ou aliviar o alto fluxo de carros. Neste contexto, este trabalho compara modelos tradicionais e de aprendizagem profunda quanto a predição, utilizando dados de fiscalização eletrônica, o fluxo futuro das vias monitoradas. No caso, a previsão seria para curto e médio período (5, 10, 15, 30, 60, 120, 150 minutos). No intuito de fornecer essa informação para os cidadãos, para que estes possam se organizar melhor e se distribuir na malha rodoviária. No restante deste capítulo serão detalhados as etapas da metodologia.
+
+\section{Modelos}
+
+% BASED ON: https://www.youtube.com/watch?v=UgwUi8fu0CY
+% TODO: corrigir a referência
+Segundo \cite{b5}, os modelos guiados por dados podem ser classificados em paramétricos e não-paramétricos. Modelos paramétricos usam um número fixo de parâmetros para tentar descrever os dados, assim assumindo uma distribuição dos mesmos. Um exemplo de modelo paramétrico seria a regressão linear. Modelos não-paramétricos possuem um número variável de parâmetros que depende dos dados utilizados.
+
+Dos modelos paramétricos, o mais famoso na literatura é o \textit{Autoregressive Integrated Average Mean} (ARIMA) e suas variações. Para o problema de previsão de fluxo, seria necessário utilizar alguma variação que levasse em conta a sazonalidade dos dados, como o \textit{Sesonal Autoregressive Integrated Average Mean} (SARIMA). Porém, devido a complexidade e a falta de tempo, escolhemos não adicionar-lo. Mas serão usados os modelos paramétricos de média e um algoritmo randômico como base.
+
+Dos modelos não-paramétricos, dentre os que se destacam estão \textit{Long Short Term Memory Neural Networks} (LSTM), \textit{Gated Recurrent Unit Neural Network} (GRU), \textit{Support Vector Machine} (SVM) e \textit{Random Forest} (RF). Todos esses modelos serão implementados e como LSTM e GRU são evoluções do \textit{Recurrent Neural Network} (RNN), este será utilizado também na comparação. 
 
 \section{Coleta de dados}
+
+O tráfego pode ser visto de várias formas diferentes. Pode ser visto pela quantidade de veículos que passaram um ponto em um intervalo de tempo, o fluxo. Também pode ser visto como a média de velocidade dos veículos em uma certo espaço, a densidade. Ou como uma média de velocidade em um intervalo de tempo, a velocidade média.
+
+% TODO: conferir isso
+Para o nosso trabalho escolhemos utilizar o fluxo, pois seus valores estão inclusos no conjunto dos números inteiros positivos. Já os outros jeitos de ver o tráfego tem seus valores inclusos no conjunto dos números naturais. Como o domínio do fluxo é menor que os outros, os modelos tem uma maior facilidade de fazer a previsão.
+
 Para predizer o tráfego será necessário a série temporal que corresponde ao fluxo de uma via. Os dados utilizados nesse trabalho foram coletados pelo \acrfull{DETRAN}\footnote{http://www.detran.df.gov.br/} do \acrfull{DF} de maio de 2018 a junho de 2018 de 4 vias diferentes. Para cada carro é registrado uma entrada contendo o identificador do equipamento, a data e hora, a faixa em que atravessou, a velocidade, a velocidade limite e o tamanho, como apresentado na Tabela \ref{table:data}.
-
-\begin{table}[h]
-    \begin{tabular}{ccccccc}
-    \toprule
-    \multicolumn{1}{l}{\textbf{Id Equipamento}} & \multicolumn{1}{l}{\textbf{Data}} & \multicolumn{1}{l}{\textbf{Hora}} & \multicolumn{1}{l}{\textbf{Faixa}} & \multicolumn{1}{l}{\textbf{km/h}} & \multicolumn{1}{l}{\textbf{km/h Max}} & \multicolumn{1}{l}{\textbf{Tamanho}} \\ 
-    \midrule
-    RSI128 & 2016/05/01 & 00:00:09 & 1 & 20 & 60 & 0 \\
-    RSI131 & 2016/05/01 & 00:00:09 & 2 & 45 & 60 & 1.1 \\
-    RSI132 & 2016/05/01 & 00:00:09 & 1 & 40 & 60 & 0 \\
-    RSI131 & 2016/05/01 & 00:00:10 & 1 & 35 & 60 & 0.5 \\ 
-    \bottomrule
-    \end{tabular}
-    \label{table:data}
-    \caption{Exemplo dos dados recebidos coletados pelo \acrshort{DETRAN}}
-\end{table}
-
-Os dados foram obtidos do equipamento de fiscalização eletrônica, os quais estão instalados em vias semafóricas. Por este motivo, é possível identificar momentos curtos onde não há fluxo de carros. Além disso, alguns dos equipamentos sofreram manutenção, resultando em alguns momentos mais longos sem registro de tráfego.
-
-\begin{figure}[t]
-    \centering
-    \includegraphics[scale=0.5]{street.png}
-    \label{figure:eixo}
-    \caption{Visão espacial do eixo monumental em Brasília}
-\end{figure}
 
 \section{Pré-Processamento dos Dados}
 
