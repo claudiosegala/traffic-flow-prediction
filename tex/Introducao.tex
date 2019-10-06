@@ -1,93 +1,14 @@
 
-A frota  de  carros no Brasil e no mundo  tem  aumentado rapidamente ao  longo  dos  últimos anos. Como pode ser visto em (citar fonte que mostra a quantidade de carros para habitantes), em 2018, o Brasil ja apresentava 1 carro para cada 4 habitantes, isso equivale a, aproximademnte, 50 milhões de carros em circulação.As vias públicas não tem conseguido acompanhar este crescimento  [7].  Com  isso,  os  congestionamentos  tendem  a piorar, aumentando a emissão de gases poluentes na atmosfera,poluição sonora e o tempo gasto pelos motoristas no trânsito,diminuindo  assim  a  qualidade  de  vida  do  habitantes  de  uma cidade.Um  dos  meios  de  amenizar  o  congestionamento  é  tenta rprever  quando  ele  irá  acontecer.  Uma  vez  que  os  cidadãos saibam  que  um  engarrafamento  irá  ocorrer,  eles  podem  se planejar melhor e tomar rotas alternativas, distribuindo melhor os  carros  na  malha  viária.  Já  organizações  governamentais poderiam  usar  os  dados  para  ter  uma  noção  em  tempo  real de  como está  o  fluxo pela  cidade,  podendo agir  antes de  um engarrafamento acontecer.A literatura está saturada com artigos de predição de fluxou tilizando aprendizagem de máquina. Porém, a maioria desses artigos  coletam  dados  e  fazem  suas  análises  em  cima  de rodovias  expressas.  Nessas  não  há  intersecções,  ou  barreiras semafóricas.  Nosso  estudo  tem  como  desafio  aplicar  estes modelos  em  vias  urbanas,  onde  há  cruzamentos  e  radares  de velocidade que impactam de maneira significativa no comportamento do fluxo de veículos, e verificar a eficácia dos modelos utilizados na literatura nestas novas condições.
+A frota  de  carros no Brasil e no mundo  tem  aumentado rapidamente ao  longo  dos  últimos anos. Como pode ser visto em (citar fonte que mostra a quantidade de carros para habitantes), em 2018, o Brasil ja apresentava 1 carro para cada 4 habitantes, isso equivale, aproximadamente, a 50 milhões de carros em circulação. As vias públicas não tem conseguido acompanhar este crescimento. Brasília, por exemplo, que é considerada uma cidade bem planejada, foi projetada para suportar uma frota de no máximo 2 milhões de carros, porém já é obrigada a conciliar 3,5 milhões, como pode ser visto em (link para referencia com a quantidade de carros no df nos ultimos 10 anos).
+
+Neste contexto de expansão urbana e rápido crescimento da frota de veículos, surgiu o conceito de cidades inteligentes (referencia para smart cities), que consiste em aplicar tecnologia no gerenciamento das áreas urbanas que afetam a população e sua saúde, visando melhorá-las. Isso inclui o gerenciamento do tráfego urbano e sua otimização. 
+
+Com  isso,  os  congestionamentos  tendem  a piorar, aumentando a emissão de gases poluentes na atmosfera,poluição sonora e o tempo gasto pelos motoristas no trânsito,diminuindo  assim  a  qualidade  de  vida  do  habitantes  de  uma cidade.Um  dos  meios  de  amenizar  o  congestionamento  é  tentar prever  quando  ele  irá  acontecer.  Uma  vez  que  os  cidadãos saibam  que  um  engarrafamento  irá  ocorrer,  eles  podem  se planejar melhor e tomar rotas alternativas, distribuindo melhor os  carros  na  malha  viária.  Já  organizações  governamentais poderiam  usar  os  dados  para  ter  uma  noção  em  tempo  real de  como está  o  fluxo pela  cidade,  podendo agir  antes de  um engarrafamento acontecer.A literatura está saturada com artigos de predição de fluxo utilizando aprendizagem de máquina. Porém, a maioria desses artigos  coletam  dados  e  fazem  suas  análises  em  cima  de rodovias  expressas.  Nessas  não  há  intersecções,  ou  barreiras semafóricas.  Nosso  estudo  tem  como  desafio  aplicar  estes modelos  em  vias  urbanas,  onde  há  cruzamentos  e  radares  de velocidade que impactam de maneira significativa no comportamento do fluxo de veículos, e verificar a eficácia dos modelos utilizados na literatura nestas novas condições.
 
 Mais especificamente, este trabalho tem como objetivo fazer a  predição  de  fluxo  em  cruzamento  utilizando  de  modelos tradicionais e de aprendizagem profunda. Para assim verificar se possuem uma performance satisfatória para cruzamentos.
 \section{Motivação}
 
+
+
 \section{Objetivo}
 
-\section{Justificativa}
-
-\acrshort{GAN} é uma arquitetura de aprendizagem profunda que vem trazendo resultados promissores em diversas áreas \cite{christian}. Ela é uma arquitetura excelente para reproduzir os dados de entrada, aprendendo a distribuição dos mesmos. Visto que queremos gerar uma série temporal, \arcshort{GAN} deve ser capaz de aprender a distribuição das séries temporais que representam o passado em t minutos para gerar uma série temporal que corresponda a uma previsão de t minutos no futuro.
-
-
-Essa arquitetura, no entanto, trabalha com dados independentes entre si, mas existem variações capazes de lidar com séries temporais, que são dependentes entre si, como mostrado em \cite{zhou_2018}, \cite{banushev_2019} e \cite{esteban2017real}, que obtiveram resultados promissores.
-
-\section{Objetivos}
-
-Este trabalho tem como objetivo propor uma arquitetura capaz de realizar predições de tráfego de curto e médio período (5, 10, 15, 30, 60, 120 e 150 minutos) utilizando GAN.
-
-Para tal, serão utilizados os dados de fiscalização eletrônica do \acrfull{DF} para treinar uma variação da arquitetura \acrshort{GAN}, usando uma \acrshort{LSTM} como gerador e como discriminador. Sendo assim, os objetivos específicos desta proposta são:
-
-\begin{itemize}
-    \item Implementar uma arquitetura capaz de gerar séries temporais que simulem os próximos t minutos dado um intervalo de série temporal.
-    \item Treinar a arquitetura de forma a evitar erros comuns no treinamento de \acrshort{GAN}, como \textit{overfitting}.
-    \item Avaliar o desempenho desta metodologia se comparada ao estado da arte nos períodos propostos.
-\end{itemize}
-
-\section{Resultados}
-
-
-
-% LATER: adicionar métricas de acurácia
-Após o tratamento dos dados e da definição dos melhores parâmetros e hiperparâmetros para cada modelo, foram realizados diversos testes e comparações. Todos os experimentos foram realizados em uma máquina equipada com processador intel I7 7700HQ, 8 Gb ram rodando Ubuntu 18.05.
-
-A primeira comparação feita foi entre os resultados das predições dos modelos com o valores de entrada normalizados e não normalizados. Para os modelos univariados, normalizamos o valor do fluxo utilizando a biblioteca sklearn, onde o menor valor é mapeado como 0 e o maior valor como 1. Segundo [Citar fonte que mostra que dados normalizados tendem a ter um melhor resultado], valores normalizados entre 0 e 1 tendem a ter um melhor resultado para algoritmos que utilizam funções de ativação sigmoidais, além de evitar que o modelo fique enviesado para os valores com maiores ordens de grandeza. Porém, como pode ser visto na tabela 1, no caso do \archfull{LSTM}, o \archfull{RMSE} ficou levemente pior para as predições utilizando valores normalizados em seu treinamento. Isso pode ter acontecido pois o valor do intervalo do fluxo oriundo dos nossos dados não era tão grande, sendo o menor valor 0 e o maior valor 60. Com um intervalo pequeno como esse, a normalização não teve um impacto tão grande, pois 0 e 60 estão apenas a uma ordem de grandeza de diferença.
-
-O mesmo raciocínio pode ser utilizado para explicar a tabela 2, onde podemos observar que a normalização também não trouxe grandes benefícios aos modelos multivariados. Novamente, a ordem de grandeza entre os dados de entrada e entre os seus diferentes tipos (velocidade, fluxo) é bastante pequena, tornando a normalização pouco eficaz também nos casos dos modelos multivariados.
-
-Como a normalização não trouxe muitas melhorias aos modelos, decidimos por continuar os testes utilizando os valores não normalizados. O próximo passo foi decidir os melhores valores para cada parâmetro e hiperparâmetro. Como pode ser observado nos gráficos 1  a 7, todos os modelos tiveram uma melhora depois de passarem por um teste utilizando o Hyperas.
-
-Com todos os modelos nas suas melhores versões, com os valores mais adequados de parâmetros e hiperparâmetros, rodamos todos os modelos com o mesmo dataset e para os seguintes valores de Janela: 
-
-
-Como pode ser visto na tabela X,  todos  os  modelos  de aprendizagem  profunda  (LSTM  uni-variado  e  multi-variado,RNN  e  GRU)  tiveram  resultados  semelhantes,  mas  não  tão bons quanto os de aprendizagem supervisionada comum, como o random forest. Isso  pode  ter  acontecido  devido  ao  nosso  conjunto  de dados  e  seu  tamanho.  Redes  neurais  recorrentes  precisam de  um  grande  volume  de  dados  para  mapear  e  aprender  a sua  distribuição,  ao  contrário  de  modelos  de  aprendizagem supervisionada  tradicionais, que obtiveram melhores previsões com o nosso dataset.
-
-Outro  ponto  interessante  a  se  notar ao observar a tabela y  é  o  tempo  de  treinamento de cada método. Os modelos de aprendizagem profunda tiveram um tempo de treinamento consideravelmente maior se comparado aos demais, o que é esperado, visto que possuem muito mais camadas de processamento. Já os  modelos  utilizados  como  base  de  comparação  tiveram um  tempo  de treinamento  extremamente  rápido,  pois  são métodos triviais  e  não  exigem  muito  processamento  e,  por consequência, também tiveram as piores previsões.
-
-
-\begin{equation}
-\acrshort{MAE} = \frac{1}{n} \times \sum_{i=1}^{n} \quad \abs{result_i - expected_i}
-\end{equation}
-
-\begin{equation}
-\acrshort{MRE} = \frac{1}{n} \times \sum_{i=1}^{n} \quad \frac{\abs{result_i - expected_i}}{result_i}
-\end{equation}
-
-\begin{equation}
-\acrshort{RMSE} = \sqrt{ \frac{1}{n} \times \sum_{i=1}^{n} \quad (result_i - expected_i) ^ 2}
-\end{equation}
-    
-\section{Limitações}
-Para se fazer a previsão serão desconsiderados certos cenários em que a captura e o relacionamentos dos dados obtidos são muito imprecisos e/ou pontuais. Esses eventos podem influenciar nos resultados obtidos e dependendo da escala do evento, podem causar uma disparidade significante entre a predição e a realidade. Entre eles estão:
-\begin{itemize}
-    \item Falhas no equipamento ou bloqueio em vias
-    \item Semáforos
-    \item Acidentes de trânsitos
-    \item Greves e movimentações
-    \item Incapacidade de registrar uma velocidade média (visto que não há registro de placas)
-    \item Carros transitando em velocidades ilegais na falta de presença de fiscalização eletrônica.
-\end{itemize}
-Além disso, o modelo será treinado com dados de uma só cidade, recolhidos de sensores instalados em locais específicos. Logo, os resultados podem não ser os mesmos quando a metodologia for utilizada em outras localidades. O modo como os cidadãos dirigem e como as vias são feitas também vão influenciar. Para a previsão perfeita seriam necessárias muitas variáveis, as quais não estão disponíveis.
-
-\section{Metodologia}
-Visto o objetivo dessa proposta, o trabalho será divido em 4 partes:
-
-\begin{itemize}
-    \item Coleta de dados: Adquirir dados de fiscalização eletrônica local, no caso \acrshort{DETRAN};
-    \item Pré-processamento: verificar e retirar dados que possuem inconsistências, ou que não importam no treinamento da arquitetura;
-    \item Implementação: programar todas as arquiteturas necessárias para a comparação e treinar utilizando os mesmos dados;
-    \item Avaliação: utilizar das métricas capturadas durante a execução de ambas arquiteturas para avaliar o desempenho.
-\end{itemize}
-
-%Porém existem pesquisas que tentam aprimorar o estado da arte tentando coletar e utilizar das variáveis aleatórias provindas de redes sociais como o Twitter \cite{he2013improving} ou utilizam de dados meteorológicos \cite{wang_2018}. Mas no geral, essas variáveis são ignoradas.
-
-\section{Hipótese}
-% TALVEZ: criar mais hipóteses que sejam mais fáceis de provar
-% TALVEZ: comparar as duas quando se adiciona chuva
-% TALVEZ: tentar prever até um dia na frente
-% TALVEZ: avaliar a importância dos atributos que eu tenho
-% TALVEZ: pegar mais fontes de dados e ver como reage
-% TALVEZ: avaliar melhores janelas de tempo para o algoritmo
-
-Queremos verificar se a arquitetura \acrshort{GAN} proposta nesse trabalho é capaz de gerar séries temporais para previsão do tráfego melhor que o estado da arte, isto é, uma arquitetura \acrshort{SLSTM}.
