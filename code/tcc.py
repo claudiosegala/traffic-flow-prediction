@@ -28,26 +28,18 @@ Original file is located at
 Connect to Google Drive of 'alfredcoinworth'
 """
 
-import google as g # To connect with google drive
-g.colab.drive.mount('/content/drive')
+# import google as g # To connect with google drive
+# g.colab.drive.mount('/content/drive')
 
-"""# Install Dependencies
+"""# Instanciate Dependencies"""
 
-In this phase we have to download all the dependencies that our code will need
-"""
-
-!pip install tensorflow
-!pip install pandas
-!pip install matplotlib
-!pip install numpy
-!pip install sklearn
-!pip install keras
-!pip install statsmodels
-
-"""# Define headers
-
-In this phase we have to declare all the libraries that we will use.
-"""
+# !pip install tensorflow
+# !pip install pandas
+# !pip install matplotlib
+# !pip install numpy
+# !pip install sklearn
+# !pip install keras
+# !pip install statsmodels
 
 import tensorflow as tf # machine learning library
 import pandas as pd # data manipulation library
@@ -61,62 +53,45 @@ import statsmodels.api as sma # statistical models api
 import statistics as st # statistics
 import statsmodels as sm # statistical models
 
+import math
+import json
+import copy
+
+from sklearn.preprocessing import MinMaxScaler
+
 """# Configurations
 
-Diminish the verbosity of tensorflow
+## Tensorflow
 """
 
-tf.logging.set_verbosity(tf.logging.ERROR)
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
-"""# Util"""
+"""## Paths"""
 
-def plot_prediction (Y, Y_hat):
-  plt.plot(Y)
-  plt.plot(Y_hat)
-  plt.title('Prediction')
-  plt.ylabel('Flow')
-  plt.xlabel('Time')
-  plt.legend(['actual', 'prediction'], loc='upper left')
-  plt.rcdefaults()
-  plt.show('Prediction')
-  plt.close('all')
+# Colab
+# TCC_PATH = '/content/drive/My Drive/TCC/'
 
-def plot_history (history, name):
-  plt.plot(history.history['loss'])
-  plt.plot(history.history['val_loss'])
-  plt.title(name + ' Model Loss')
-  plt.ylabel('Loss')
-  plt.xlabel('Epoch')
-  plt.legend(['train', 'test'], loc='upper left')
-  plt.figure(figsize=(100, 100))
-  plt.show(name + "ind")
-  plt.close('all')
+# Local
+TCC_PATH = ''
 
-def print_metrics (Y_hat, Y_test):
-  #evs = sklm.explained_variance_score(Y_test, Y_hat)
-  mse = sklm.mean_squared_error(Y_test, Y_hat)
-  mae = sklm.mean_absolute_error(Y_test, Y_hat)
-  #msle = sklm.mean_squared_log_error(Y_test, Y_hat)
-  me = sklm.max_error(Y_test, Y_hat)
-  
-  #print(f"EVS: {evs}")
-  print(f"RMSE: {np.sqrt(mse)}")
-  #print(f"MSE: {mse}")
-  #print(f"MAE: {mae}")
-  #print(f"MSLE: {msle}")
-  #print(f"Max Error: {me}")
+"""## Parametes"""
 
-"""# Configure Hyperparameters"""
-
-TRAIN_SPLIT = 0.8
-
-SEEABLE_PAST = 100 # in minutes
+SEEABLE_PAST = 180 # in minutes
 
 PREDICT_IN_FUTURE = 15 # in minutes
 
-FLOW_INTERVAL = 150 # the interval size for each flow
+FLOW_INTERVAL = 450 # the interval size for each flow
 
-MULTIVARIATE = False # if we are gonna use multiple data or not
+NORMALIZE_FEATS = False #Decide if we gonna use normalized flow and speed values, or not
+
+SET_SPLIT = 0.75
+
+TEST_SPLIT = 0.2
+
+VALIDATION_SPLIT = 0.2
+
+VERBOSITY = False
+
 
 # Derivated
 
@@ -124,23 +99,319 @@ N_STEPS = SEEABLE_PAST * 60 // FLOW_INTERVAL # the number of flows to see in the
 
 N_FUTURE = PREDICT_IN_FUTURE * 60 // FLOW_INTERVAL # how much in the future we want to predict (0 = predict the flow on the next 5 minutes)
 
-N_FEATURES = 9 if MULTIVARIATE else 1
-
 DAY_SIZE = (24 * 3600) // FLOW_INTERVAL  
 
 WEEK_SIZE = 7 * DAY_SIZE
 
-"""# Data Retrieval
+"""## Global"""
 
-This phase we have to get the data stored in Google Drive.
+result_data = {
+    'results': {},
+    'meta': {}
+}
+
+comparison_data = []
+
+"""# Util
+
+## Data
+"""
+
+# split_sequence([1, 2, 3, 4, 5], 3) #=> ([[1, 2, 3], [2, 3, 4]], [4, 5])
+def split_sequence(sequence, isMulti):
+  n = len(sequence)
+  X, Y = list(), list()
+  
+  for i in range(n):
+    j = i + N_STEPS
+    k = j + N_FUTURE
+
+    if k >= n:
+      break
+
+    seq_x, seq_y = sequence[i:j], sequence[k]
+    X.append(seq_x)
+    Y.append(seq_y[0] if isMulti else seq_y)
+
+  return np.array(X), np.array(Y)
+
+def reshape_flow (raw_seq, isMulti):  
+  # split into samples
+  X, Y = split_sequence(np.array(raw_seq), isMulti)
+  
+  print(X.shape)
+  
+  if not isMulti: # reshape from [samples, timesteps] into [samples, timesteps, features]
+    X = X.reshape((X.shape[0], X.shape[1], 1))
+
+  return X, Y
+
+"""## Plot"""
+
+def plot_history (history, name):
+  path = f"{TCC_PATH}plots/histories/{name}"
+  
+  plt.plot(history.history['loss'])
+  plt.plot(history.history['val_loss'])
+  plt.title(name + ' Model Loss')
+  plt.ylabel('Loss')
+  plt.xlabel('Epoch')
+  plt.legend(['train', 'test'], loc='upper left')
+  plt.rcdefaults()
+  
+  plt.savefig(path + ".png", bbox_inches='tight')
+  plt.savefig(path + ".pdf")
+  
+  #plt.show(name + "ind")
+  plt.close('all')
+
+def plot_prediction (Y, Y_hat, title):
+  flatten = lambda l: [i for sl in l for i in sl]
+  
+  n = math.floor(len(Y) / DAY_SIZE)
+  Y = flatten(Y)
+  Y_hat = flatten(Y_hat)
+  
+  for r in range(n):
+    i = r * DAY_SIZE
+    j = min(i + DAY_SIZE, len(Y))
+    
+    path = f"{TCC_PATH}plots/predictions/{title} ({str(r+1).zfill(2)} of {n})"
+    
+    plt.plot(Y[i:j])
+    plt.plot(Y_hat[i:j])
+    plt.title(title + 'Prediction')
+    plt.ylabel('Flow')
+    plt.xlabel('Time')
+    plt.legend(['actual', 'prediction'], loc='upper left')
+    plt.rcdefaults()
+
+    plt.savefig(path + ".png", bbox_inches='tight')
+    plt.savefig(path + ".pdf")
+
+    plt.close('all')
+
+def plot_performance_bar(i, y_label, title):
+  path = f"{TCC_PATH}plots/performances/bars/{title}"
+  
+  models = tuple(results.keys())
+  y_pos = np.arange(len(models))
+  performance = [sum(v[i]) / len(v[i]) for v in results.values()]
+
+  plt.rcdefaults()
+  plt.bar(y_pos, performance, align='center', alpha=0.5)
+  plt.xticks(y_pos, models)
+  plt.ylabel(y_label)
+  plt.title(title)
+
+  plt.savefig(path + ".png", bbox_inches='tight')
+  plt.savefig(path + ".pdf")
+  
+  plt.show()
+  plt.close('all')
+
+def plot_performance_box(i, y_label, title):
+  path = f"{TCC_PATH}plots/performances/boxes/{title}"
+  
+  fig, ax_plot = plt.subplots()
+  
+  ax_plot.set_title(title)
+  ax_plot.set_xlabel('Model')
+  ax_plot.set_ylabel(y_label)
+  
+  bplot = ax_plot.boxplot([v[i] for v in results.values()])
+  ax_plot.set_xticklabels(list(results.keys()))
+  
+  plt.savefig(path + ".png", bbox_inches='tight')
+  plt.savefig(path + ".pdf")
+  
+  plt.show()
+  plt.close('all')
+
+"""## Model"""
+
+from keras.models import Sequential
+from keras.layers import Dense
+
+def split_dataset (n):
+  window_size = int(n * SET_SPLIT)
+  test_size = int(window_size * TEST_SPLIT)
+  jump_size = test_size
+  train_size = window_size - test_size
+    
+  i, j, k = 0, train_size, min(n, train_size + test_size)
+  
+  res = []
+  
+  while j < n:
+    res.append((i, j, k))
+    
+    i = i + jump_size
+    j = i + train_size
+    k = min(n, j + test_size)
+    
+  return res
+
+def hit_ratio (Y, Y_hat):
+  cnt = 0
+  
+  for i in range(len(Y)):
+    if i == 0:
+      continue
+      
+    exp = Y[i] - Y[i-1]
+    obs = Y_hat[i] - Y_hat[i-1]
+    
+    if exp * obs > 0:
+      cnt += 1
+    
+  return cnt / len(Y)
+
+def precision (Y, Y_hat):
+  n_buckets = 7;
+  buckets = [0] * n_buckets
+  
+  for i in range(len(Y)):
+    diff = abs(Y[i] - Y_hat[i])
+    
+    for i in range (n_buckets):
+      if diff <= 2**i:
+        buckets[i] += 1
+        break
+
+  for i in range (n_buckets):
+     buckets[i] = buckets[i] / len(Y)
+
+  return tuple(buckets)
+
+def evaluate (expected, observed, times, title):
+  global result_data
+  
+  n = len(expected)
+  
+  expected = list(map(list, expected))
+  observed = list(map(list, observed))
+  
+  # Make the arrays serializable
+  for i in range(n):
+    expected[i] = list(map(float, expected[i]))
+    observed[i] = list(map(float, observed[i]))
+
+  
+  if NORMALIZE_FEATS:
+    for i in range(n):
+      expected[i] = list(scaler.inverse_transform(expected[i]))
+      observed[i] = list(scaler.inverse_transform(observed[i]))
+  
+  result_data['results'][title] = {
+    'TIME': 0,
+    'RMSE': 0.0,
+    'NRMSE': 0.0,
+    'MAE': 0.0,
+    'R2': 0.0,
+    'HR': 0.0,
+    'PRE': [],
+    'raw': {
+      'expected': expected,
+      'observed': observed,
+      'execution_time': times,
+      'RMSE': [0] * n,
+      'NRMSE': [0] * n,
+      'MAE': [0] * n,
+      'R2': [0] * n,
+      'HR': [0] * n,
+      'PRE': [0] * n,
+    }
+  }
+  
+  eva = result_data['results'][title]
+  raw = result_data['results'][title]['raw']
+  
+  for i in range(n):
+    Y = expected[i]
+    Y_hat = observed[i]
+    time = times[i]
+
+    raw['MAE'][i] = sklm.mean_absolute_error(Y, Y_hat)
+    raw['RMSE'][i] = np.sqrt(sklm.mean_squared_error(Y, Y_hat))
+    raw['NRMSE'][i] = raw['RMSE'][i] / np.std(Y)
+    raw['R2'][i] = sklm.r2_score(Y, Y_hat)
+    raw['HR'][i] = hit_ratio(Y, Y_hat)
+    raw['PRE'][i] = precision(Y, Y_hat)
+    
+    if VERBOSITY:
+      print(f"({i+1}/{n}) Test Size: {len(Y)}, Time: {time}s, RMSE: {raw['RMSE'][i]}, NRMSE: {raw['NRMSE'][i]}, MAE: {raw['MAE'][i]}, R2: {raw['R2'][i]}, Hit Ratio: {raw['HR'][i] * 100}%")
+    
+  eva['TIME'] = int(sum(times))
+  eva['RMSE'] = sum(raw['RMSE']) / len(raw['RMSE'])
+  eva['NRMSE'] = sum(raw['NRMSE']) / len(raw['NRMSE'])
+  eva['MAE'] = sum(raw['MAE']) / len(raw['MAE'])
+  eva['R2'] = sum(raw['R2']) / len(raw['R2'])
+  eva['HR'] = sum(raw['HR']) / len(raw['HR'])
+  eva['PRE'] = list(map(sum, zip(*raw['PRE'])))
+      
+  if VERBOSITY:
+    plot_prediction(expected, observed, title)
+    print(f"=> Total Time: {eva['TIME']}s, RMSE: {eva['RMSE']}, NRMSE: {eva['NRMSE']}, MAE: {eva['MAE']}, R2: {eva['R2']}, Hit Ratio: {eva['HR'] * 100}%, Precision: {eva['PRE']}")
+
+"""## Storage"""
+
+def print_json ():
+  print(json.dumps(result_data, sort_keys=True, indent=4))
+
+def store_results ():
+  name = int(tm.time())
+  
+  result_data['meta'] = {
+    "SEEABLE_PAST": SEEABLE_PAST,
+    "PREDICT_IN_FUTURE": PREDICT_IN_FUTURE,
+    "FLOW_INTERVAL": FLOW_INTERVAL,
+    "NORMALIZE_FEATS": NORMALIZE_FEATS,
+    "SET_SPLIT": SET_SPLIT,
+    "TEST_SPLIT": TEST_SPLIT,
+    "VALIDATION_SPLIT": VALIDATION_SPLIT,
+  }
+  
+  with open(f"{TCC_PATH}results/{name}.json", 'w') as json_file:
+    json.dump(result_data, json_file)
+    
+  slim_result_data = copy.deepcopy(result_data)
+  for model in slim_result_data['results']:
+      del slim_result_data['results'][model]['raw']
+    
+    
+  with open(f"{TCC_PATH}results/{name}_slim.json", 'w') as json_file:
+    json.dump(slim_result_data, json_file)
+
+def store_comparisons ():
+  name = int(tm.time())
+  
+  with open(f"{TCC_PATH}results/comparison/{name}.json", 'w') as json_file:
+    json.dump(comparison_data, json_file)
+    
+  slim_comparison_data = copy.deepcopy(comparison_data)
+  for i in range(len(slim_comparison_data)):
+    print([*slim_comparison_data[i]['results']])
+    for model in slim_comparison_data[i]['results']:
+      del slim_comparison_data[i]['results'][model]['raw']
+    
+    
+  with open(f"{TCC_PATH}results/comparison/{name}_slim.json", 'w') as json_file:
+    json.dump(slim_comparison_data, json_file)
+
+"""# Dataset Generation
+
+This phase we have to get the data stored in Google Drive and transform into a dataset for prediction.
+
+## Retrieval
 """
 
 col_names = ['Sensor', 'Date', 'Time', 'Lane', 'Speed', 'Max Speed', 'Size']
-all_data = pd.read_csv('/content/drive/My Drive/TCC/chunks/all_data_sorted.csv', ';', header=None, names=col_names)
+all_data = pd.read_csv(f"{TCC_PATH}dataset/all_data_sorted.csv", ';', header=None, names=col_names)
 
 all_data.head()
 
-"""# Data Pre-processing"""
+"""## Pre-processing"""
 
 def adjust_data(data):
   # Extract data from just one sensor
@@ -167,14 +438,16 @@ data.head()
 
 data.describe()
 
-print(f"This data is from <{data['Date'].min()}> to <{data['Date'].max()}>\n")
+start = data['Date'].min()
+end = data['Date'].max()
+print(f"This data is from <{start}> to <{end}>. That is {end - start} days.\n")
 
 print(f"It contains {len(data['Date'])} entries\n")
 
 for col, cont in data.iteritems():
     print(f"Column {col} has {cont.isnull().sum()} null elements and {cont.isna().sum()} nan elements")
 
-"""# Flow Retrieval
+"""## Flow Generation
 
 This will transform the time series of register cars that passed in a array of flow per k minute.
 """
@@ -222,11 +495,20 @@ def get_flow (data):
 multivariateData = get_flow(data)
 univariateData = multivariateData['Flow']
 
+if NORMALIZE_FEATS:
+  lenth = len(univariateData)
+  univariateData = np.asarray(univariateData).reshape((-1, 1))
+  scaler = MinMaxScaler(feature_range=(0,1))
+  scaler = scaler.fit(univariateData)
+  normalizedData = scaler.transform(univariateData)
+  univariateData = np.asarray(normalizedData).reshape(lenth,)
+  univariateData = pd.DataFrame(univariateData)
+
 multivariateData.describe()
 
 univariateData.describe()
 
-"""# Flow Analysis
+"""## Flow Analysis
 
 This is based on [A Guide to Time Series Visualization with Python 3](https://www.digitalocean.com/community/tutorials/a-guide-to-time-series-visualization-with-python-3).
 """
@@ -237,172 +519,35 @@ fig = decomposition.plot()
 plt.rcdefaults()
 plt.plot()
 
-"""# Prepare Dataset
+"""## I/O Generation
 
 This phase will form the input (X) and the output (Y)
 """
 
-# split_sequence([1, 2, 3, 4, 5], 3) #=> ([[1, 2, 3], [2, 3, 4]], [4, 5])
-def split_sequence(sequence):
-  n = len(sequence)
-  X, Y = list(), list()
-  
-  for i in range(n):
-    # find the end of this pattern
-    end_ix = i + N_STEPS
+X_uni, Y_uni= reshape_flow(univariateData, False)
 
-    # check if we are beyond the sequence
-    if end_ix + N_FUTURE > n-1:
-      break
+if VERBOSITY:
+  print(f"X Univariate Shape: {X_uni.shape}")
+  print(f"Y Univariate Shape: {Y_uni.shape}")
 
-    # gather input and output parts of the pattern
-    seq_x, seq_y = sequence[i:end_ix], sequence[end_ix + N_FUTURE]
-    X.append(seq_x)
-    Y.append(seq_y[0] if MULTIVARIATE else seq_y)
+X_multi, Y_multi= reshape_flow(multivariateData, True)
 
-  return np.array(X), np.array(Y)
+if VERBOSITY:
+  print(f"X Multivariate Shape: {X_multi.shape}")
+  print(f"Y Multivariate Shape: {Y_multi.shape}")
 
-def reshape_flow (raw_seq):  
-  # split into samples
-  X, Y = split_sequence(raw_seq)
-
-  # reshape from [samples, timesteps] into [samples, timesteps, features]
-  X = X.reshape((X.shape[0], X.shape[1], N_FEATURES))
-  
-  return X, Y
-
-X, Y = reshape_flow(multivariateData if MULTIVARIATE else univariateData)
-
-print(X.shape)
-
-print(Y.shape)
-
-"""# Util"""
-
-from keras.models import Sequential
-from keras.layers import SimpleRNN, Dense
-
-def split (n, window_size, test_split):
-  test_size = int(window_size * test_split)
-  jump_size = test_size
-  train_size = window_size - tes_size
-  
-  i, j, k = 0, train_size, min(n, train_size + test_size)
-  
-  res = []
-  
-  while j < size:
-    res.append((i, j, k))
-    
-    i = i + jump_size
-    j = i + train_size
-    k = min(size, j + test_size)
-    
-  return res
-
-def evaluate (expected, observed, times, verbose=0):
-  n = len(expected)
-  RMSE = [0] * n
-  NRMSE = [0] * n
-  MAE = [0] * n
-  
-  for i in range(n):
-    Y = expected[i]
-    Y_hat = observed[i]
-    time = times[i]
-    
-    MAE[i] = sklm.mean_absolute_error(Y, Y_hat)
-    RMSE[i] = np.sqrt(sklm.mean_squared_error(Y, Y_hat))
-    NRMSE[i] = rmse / np.std(Y)
-    
-    if verbose > 0:
-      print(f"({i}/{n}) ({time}s) - RMSE: {RMSE[i]}, NRMSE: {NRMSE[i]}, MAE: {MAE[i]}")
-      
-  if verbose > 0:
-    flatten = lambda l: [i for sl in l for i in sl]
-    plot_prediction(flatten(expected), flatten(observed))
-      
-  time = sum(times)
-  rmse = sum(RMSE) / n
-  nrmse = sum(NRMSE) / n
-  mae = sum(MAE) / n
-  
-  return (time, rmse, nrmse, mae)
-
-def run(model, X, Y):
-  expected, observed, times = [], [], []
-  pointers = split(len(X), 24000, 0.2)
-  
-  for i, j, k in pointers:
-    start = tm.time()
-    
-    model.fit(X[i:j], Y[i:j])
-    
-    expected.append(Y[j:k])
-    observed.append(model.predict(X[j:k]))
-    times.append(tm.time() - start)
-    
-  return evaluate(expected, observed, times)
-
-def evaluate_model (model, X, Y, train_size=20000, test_size=2000, validation_split=0.25, batch_size=64, epochs=15, verbose=0):
-  RMSE, NRMSE, MAE = [], [], []
-  size = len(X)
-  i, j, k = 0, train_size, min(size, train_size + test_size)
-  start = tm.time()
-  jump_size = int(train_size * validation_split)
-  
-  while j < size:
-    _start = tm.time()
-    
-    hist = model.fit(X[i:j], Y[i:j], validation_split=validation_split, batch_size=batch_size, epochs=epochs, verbose=verbose)
-    
-    Y_hat = model.predict(X[j:k], verbose=verbose)
-    
-    rmse = np.sqrt(sklm.mean_squared_error(Y[j:k], Y_hat))
-    
-    nrmse = rmse / np.std(Y[j:k])
-    
-    mae = sklm.mean_absolute_error(Y[j:k], Y_hat)
-  
-    RMSE.append(rmse)
-    
-    NRMSE.append(nrmse)
-    
-    MAE.append(mae)
-    
-    if verbose > 1:
-      print(f" - {len(RMSE)}/{(size - train_size + jump_size - 1) // jump_size} ({tm.time() - _start}s) - RMSE: {rmse}, NRMSE: {nrmse}")
-      
-    if i == 0:
-      plot_prediction(Y[j:k], Y_hat)
-      
-    i = i + jump_size
-    j = i + train_size
-    k = min(size, j + test_size)
-  
-  time = tm.time() - start
-  rmse = sum(RMSE) / len(RMSE)
-  nrmse = sum(NRMSE) / len(NRMSE)
-  mae = sum(MAE) / len(MAE)
-  
-  print(f"Training Time {int(time)}s, RMSE: {rmse}, NRMSE: {nrmse}, MAE: {mae}")
-  
-  return (time, rmse, nrmse, mae)
-
-results = {}
-
-"""# Baseline: Random
+"""# Random (Baseline)
 
 This implementation just guess a random number in the [0, 100] interval for every output.
 """
 
 import random as rnd # random
 
-def random_guess (Y):
+def random_guess_univariate (Y):
   m = max(Y)
   
   expected, observed, times = [], [], []
-  pointers = split(len(X), 24000, 0.2)
+  pointers = split_dataset(len(Y))
   
   for i, j, k in pointers:
     start = tm.time()
@@ -411,25 +556,29 @@ def random_guess (Y):
     observed.append([rnd.randint(0, m) for i in range(k - j)])
     times.append(tm.time() - start)
     
-  return evaluate(expected, observed, times)
+  evaluate(expected, observed, times, "Random Guess")
 
-"""# Baseline: Default
+random_guess_univariate(Y_uni)
+
+"""# Mean (Baseline)
 
 This implementation just get the mean of every flow value in the input and place it as output.
 """
 
-def default_mean (X, Y):
+def mean_univariate (X, Y):
   expected, observed, times = [], [], []
-  pointers = split(len(X), 24000, 0.2)
+  pointers = split_dataset(len(X))
   
   for i, j, k in pointers:
     start = tm.time()
     
     expected.append(Y[j:k])
-    observed.append([np.mean([v[0] for v in x]) for x in X[j:k]])
+    observed.append([np.mean(x) for x in X[j:k]])
     times.append(tm.time() - start)
     
-  return evaluate(expected, observed, times)
+  evaluate(expected, observed, times, "Mean")
+
+mean_univariate(X_uni, Y_uni)
 
 """# Random Forest
 
@@ -442,7 +591,9 @@ def random_forest(X, Y):
   model = skl.ensemble.RandomForestRegressor(n_estimators=100, max_features='auto', random_state=0)
 
   expected, observed, times = [], [], []
-  pointers = split(len(X), 24000, 0.2)
+  pointers = split_dataset(len(X))
+  
+  X = X.reshape(X.shape[0], X.shape[1])
   
   for i, j, k in pointers:
     start = tm.time()
@@ -453,7 +604,9 @@ def random_forest(X, Y):
     observed.append(model.predict(X[j:k]))
     times.append(tm.time() - start)
     
-  return evaluate(expected, observed, times)
+  evaluate(expected, observed, times, "Random Forest")
+
+random_forest(X_uni, Y_uni)
 
 """# Support Vector Machine"""
 
@@ -463,7 +616,9 @@ def support_vector_machine(X,Y):
   model = svm.SVR(gamma='scale', C=1.0, epsilon=0.2)
 
   expected, observed, times = [], [], []
-  pointers = split(len(X), 24000, 0.2)
+  pointers = split_dataset(len(X))
+  
+  X = X.reshape(X.shape[0], X.shape[1])
   
   for i, j, k in pointers:
     start = tm.time()
@@ -474,125 +629,206 @@ def support_vector_machine(X,Y):
     observed.append(model.predict(X[j:k]))
     times.append(tm.time() - start)
     
-  return evaluate(expected, observed, times)
+  evaluate(expected, observed, times, "SVM")
+
+support_vector_machine(X_uni, Y_uni)
 
 """# RNN"""
 
 from keras.layers import SimpleRNN
 
-def rnn (X, Y): 
+def rnn (X, Y, isMulti): 
+  name = "RNN Multivariate" if isMulti else "RNN Univariate"
+  
   model = Sequential()
   
-  model.add(SimpleRNN(50, activation='relu', input_shape=(N_STEPS, N_FEATURES)))
+  model.add(SimpleRNN(50, activation='relu', input_shape=(X.shape[1], X.shape[2])))
   model.add(Dense(1))
   
   model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])
   
   expected, observed, times = [], [], []
-  pointers = split(len(X), 24000, 0.2)
+  pointers = split_dataset(len(X))
   
   for i, j, k in pointers:
     start = tm.time()
     
-    model.fit(X[i:j], Y[i:j], validation_split=0.2, batch_size=64, epochs=15, verbose=0)
+    hist = model.fit(X[i:j], Y[i:j], validation_split=0.2, batch_size=64, epochs=15, verbose=0)
     
     expected.append(Y[j:k])
     observed.append(model.predict(X[j:k]))
     times.append(tm.time() - start)
     
-  return evaluate(expected, observed, times)
+    if VERBOSITY:
+      plot_history(hist, f"{name} ({str(len(times)).zfill(2)} of {len(pointers)})")
+    
+  evaluate(expected, observed, times, name)
+
+rnn(X_uni, Y_uni, False)
+
+rnn(X_multi, Y_multi, True)
 
 """# LSTM"""
 
 from keras.layers import LSTM
 
-def lstm (X, Y): 
+def lstm (X, Y, isMulti): 
+  name = "LSTM Multivariate" if isMulti else "LSTM Univariate"
+  
   model = Sequential()
   
-  model.add(LSTM(50, activation='relu', input_shape=(N_STEPS, N_FEATURES)))
+  model.add(LSTM(50, activation='relu', input_shape=(X.shape[1], X.shape[2])))
   model.add(Dense(1))
   
   model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])
   
   expected, observed, times = [], [], []
-  pointers = split(len(X), 24000, 0.2)
+  pointers = split_dataset(len(X))
   
   for i, j, k in pointers:
     start = tm.time()
     
-    model.fit(X[i:j], Y[i:j], validation_split=0.2, batch_size=64, epochs=15, verbose=0)
+    hist = model.fit(X[i:j], Y[i:j], validation_split=0.2, batch_size=64, epochs=15, verbose=0)
     
     expected.append(Y[j:k])
     observed.append(model.predict(X[j:k]))
     times.append(tm.time() - start)
     
-  return evaluate(expected, observed, times)
+    if VERBOSITY:
+      plot_history(hist, f"{name} ({str(len(times)).zfill(2)} of {len(pointers)})")
+    
+  evaluate(expected, observed, times, name)
+
+lstm(X_uni, Y_uni, False)
+
+lstm(X_multi, Y_multi, True)
 
 """# GRU"""
 
 from keras.layers import GRU
 
-def gru (X, Y): 
+def gru (X, Y, isMulti): 
+  name = "GRU Multivariate" if isMulti else "GRU Univariate"
+  
   model = Sequential()
   
-  model.add(GRU(50, activation='relu', input_shape=(N_STEPS, N_FEATURES)))
+  model.add(GRU(50, activation='relu', input_shape=(X.shape[1], X.shape[2])))
   model.add(Dense(1))
   
   model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])
 
   expected, observed, times = [], [], []
-  pointers = split(len(X), 24000, 0.2)
+  pointers = split_dataset(len(X))
   
   for i, j, k in pointers:
     start = tm.time()
     
-    model.fit(X[i:j], Y[i:j], validation_split=0.2, batch_size=64, epochs=15, verbose=0)
+    hist = model.fit(X[i:j], Y[i:j], validation_split=0.2, batch_size=64, epochs=15, verbose=0)
     
     expected.append(Y[j:k])
     observed.append(model.predict(X[j:k]))
     times.append(tm.time() - start)
     
-  return evaluate(expected, observed, times)
+    if VERBOSITY:
+      plot_history(hist, f"{name} ({str(len(times)).zfill(2)} of {len(pointers)})")
+    
+  evaluate(expected, observed, times, name)
 
-"""# Running"""
+gru(X_uni, Y_uni, False)
 
-results['Random'] = random_guess(Y)
+gru(X_multi, Y_multi, True)
 
-results['Mean'] = default_mean(X, Y)
+"""# Results
 
-results['RF'] = random_forest(X, Y)
+## Store
+"""
 
-results['SVM'] = support_vector_machine(X, Y)
+store_results()
 
-results['RNN'] = rnn(X, Y)
+"""## Plot"""
 
-results['LSTM'] = lstm(X, Y)
+# plot_performance_bar(0, 'Seconds', 'Training Time Comparison')
 
-results['GRU'] = gru(X, Y)
+# plot_performance_box(0, 'Seconds', 'Training Time Comparison')
 
-"""# Results"""
+# plot_performance_bar(1, 'RMSE', 'Root Mean Square Error Comparison')
 
-def plot_performance(i, y_label, title):
-  models = tuple(results.keys())
-  y_pos = np.arange(len(models))
-  print(results.values())
-  performance = [v[i] for v in results.values()]
+# plot_performance_box(1, 'RMSE', 'Root Mean Square Error Comparison')
 
+# plot_performance_bar(2, 'NRMSE', 'Normalized Root Mean Square Error Comparison')
+
+# plot_performance_box(2, 'NRMSE', 'Normalized Root Mean Square Error Comparison')
+
+# plot_performance_bar(3, 'MAE', 'Max Absolute Error Comparison')
+
+# plot_performance_box(3, 'MAE', 'Max Absolute Error Comparison')
+
+# plot_performance_bar(4, 'R2', 'R Squared Comparison')
+
+# plot_performance_box(4, 'R2', 'R Squared Comparison')
+
+# plot_performance_bar(5, 'HR', 'Hit Ratio Comparison')
+
+# plot_performance_box(5, 'HR', 'Hit Ratio Comparison')
+
+"""# Compare By Window"""
+
+def plot_results_by_window_split():
+  path = f"{TCC_PATH}plots/window_comparison"
+  models = [*comparison_data[0]['results']]
+  print(models)
+  
+  for model in models:
+    datapoints = [result['results'][model]['NRMSE'] for result in comparison_data]
+    plt.plot(datapoints)
+
+  plt.title('Windows Size for Training Comparison')
+  plt.ylabel('NRMSE')
+  plt.xlabel('Window Size')
+  plt.legend(models, loc='upper left')
   plt.rcdefaults()
-  plt.bar(y_pos, performance, align='center', alpha=0.5)
-  plt.xticks(y_pos, models)
-  plt.ylabel(y_label)
-  plt.title(title)
 
-  plt.show()
+  plt.savefig(path + ".png", bbox_inches='tight')
+  plt.savefig(path + ".pdf")
 
-plot_performance(0, 'Seconds', 'Training Time Comparison')
+  plt.close('all')
 
-plot_performance(1, 'RMSE', 'Root Mean Square Error Comparison')
+def compare_results_by_window_split():
+  global SET_SPLIT
+  global result_data
+  global comparison_data
+  
+  splitting_windows = [0.20, 0.25, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90]
+  
+  result_data = {
+      'results': {},
+      'meta': {}
+  }
+  comparison_data = []
 
-plot_performance(2, 'NRMSE', 'Normalized Root Mean Square Error Comparison')
+  for split in splitting_windows:
+    SET_SPLIT = split
 
-plot_performance(3, 'MAE', 'Max Absolute Error Comparison')
+    random_guess_univariate(Y_uni)
+    mean_univariate(X_uni, Y_uni)
+    random_forest(X_uni, Y_uni)
+    support_vector_machine(X_uni, Y_uni)
+    rnn(X_uni, Y_uni, False)
+    rnn(X_multi, Y_multi, True)
+    lstm(X_uni, Y_uni, False)
+    gru(X_uni, Y_uni, False)
+    gru(X_multi, Y_multi, True)
+    
+    print([*result_data['results']])
+
+    comparison_data.append(copy.deepcopy(result_data))
+
+
+  store_comparisons()
+
+compare_results_by_window_split()
+
+#plot_results_by_window_split()
 
 """# Observations:
 
