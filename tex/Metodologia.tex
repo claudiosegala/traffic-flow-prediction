@@ -25,7 +25,7 @@ Dos modelos não-paramétricos, se destacam o \textit{Long Short Term Memory Neu
 
 \subsection{Modelos de Comparação}
 
-Para termos uma base de comparação inicial, utilizaremos dois modelos com o único propósito de estabelecer uma base para as predições dos outros modelos. Serão eles o modelo randômico e a média móvel. O primeiro faz suas predições apenas escolhendo aleatoriamente um número de 0 ao maior número do nosso conjunto de dados. Com isso, conseguimos colocar em perspectiva nossos outros modelos e analisar se eles estão melhores do que simplesmente escolher valores possíveis ao acaso. Já o segundo faz a média dos valores da entrada, o que seria o método mais simples depois de escolher valores aleatórios.
+Para termos uma base de comparação inicial, utilizaremos dois modelos com o único propósito de estabelecer uma base para as predições dos outros modelos. Serão eles o modelo randômico e a média móvel. O primeiro faz suas predições apenas escolhendo aleatoriamente um número de 0 até o maior número do nosso conjunto de dados. Com isso, conseguimos colocar em perspectiva nossos outros modelos e analisar se eles estão melhores do que simplesmente escolher valores possíveis ao acaso. Já o segundo faz a média dos valores da entrada, o que seria o método mais simples depois de escolher valores aleatórios.
 \subsection{Implementação}
 
 % TODO: Falar sobre as tecnologias usadas e suas versões
@@ -47,11 +47,14 @@ Nem todas as colunas são úteis para o aprendizado dos modelos, em especial, as
 
 \subsection{Transformação dos Dados}
 
-Se utilizarmos a coluna \texttt{Data} do jeito que está, ficaria a cargo dos modelos extrair muitos dos significados por trás de uma data. Isto é, qual o dia da semana, qual o dia do mês, estação. Então para facilitar o aprendizado será utilizado o método \textit{one-hot encoding} para transformar a coluna de \texttt{Data} em 7 colunas que representam os dias da semana. É importante notar também que caso deixássemos a informação como somente uma coluna, o modelo ao fazer a regressão poderia acabar fazendo uma relação como "segunda" é melhor que "quarta" e por isso foram dividas em 7 colunas de classificação (0 ou 1).
+%TODO: Adicionar referencia que mostra que one hot enconding realmente melhora o modelo. (dizer mais detalhadamente quais os erros que podem acontecer se nao utilizarmos one hot enconding)
+% https://www.researchgate.net/publication/320465713_A_Comparative_Study_of_Categorical_Variable_Encoding_Techniques_for_Neural_Network_Classifiers
+
+Se utilizássemos a coluna \texttt{Data} sem tratá-la, ficaria a cargo dos modelos implementados extrair muitos dos significados por trás de uma data. Isto é, qual o dia da semana correspondente, qual o dia do mês, estação. Se fosse dessa forma, os modelos poderiam fazer inferências que não são verdades, como por exemplo, "segunda" é melhor que "quarta", ou algo similar. Então, para facilitar o aprendizado e evitar falsas suposições será utilizado o método \textit{one-hot encoding} para transformar a coluna de \texttt{Data} em 7 colunas binárias que representam os dias da semana. Dessa forma, cada dia da semana é representado de maneira binária com um bit, dando menos espaço para inferências. Mais sobre One hot enconding pode ser visto em [CITACAO ONE HOT ENCONDING]
 
 \subsection{Acumulação dos registros}
 
-O tráfego pode ser visto de várias formas diferentes. Pode ser visto pela quantidade de veículos que passaram um ponto em um intervalo de tempo, o fluxo. Também pode ser visto como a média de velocidade dos veículos em uma certo espaço, a densidade. Ou como uma média de velocidade em um intervalo de tempo, a velocidade média.
+O tráfego pode ser visto de várias formas diferentes. Pode ser visto como a quantidade de veículos que passaram por um ponto em um determinado intervalo de tempo, ou seja, o fluxo. Também pode ser visto como a média de velocidade dos veículos em uma certo espaço, ou seja, a densidade. Ou como uma média de velocidade em um intervalo de tempo, a velocidade média.
 
 % TODO: conferir isso
 Para o nosso trabalho escolhemos utilizar o fluxo, pois seus valores estão inclusos no conjunto dos números inteiros positivos. Já os outros jeitos de ver o tráfego tem seus valores inclusos no conjunto dos números naturais. Como o domínio do fluxo é menor que os outros, os modelos tem uma maior facilidade de fazer a previsão.
