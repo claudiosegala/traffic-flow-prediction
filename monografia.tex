@@ -11,7 +11,6 @@
 \usepackage{pdfpages}% incluir PDFs, usado no apêndice
 \usepackage{commath} % inclui expressões matemáticas
 \usepackage{booktabs}
-\usepackage[table,xcdraw]{xcolor}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Informações do Trabalho
@@ -34,19 +33,28 @@
 \keywords{crossing, machine learning, forecasting, prediction, flow, neural networks, vehicles, transit, traffic}%
 
 \newcommand{\unbcic}{\texttt{UnB-CIC}}%
-
+\usepackage{float} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Texto
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}%
     \capitulo{Introducao}{Introdução}%
     \capitulo{Fundamentacao_Teorica}{Fundamentação Teórica}%
-    \capitulo{Revisao_Literatura}{Revisão da Literatura}%
+    \capitulo{Trabalhos_Relacionados}{Trabalhos Relacionados}%
     \capitulo{Analise_Dados}{Análise dos Dados}%
-    \capitulo{Metodologia}{Metodologia}%
+    \capitulo{Metodologia}{Metodologia de Comparação}%
     \capitulo{Resultados}{Resultados}
     \capitulo{Conclusao}{Conclusão}
 
     %\apendice{Apendice_Fichamento}{Fichamento de Artigo Científico}%
     %\anexo{Anexo1}{Documentação Original \unbcic\ (parcial)}%
 \end{document}%
+
+
+% FOR FINAL VERSION
+
+% - checar se tudo que ta em inglês está em itálico
+% - checar se tudo que é sigla está em acrshort e acrfull
+% - checar se a primeira aparição de todas as siglas está acrfull
+% - checar se estamos usando média móvel como nome do modelo de base
+% - rodar em mil máquinas de plágio para evitar falso positivo tardio

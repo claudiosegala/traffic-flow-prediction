@@ -1,0 +1,22 @@
+Em  \cite{Zainab_2018} é apresentado um trabalho de predição de tráfego que tem como objetivo antecipar congestionamentos em rodovias de Estocolmo, Suécia, utilizando aprendizagem profunda, mais precisamente \textit{Stacked Long Short-Term Memory Neural Networks} (SLSTM). Para tal, são utilizados dados coletados por sensores do sistema de controle da autoestrada da cidade. Tais sensores monitoram as principais vias da metrópole e coletam informações como fluxo e velocidade de cada faixa a cada 1 minuto. O trabalho propõe três modelos de predição:
+
+\begin{itemize}
+    \item O (1-1) Modelo utilizando apenas um sensor que faz a predição apenas do local daquele sensor
+    \item O (n-n) Modelo que utiliza n sensores de uma determinada área e faz a predição de todas as localidades
+    \item O (m-n) Modelo que utiliza os m sensores mais significantes de uma área que contém um total de n sensores e que faz a predição para todos os n locais.
+\end{itemize}
+
+Dos três modelos apresentados, o mais eficiente foi o m-n, pois faz a previsão de tráfego em vários pontos diferentes da via e tem um custo computacional menor que o n-n, além disso, utiliza menos sensores, o que diminui os dados de entrada da rede neural. Esse Modelo foi comparado com outros usando as métricas RMSE e MAE. O resultado dessas métricas é comparado com a acurácia de outros modelos como \textit{Recurrent Neural Network} (RNN) e \textit{Feed Forward Network} (FFN). O erro calculado foi menor na metodologia do autor em todos os casos, comprovando a eficácia do método (SLSTM).
+
+\cite{lv_6894591} propôs um trabalho semelhante de comparação de modelos de predição, mas utilizando \textit{Stacked Auto Encoders} (SAE). O modelo de predição proposto pelo artigo é aplicado aos dados coletados por 15,000 sensores espalhados pelas estradas da Califórnia. As predições são divididas em intervalos de 15, 30, 45 e 60 minutos. Mais uma vez, a acurácia dos testes foi medida utilizando  \acrshort{MAE}, \acrshort{MRE} e \acrshort{RMSE} para cada intervalo de tempo e comparada com a acurácia de predição de outros métodos, como \acrfull{BPNN}, \acrfull{RW}, \acrfull{SVM} e \acrfull{RBFNN}. Novamente, o método apresentado pelo artigo foi o mais eficiente.      
+
+Um modelo mais próximo do utilizado em nossos testes é descrito em \cite{Seoul}. Diferentemente dos trabalhos relacionados apresentados nos parágrafos anteriores, \cite{Seoul} apresenta um estudo feito com dados coletados de vias urbanas de Seoul, e não rodovias expressas. O trabalha utiliza 3 base de dados diferentes:
+
+\begin{itemize}
+    \item Uma base gerada sintéticamente pela \textit{SK Planet Company}.
+    \item Uma base coletada do governo metropolitano de Seul.
+    \item Uma base de dados coletado do \textit{Aplicatio T-Map}, considerado a aplicação de navegação mais utilizada da Coreia.
+\end{itemize} 
+
+Além das 3 bases de dados, também foi adicionado ao modelo uma variável para medir o impacto das condições climáticas sobre o tráfego.
+Para a predição, foram utilizados o LSTM, GRU e um método proposto chamado \textit{Merged Long Short Term Memory Neural Network} (MLSTM). Nos testes feitos, o método de avaliação foi o RMSE, para o qual o MLSTM se mostrou mais eficiente, seguido do LSTM comum e do GRU. Porém, a diferença do RMSE entre os 3 algoritmos não ultrapassou 0.1, o que demonstra que a eficácia de todos os métodos é bem similar para o conjunto de dados do trabalho. Vale ressaltar também que todos os modelos utilizados neste trabalho se encaixam na categoria de aprendizagem profunda e derivam de redes neurais recorrentes, o que pode explicar a performance tão similar.
