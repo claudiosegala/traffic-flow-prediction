@@ -1,43 +1,126 @@
-% TODO: adicionar subseção de modelagem do problema
-% TODO: adicionar gráfico (fluxo por tempo) em tratamento de dados.
+% TODO: Adicionar subseção de modelagem do problema
 
-Como visto anteriormente, congestionamentos nas cidades tendem a piorar com o aumento de carros. Sendo assim, é importante pensar em métodos para evitar ou aliviar o alto fluxo de carros. Neste contexto, este trabalho compara modelos tradicionais e de aprendizagem profunda quanto a predição, utilizando dados de fiscalização eletrônica, o fluxo futuro das vias monitoradas. No caso, a previsão seria para curto e médio período (5, 10, 15, 30, 60, 120, 150 minutos). No intuito de fornecer essa informação para os cidadãos, para que estes possam se organizar melhor e se distribuir na malha rodoviária. No restante deste capítulo serão detalhados as etapas da metodologia.
+% TODO: Usar a metodologia do Fábio como inspiração
+
+Este capítulo tem como objetivo explicar como as comparações foram realizadas. Desde a forma como os dados foram selecionados e tratados para serem utilizados de entrada para os algoritmos até os motivos pelos quais determinados modelos foram escolhidos, e suas principais diferenças.
+
+%TODO: Retirar o texto abaixo (?)
+
+%Como visto anteriormente, congestionamentos nas cidades tendem a piorar com o aumento de carros. Sendo assim, é importante pensar em métodos para evitar ou aliviar o alto fluxo de carros. Neste contexto, este trabalho compara modelos tradicionais e de aprendizagem profunda quanto a predição, utilizando dados de fiscalização eletrônica, o fluxo futuro das vias monitoradas. No caso, a previsão seria para curto e médio período (5, 10, 15, 30, 60, 120, 150 minutos). No intuito de fornecer essa informação para os cidadãos, para que estes possam se organizar melhor e se distribuir na malha rodoviária. No restante deste capítulo serão detalhados as etapas da metodologia.
 
 \section{Modelos}
+% TODO: Justificar que  a não inclusão do ARIMA foi devido ao tempo de treinamento, já tínhamos muitos modelos e seria necessário um estudo melhor adaptar o conjunto de dados para o ARIMA visto que ele exige uma certa distribuição de dados e nossos dados possuem sazonalidade
 
-% BASED ON: https://www.youtube.com/watch?v=UgwUi8fu0CY
+% TODO: Justificar a escolha de cada modelo (e que temos que escolher regressores já que a resposta é contínua)
+
+% RESOURCE: Parametrico e Não-Parametrico https://www.youtube.com/watch?v=UgwUi8fu0CY
 % TODO: corrigir a referência
-Segundo \cite{b5}, os modelos guiados por dados podem ser classificados em paramétricos e não-paramétricos. Modelos paramétricos usam um número fixo de parâmetros para tentar descrever os dados, assim assumindo uma distribuição dos mesmos. Um exemplo de modelo paramétrico seria a regressão linear. Modelos não-paramétricos possuem um número variável de parâmetros que depende dos dados utilizados.
+Os modelos de predição guiados por dados podem ser classificados em dois grupos: paramétricos e não-paramétricos, segundo \cite{parametric}. Modelos paramétricos usam um número fixo de parâmetros para tentar descrever os dados, assumindo assim a distribuição dos mesmos. Um exemplo de modelo paramétrico seria a regressão linear, que utiliza uma equação com parâmetros fixos para traçar uma reta que melhor representa a distribuição dos dados. Já modelos não-paramétricos possuem um número variável de parâmetros que dependem dos dados utilizados.
 
-Dos modelos paramétricos, o mais famoso na literatura é o \textit{Autoregressive Integrated Average Mean} (ARIMA) e suas variações. Para o problema de previsão de fluxo, seria necessário utilizar alguma variação que levasse em conta a sazonalidade dos dados, como o \textit{Sesonal Autoregressive Integrated Average Mean} (SARIMA). Porém, devido a complexidade e a falta de tempo, escolhemos não adicionar-lo. Mas serão usados os modelos paramétricos de média e um algoritmo randômico como base.
+%TODO: Adicionar referencia para ARIMA
 
-Dos modelos não-paramétricos, dentre os que se destacam estão \textit{Long Short Term Memory Neural Networks} (LSTM), \textit{Gated Recurrent Unit Neural Network} (GRU), \textit{Support Vector Machine} (SVM) e \textit{Random Forest} (RF). Todos esses modelos serão implementados e como LSTM e GRU são evoluções do \textit{Recurrent Neural Network} (RNN), este será utilizado também na comparação. 
+Dos modelos paramétricos, o mais utilizado na literatura para previsão de fluxo é o \textit{Autoregressive Integrated Average Mean} (ARIMA) e suas variações. % Para o problema de previsão de fluxo, seria necessário utilizar alguma variação que levasse em conta a sazonalidade dos dados, como o \textit{Sesonal Autoregressive Integrated Average Mean} (SARIMA). Porém, devido a complexidade e a falta de tempo, escolhemos não adicioná-lo.
 
-\section{Coleta de dados}
+Dos modelos não-paramétricos, se destacam o \textit{Long Short Term Memory Neural Networks} (LSTM), \textit{Gated Recurrent Unit Neural Network} (GRU), \textit{Support Vector Machine} (SVM) e \textit{Random Forest} (RF). Todos esses modelos serão implementados para os nossos testes. Como LSTM e GRU são evoluções do \textit{Recurrent Neural Network} (RNN), este também será incluído na comparação. 
+
+\subsection{Modelos de Comparação}
+
+Para termos uma base de comparação inicial, utilizaremos dois modelos com o único propósito de estabelecer uma base para as predições dos outros modelos. Serão eles o modelo randômico e a média móvel. O primeiro faz suas predições apenas escolhendo aleatoriamente um número de 0 ao maior número do nosso conjunto de dados. Com isso, conseguimos colocar em perspectiva nossos outros modelos e analisar se eles estão melhores do que simplesmente escolher valores possíveis ao acaso. Já o segundo faz a média dos valores da entrada, o que seria o método mais simples depois de escolher valores aleatórios.
+\subsection{Implementação}
+
+% TODO: Falar sobre as tecnologias usadas e suas versões
+
+Nossos modelos foram implementados na linguagem \textit{Python} utilizando bibliotecas como \textit{Keras} com \textit{TensorFlow} e \textit{SKLearn}. Escolhemos utilizar essas bibliotecas, pois suas implementações já são robustas, otimizadas e bem testadas. Implementar todos os modelos sem o auxilio de nenhuma biblioteca seria ineficiente para o nosso objetivo e prono a erros. Além disso, o uso das bibliotecas facilita a reprodução do experimento.
+
+\textit{Keras} foi utilizado para implementar os modelos de \acrshort{RNN}, \acrshort{LSTM} e \acrshort{GRU} e escolhemos usar como base dessa biblioteca o \textit{TensorFlow}, visto que este é o framework com suporte para aprendizado de máquina mais utilizado dentre os desenvolvedores, segundo um \textit{survey} feito em 2018 pelo \textit{StackOverflow} \cite{stack_2018}. Já \textit{SKLearn} foi utilizado para implementar os modelos \acrshort{RF} e \acrshort{SVM}. Além disso, utilizamos a biblioteca \textit {Hyperas} para a escolha dos melhores valores para cada um dos parâmetros.
+
+\section{Pré-Processamento dos Dados}
+% TODO: Adicionar gráfico (fluxo por tempo) em tratamento de dados.
+
+Nesta etapa serão feitas remoções e transformações dos dados mostrados na Tabela \ref{table:data} para melhorar o aprendizado dos modelos.
+
+\subsection{Limpeza dos Dados}
+% TODO?: Botar hora no multivariate
+
+Nem todas as colunas são úteis para o aprendizado dos modelos, em especial, as colunas \texttt{Faixa}, \texttt{Hora}, \texttt{Limite de Velocidade da Via} e \texttt{Tamanho do Veículo}. \texttt{Faixa} será removido, pois nas transformações que virão a seguir esse dado se tornará desnecessário. \texttt{Hora} será removido, pois para que tivesse algum efeito positivo no aprendizado  seria preciso um estudo mais minucioso para transformar esse dado em algo que não afetasse o aprendizado. \texttt{Limite de Velocidade da Via} será removido, pois este dado tem seu valor repetido ao longo de todos os registros, ou seja, é uma constante em todo o conjunto de dados. \texttt{Tamanho do Veículo} será removido, pois este não foi medido de forma precisa, visto que existem registros com veículos de tamanho nulo.
+
+
+\subsection{Transformação dos Dados}
+
+Se utilizarmos a coluna \texttt{Data} do jeito que está, ficaria a cargo dos modelos extrair muitos dos significados por trás de uma data. Isto é, qual o dia da semana, qual o dia do mês, estação. Então para facilitar o aprendizado será utilizado o método \textit{one-hot encoding} para transformar a coluna de \texttt{Data} em 7 colunas que representam os dias da semana. É importante notar também que caso deixássemos a informação como somente uma coluna, o modelo ao fazer a regressão poderia acabar fazendo uma relação como "segunda" é melhor que "quarta" e por isso foram dividas em 7 colunas de classificação (0 ou 1).
+
+\subsection{Acumulação dos registros}
 
 O tráfego pode ser visto de várias formas diferentes. Pode ser visto pela quantidade de veículos que passaram um ponto em um intervalo de tempo, o fluxo. Também pode ser visto como a média de velocidade dos veículos em uma certo espaço, a densidade. Ou como uma média de velocidade em um intervalo de tempo, a velocidade média.
 
 % TODO: conferir isso
 Para o nosso trabalho escolhemos utilizar o fluxo, pois seus valores estão inclusos no conjunto dos números inteiros positivos. Já os outros jeitos de ver o tráfego tem seus valores inclusos no conjunto dos números naturais. Como o domínio do fluxo é menor que os outros, os modelos tem uma maior facilidade de fazer a previsão.
 
-Para predizer o tráfego será necessário a série temporal que corresponde ao fluxo de uma via. Os dados utilizados nesse trabalho foram coletados pelo \acrfull{DETRAN}\footnote{http://www.detran.df.gov.br/} do \acrfull{DF} de maio de 2018 a junho de 2018 de 4 vias diferentes. Para cada carro é registrado uma entrada contendo o identificador do equipamento, a data e hora, a faixa em que atravessou, a velocidade, a velocidade limite e o tamanho, como apresentado na Tabela \ref{table:data}.
+% TODO: Falar que aproveitamos e adicionamos no multivariado a densidade e a velocidade média
+Sendo assim, iremos transformar o conjunto de dados de uma série temporal de registro de veículos para uma série temporal de fluxos. Isto é, iremos calcular a quantidade de carros que passaram em um certo intervalo de tempo. No caso, os melhores resultados foram com a acumulação dos registros em um intervalo de 7.5 minutos. Isso em parte se deve ao fato que quando se acumula os registros em um intervalo pequeno, o conjunto de dados fica com muito ruído, dificultando a aprendizagem. Porém ao se aumentar o intervalo o conjunto de dados acaba por se tornar muito pequeno o que dificulta a aprendizagem. Ao final da transformação, temos um conjunto de dados composto de:
 
-\section{Pré-Processamento dos Dados}
+\begin{itemize}
+    \item Fluxo de Veículos
+    \item Velocidade Média
+    \item Dia da Semana (Divido em sete colunas de classificação binária)
+\end{itemize}
 
-O tráfego é afetado por variáveis temporais (horários de pico), espaciais (centros metropolitanos) e aleatórias (acidentes, chuvas). Porém, devido a dificuldade de prever os dados aleatórios, é mais comum na literatura encontrar pesquisas que trabalham apenas com os dados temporais e espaciais. Sendo assim, assume-se que (i): existe uma tendência do fluxo se repetir e (ii): eventos aleatórios não afetam a tendência do fluxo.
+\subsection{Normalização dos Dados}
+% TODO: Falar o motivo do porque se normaliza
+% TODO: Justificar o porquê não normalizamos os dados
 
-Nesta etapa será feita uma avaliação dos dados, pois alguns deles não são muito relevantes para a pesquisa, ou não foram medidos de forma precisa, como por exemplo o tamanho do veículo e, portanto, serão removidos. Além disso, podemos extrair mais informações dos dados que recebemos, tal como calcular o dia da semana em que o dado foi registrado e verificar se é um feriado ou dia comemorativo. Isso permitirá uma análise melhor da relação entre dia da semana e intensidade do fluxo nas vias.
+Além disso, em função do modo de como alguns dos modelos funcionam, serão utilizados as versões normalizados dos conjuntos de dados para tornar mais efetivo o treinamento dos mesmos.
 
-Também será preciso lidar com as manutenções que as infraestruturas podem ter no tempo da série temporal que coletamos, e para isso podemos preencher com aproximações ou simplesmente diminuir a quantidade de dados coletados para que não exista mais a falha.
+\subsection{Redução de Ruído}
 
-\section{Implementação}
+Mesmo com um intervalo significativo, ainda foi necessário aplicar uma técnica de redução de ruído...
 
-Nesta etapa serão implementados as duas arquiteturas, isto é, a arquitetura proposta (\acrshort{GAN} com \acrshort{LSTM}) e o estado da arte (\acrshort{SLSTM}). Para tal, usaremos do \textit{framework} \textit{TensorFlow}, visto que este é o framework com suporte para aprendizado de máquina mais utilizado dentre os desenvolvedores, segundo um \textit{survey} feito em 2018 pelo \textit{StackOverflow} \cite{stack_2018}.
+\subsection{Produção dos Conjunto de Dados}
 
-Nesta fase serão utilizados apenas dois terços dos dados obtidos, o restante dos dados serão utilizados posteriormente como teste. Esses dados de treino serão divididos em diversos blocos contendo um intervalo de tempo contínuo. Esses blocos serão usados como entrada tanto para o gerador da arquitetura proposta quanto para o estado da arte. Além disso, o gerador e o estado da arte terão a mesma saída, uma série temporal que seja a continuação da série de entrada, predizendo os próximos t minutos. Já o discriminador terá como entrada tanto a saída do gerador ,quanto a série temporal real, retornando como saída a probabilidade de que o resultado do gerador seja real.
+Para fins de análise, utilizaremos o conjunto de dados pré processados para gerar um outro conjunto de dados mais simples. Este possuirá somente o fluxo, permitindo assim verificar se as variáveis escolhidas (\textit{Velocidade Média} e \textit{Dia da Semana}) melhoram a performance do modelo. Deste modo, teremos um conjunto de dados uni-variado, isto é, possuirá somente uma variável, o fluxo. E o outro será multi-variado, isto é, possuirá várias variáveis, sendo elas o fluxo, a velocidade média no intervalo e o dia da semana.
 
-Para cada tentativa de predição diferente, isto é, tentar predizer 5, 10, 15, 30, 60, 120 ou 150 minutos, será feito um novo treinamento na arquitetura. Assim, treinaremos as redes neurais especificamente para o intervalo de tempo que ela deve prever naquele momento.
+\subsection{Escolha de Parâmetros e Hiper-Parâmetros}
+% TODO: Falar quais variáveis foram testadas no hyperas e quais as opções
+
+Para a escolha dos parâmetros e hiper-parâmetros será feito uma busca dos melhores para cada modelo. Será utilizado a biblioteca \textit{Hyperas} que já possui integração com a biblioteca \textit{Keras}. Os parâmetros e hiper-parâmetros escolhidos para a otimização foram tamanho do \textit{batch}, o otimizador do modelo, a função de ativação, quantidade de neurônios e o tamanho da entrada. 
+
+\begin{itemize}
+    \item único sensor uni-variado
+    \item múltiplos sensores uni-variado
+    \item único sensor multi-variado
+    \item múltiplos sensores multi-variado
+\end{itemize}
+
+\subsection{Especificação do Ambiente}
+% TODO: Falar sobre a especificação do ambiente
 
 \section{Avaliação Final}
+% TODO: Falar das principais métricas usadas e colocar a referência.
 
-Nessa fase serão utilizados os 1/3 dos dados restantes. Para cada treino da fase de implementação, serão utilizados esses dados de teste para verificar qual dos dois modelos (o modelo proposto pelo trabalho, ou o estado da arte) foi capaz de prever melhor o fluxo de carros futuro. Ou seja, os dados de teste serão comparados com as previsões dos dois modelos e a acurácia de ambos será verificada utilizando \acrshort{MAE}, \acrshort{MRE} e \acrshort{RMSE}. Além disso, também será utilizado o método de \textit{K-Fold Cross Validation} para a estimação dos parâmetros e validação da metodologia como um todo.
+% TODO: Justificar que não podemos usar MAPE como avaliação, pois nosso dataset inclui zeros (https://stats.stackexchange.com/questions/280464/is-mape-a-good-error-measurement-statistic-and-what-alternatives-are-there)
+
+% TODO: worth a reading to complement the reason why we use normalised version (https://stats.stackexchange.com/questions/10289/whats-the-difference-between-normalization-and-standardization)
+
+% TODO: Incluir métricas que vamos avaliar, incluir as de precisão
+
+% TODO: Explicar porqué não usamos acurácia
+
+Para a avaliação será utilizado uma janela deslizante no conjunto de dados para criar um subconjunto de treino. Assim podemos ter uma melhor certeza sobre os resultados. Todos os modelos serão treinados e testados com os mesmos subconjuntos de dados, afim de facilitar comparações. Como métricas, serão usados MAE, RMSE e NRMSE. 
+
+\begin{equation}
+MAE = \frac{1}{n} \times \sum_{i=1}^{n} \quad \abs{result_i - expected_i}
+\end{equation}
+
+\begin{equation}
+RMSE = \sqrt{ \frac{1}{n} \times \sum_{i=1}^{n} \quad (result_i - expected_i) ^ 2}
+\end{equation}
+
+\begin{equation}
+\sigma = \sqrt{ \frac{1}{n} \times \sum_{i=1}^{n} \quad (result_i - \overline{result}) ^ 2}
+\end{equation}
+
+\begin{equation}
+NRMSE = \frac{RMSE(result, expected)}{\sigma(expected)}
+\end{equation}
+
+As duas primeiras métricas são as mais utilizadas na literatura, a última é uma métrica utilizada para permitir comparações entre modelos que usam conjunto de dados diferentes, visto que ao ser normalizado ele perde a correlação com o conjunto de dados. Essas medições serão feitas para cada tempo de previsão discutido.
