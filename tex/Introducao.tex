@@ -1,14 +1,51 @@
+% TODO: ver com o Li se faz sentido escrever sobre cidades inteligentes só na introdução. Se fizer, escrever o primeiro parágrafo falando como que cidades inteligentes são a tendência e como um dos maiores problemas é congestionamento. Que elas querem ser mais limpas
 
-A frota  de  carros no Brasil e no mundo  tem  aumentado rapidamente ao  longo  dos  últimos anos. Como pode ser visto em (citar fonte que mostra a quantidade de carros para habitantes), em 2018, o Brasil ja apresentava 1 carro para cada 4 habitantes, isso equivale, aproximadamente, a 50 milhões de carros em circulação. As vias públicas não tem conseguido acompanhar este crescimento. Brasília, por exemplo, que é considerada uma cidade bem planejada, foi projetada para suportar uma frota de no máximo 2 milhões de carros, porém já é obrigada a conciliar 3,5 milhões, como pode ser visto em (link para referencia com a quantidade de carros no df nos ultimos 10 anos).
+A frota  de  veículos no Brasil e no mundo tem aumentado rapidamente ao longo  dos últimos anos. Como pode ser visto em \cite{G1}, em 2018, o Brasil já apresentava 1 carro para cada 4 habitantes. Isso equivale, aproximadamente, a 50 milhões de carros em circulação. As vias públicas não tem conseguido acompanhar este crescimento e acomodar todo este volume. Brasília, por exemplo, que é considerada uma cidade bem planejada, foi projetada para suportar uma frota de no máximo 2 milhões de automóveis, porém já é obrigada a conciliar 3.5 milhões, como pode ser visto em \cite{detran_2018}, e começa a sofrer com os congestionamentos.
 
-Neste contexto de expansão urbana e rápido crescimento da frota de veículos, surgiu o conceito de cidades inteligentes (referencia para smart cities), que consiste em aplicar tecnologia no gerenciamento das áreas urbanas que afetam a população e sua saúde, visando melhorá-las. Isso inclui o gerenciamento do tráfego urbano e sua otimização. 
+% TODO: remover piada
+Em resposta a essa tendência, as cidade tem utilizado da tecnologia para gerenciar melhor as suas vias e as pessoas tem usado aplicações para tentar escapar dos congestionamentos. Porém se as tecnologias e aplicações não se preocuparem em como a via vai estar em alguns minutos, isso pode levar a erros de cálculo muito grandes. Se não temos como prever o futuro, como podemos então nos planejar melhor? Com Taró! Mentira, com matemática! Utilizando-se de técnicas de aprendizagem de máquina é possível aprender como uma via tende a se comportar, podendo assim estimar como ela vai estar em alguns minutos de forma mais precisa.
 
-Com  isso,  os  congestionamentos  tendem  a piorar, aumentando a emissão de gases poluentes na atmosfera,poluição sonora e o tempo gasto pelos motoristas no trânsito,diminuindo  assim  a  qualidade  de  vida  do  habitantes  de  uma cidade.Um  dos  meios  de  amenizar  o  congestionamento  é  tentar prever  quando  ele  irá  acontecer.  Uma  vez  que  os  cidadãos saibam  que  um  engarrafamento  irá  ocorrer,  eles  podem  se planejar melhor e tomar rotas alternativas, distribuindo melhor os  carros  na  malha  viária.  Já  organizações  governamentais poderiam  usar  os  dados  para  ter  uma  noção  em  tempo  real de  como está  o  fluxo pela  cidade,  podendo agir  antes de  um engarrafamento acontecer.A literatura está saturada com artigos de predição de fluxo utilizando aprendizagem de máquina. Porém, a maioria desses artigos  coletam  dados  e  fazem  suas  análises  em  cima  de rodovias  expressas.  Nessas  não  há  intersecções,  ou  barreiras semafóricas.  Nosso  estudo  tem  como  desafio  aplicar  estes modelos  em  vias  urbanas,  onde  há  cruzamentos  e  radares  de velocidade que impactam de maneira significativa no comportamento do fluxo de veículos, e verificar a eficácia dos modelos utilizados na literatura nestas novas condições.
+%Neste contexto de expansão urbana e rápido crescimento da frota de veículos, surgiu o conceito de cidades inteligentes (referencia para smart cities), que consiste em aplicar tecnologia no gerenciamento das áreas urbanas que afetam a população e sua saúde, visando melhorá-las. Isso inclui o gerenciamento do tráfego urbano e sua otimização. 
 
-Mais especificamente, este trabalho tem como objetivo fazer a  predição  de  fluxo  em  cruzamento  utilizando  de  modelos tradicionais e de aprendizagem profunda. Para assim verificar se possuem uma performance satisfatória para cruzamentos.
 \section{Motivação}
+% TODO: deixar frase inicial mais coerente
+Como dito anteriormente, os grandes centros urbanos não estão conseguindo acompanhar a constante expansão do volume de carros. Por conta disso, congestionamentos tendem a se tornar mais frequentes e mais severos, aumentando a emissão de gases poluentes na atmosfera, contribuindo para a poluição sonora e aumentando o tempo gasto pelos motoristas no trânsito, impactando de maneira negativa na qualidade de vida da cidade e seus habitantes. % Todos estes efeitos negativos vão de encontro ao conceito de cidades inteligentes.
 
+Neste contexto, surgiram várias pesquisas na área de mobilidade urbana e transporte que visam contornar estes problemas. Dentre essas pesquisas, um dos meios encontrados de amenizar o congestionamento é tentar prever quando ele irá acontecer. Uma vez que os cidadãos saibam que um engarrafamento irá ocorrer, eles podem se planejar melhor e tomar rotas alternativas, distribuindo de maneira mais eficiente os carros na malha viária. Já organizações governamentais poderiam usar os dados para ter uma noção em tempo real de como está o fluxo pela cidade, podendo agir redirecionando vias e reprogramando semáforos.
 
+A literatura está repleta de artigos de predição de fluxo utilizando aprendizagem de máquina. Porém, a maioria desses artigos coletam dados e fazem suas análises em cima de rodovias expressas. Nessas não há intersecções, ou barreiras semafóricas. Nosso estudo tem como desafio realizar a predição de fluxo em cenários que se assemelhem mais a centros urbanos, onde as vias públicas possuem cruzamentos e radares de velocidade que impactam de maneira significativa no comportamento do fluxo de veículos.
 
 \section{Objetivo}
+% TODO: melhorar muito
 
+Como já foi dito, este trabalho busca realizar a predição de fluxo de veículos em vias urbanas. Para tal, usaremos os métodos mais explorados na literatura. Como tais métodos são comumente utilizados para o cálculo de fluxo em vias livres, este trabalho tem como objetivo propor uma análise do comportamento destes mesmos métodos sob novas condições (vias urbanas com cruzamentos), além de comparar a eficácia da predição de cada um deles.
+ 
+\section{Justificativa}
+% TODO: mostrar um gráfico mostrando o crescimento dos congestionamento
+% TODO: adicionar referência mostrando a quantidade de congestionamento diferentes.
+% TODO: mencionar algum artigo que fala que o google maps utiliza de sua localização quando sente que vc está dirigindo
+
+
+% TODO: Criar uma justificativa mais plausível
+
+Congestionamentos têm ocorrido com mais frequência e aumentado o tempo de duração ao longo dos anos. 
+
+
+\section{Estrutura da Monografia}
+
+Esta monografia está estruturado em 7 capítulos. Retirando o capítulo corrente de introdução, ainda temos:
+
+\begin{itemize}
+    \item \textbf{Capítulo 2:} teoria necessária para o entendimento do trabalho;
+    \item \textbf{Capítulo 3:} exposição dos trabalhos similares e relacionados ao nosso;
+    \item \textbf{Capítulo 4:} análise dos tipos de dados normalmente utilizados e do que vamos utilizar;
+    \item \textbf{Capítulo 5:} exposição detalhada da metodologia de comparação e das escolhas feitas nesse trabalho;
+    \item \textbf{Capítulo 6:} mostra dos resultados obtidos e análise dos mesmos;
+    \item \textbf{Capítulo 7:} conclusão do nosso trabalho e como nosso trabalho poderia evoluir;
+\end{itemize}
+
+% TALVEZ ----------------------------------
+
+% TODO?: Falar que o método utilizado por algumas empresas chega a ser invasivo (Google Maps)
+
+% TODO?: Falar algum projeto maior que uma das etapas exige previsão de fluxo (Falar sobre controle de semáforo dinâmico e da possibilidade de uma central de controle que permite visualizar o tráfego futuro em tempo real que poderia auxiliar na tomada de decisão)

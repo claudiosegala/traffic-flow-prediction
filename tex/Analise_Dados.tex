@@ -1,5 +1,19 @@
 % TODO: Devemos explicar como o fiscalizador eletrônico funciona? (https://industriahoje.com.br/como-funcionam-os-radares-de-velocidade)
 
+% TODO: Escrever um parágrafo explicando o porquê de não termos usados dados aleatórios como dados meteorologicos (motivos como não saber se está chovendo na área específica, entre outros)
+
+% TODO?: Olhar gráficos que o Fábio colocou e fazer similares
+
+% TODO: Mostrar falha nos dados que podem indicar coisas ruins, mas só falar como que vamos lidar no pré-processamento
+
+% TODO: Adicionar gráficos de análise de dados como estacionaridade, sazonalidade e outros
+
+% TODO: Usar a análise de dados do Fábio como inspiração
+
+% TODO: Falar que não tem Nan
+
+% TODO: Falar a quantidade de registros total e de que dia a que dia vão os dados
+
 Esse capítulo tem como objetivo mostrar uma análise dos tipos de dados que estamos lidando. Mostrando os desafios e obstáculos que esse dados possuem. Além disso, iremos especificar melhor os dados que usamos para esse trabalho.
 
 \section{Características do Tráfego}
@@ -10,11 +24,12 @@ Assim, é comum na literatura optar por usar apenas dados com fatores espaciais 
 
 \section{Aquisição}
 
-Os dados\footnote{http://bit.ly/processed-data-2l5MaAG} provêm de dois cruzamentos na avenida Hélio Prates que cruza a Taguatinga e Ceilândia, duas cidades satélites do Distrito Federal (DF). Estes dados foram coletados e fornecidos pelo Departamento de Trânsito (DETRAN\footnote{http://www.detran.df.gov.br/}) do DF. Sendo a coleta feita por fiscalizadores eletrônicos localizados nos cruzamentos.
+Os dados\footnote{http://bit.ly/processed-data-2l5MaAG} provêm de dois cruzamentos na avenida Hélio Prates que cruza a Taguatinga e Ceilândia, duas cidades satélites do Distrito Federal (DF). Estes dados foram coletados e fornecidos pelo Departamento de Trânsito (\acrfull{DETRAN}\footnote{http://www.detran.df.gov.br/}) do \acrfull{DF}. Sendo a coleta feita por fiscalizadores eletrônicos localizados nos cruzamentos.
 
 % TODO: colocar todos os fiscalizadores eletronicos
 % TODO: consertar o intervalo que recebemos
-Nesses dados estão inclusos registros de todos os veículos que passaram pelo local nos meses de maio a junho de 2016 em forma de uma série temporal. Para cada registro se tem uma identificação do fiscalizador eletrônico, data, hora, faixa de via, velocidade, limite de velocidade da via e tamanho do veículo, assim como mostrado na tabela {table:data}.
+% TODO: consertar quantidade de sensores
+Nesses dados estão inclusos registros de todos os veículos que passaram pelo local nos meses de maio a junho de 2016 em forma de uma série temporal. Os registros são de 4 sensores em 4 vias diferentes. Para cada registro se tem uma identificação do fiscalizador eletrônico, data, hora, faixa de via, velocidade, limite de velocidade da via e tamanho do veículo, assim como mostrado na tabela \ref{table:data}.
 
 \begin{table}[h]
     \begin{tabular}{ccccccc}
