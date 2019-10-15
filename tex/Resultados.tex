@@ -10,6 +10,8 @@
 
 % TODO: Adicionar gráfico de como os modelos se comportam com o aumento e diminuição do intervalo de fluxo 
 
+
+
 Após o tratamento dos dados e da definição dos melhores parâmetros e hiper-parâmetros para cada modelo, foram realizados diversos testes e comparações. Todos os experimentos foram realizados em uma máquina equipada com processador Intel I7 7700HQ, 8 GB RAM rodando Ubuntu 18.05.
 
 
@@ -36,7 +38,6 @@ Após o tratamento dos dados e da definição dos melhores parâmetros e hiper-p
 
 
 A primeira comparação feita foi entre os resultados das predições dos modelos com o valores de entrada normalizados e não normalizados. Para os modelos uni-variados, normalizamos o valor do fluxo utilizando a biblioteca \textit{Sklearn}, onde o menor valor é mapeado como 0 e o maior valor como 1. Segundo [Citar fonte que mostra que dados normalizados tendem a ter um melhor resultado], valores normalizados entre 0 e 1 tendem a ter um melhor resultado para algoritmos que utilizam funções de ativação sigmoidais, além de evitar que o modelo fique enviesado para os valores com maiores ordens de grandeza. Porém, como pode ser visto na tabela 1, no caso do \acrfull{LSTM}, o \acrfull{RMSE} ficou levemente pior para as predições utilizando valores normalizados em seu treinamento. Isso pode ter acontecido pois o valor do intervalo do fluxo oriundo dos nossos dados não era tão grande, sendo o menor valor 0 e o maior valor 60. Com um intervalo pequeno como esse, a normalização não teve um impacto tão grande, pois 0 e 60 estão apenas a uma ordem de grandeza de diferença.
-
 
 O mesmo raciocínio pode ser utilizado para explicar a tabela 2, onde podemos observar que a normalização também não trouxe grandes benefícios aos modelos multivariados. Novamente, a ordem de grandeza entre os dados de entrada e entre os seus diferentes tipos (velocidade, fluxo) é bastante pequena, tornando a normalização pouco eficaz também nos casos dos modelos multivariados.
 

@@ -1,6 +1,5 @@
 % TODO: Devemos explicar como o fiscalizador eletrônico funciona? (https://industriahoje.com.br/como-funcionam-os-radares-de-velocidade)
 
-% TODO: Escrever um parágrafo explicando o porquê de não termos usados dados aleatórios como dados meteorologicos (motivos como não saber se está chovendo na área específica, entre outros)
 
 % TODO?: Olhar gráficos que o Fábio colocou e fazer similares
 
@@ -10,21 +9,21 @@
 
 % TODO: Usar a análise de dados do Fábio como inspiração
 
-% TODO: Falar que não tem Nan
-
+% TODO: Falar que não tem inconsitências muito grandes (perda de dados)
 % TODO: Falar a quantidade de registros total e de que dia a que dia vão os dados
 
-Esse capítulo tem como objetivo mostrar uma análise dos tipos de dados que estamos lidando. Mostrando os desafios e obstáculos que esse dados possuem. Além disso, iremos especificar melhor os dados que usamos para esse trabalho.
+Este capítulo tem como objetivo realizar uma análise dos tipos de dados que estamos utilizando. Mostrar os desafio e problemas que tivemos que lidar ao tratá-los.
 
 \section{Características do Tráfego}
 
-É importante notar que o tráfego é afetado por fatores temporais, espaciais e aleatórios. Os fatores temporais são, por exemplo, o horário de entrada e saída dos trabalhadores. Os fatores espaciais são, por exemplo, como a malha rodoviário se distribui em uma localização ou a quantidade de empresas em uma área. Já fatores aleatórios são, por exemplo, acidentes e a meteorologia do dia. Sendo assim, modelos de previsões podem ter desempenhos diferentes dependendo de onde e quando os dados forem coletados. Isso, sem levar em conta a impossibilidade de se prever os fatores aleatórios.
+É importante salientar que o tráfego é afetado por diversos fatores: temporais, espaciais e aleatórios. Os fatores temporais são, por exemplo, o horário do expediente dos trabalhadores que possuem veículos. Os fatores espaciais são, por exemplo, como a malha rodoviário se distribui em uma localização, ou a quantidade de empresas em uma área. Já fatores aleatórios são, por exemplo, acidentes que possam vir a ocorrer e a meteorologia do dia. Sendo assim, modelos de previsões podem ter desempenhos diferentes dependendo de onde e quando os dados forem coletados. Isso sem levar em conta a impossibilidade de se prever os fatores aleatórios.
 
-Assim, é comum na literatura optar por usar apenas dados com fatores espaciais e temporais. Assim, fazendo uma suposição de que exista uma tendência no fluxo que pode ser previsto e que embora as variáveis aleatórias possam afetar o fluxo, elas não afetam o bastante para mudar a tendência no longo prazo. Seguindo a literatura, esse artigo utilizará variáveis temporais e espaciais.
+Dessa forma, é comum na literatura optar-se por usar apenas dados com fatores espaciais e temporais. Assim fazendo uma suposição de que exista uma tendência no fluxo que pode ser previsto e que, embora as variáveis aleatórias possam afetar o fluxo, elas não afetam o bastante para mudar a tendência no longo prazo. Seguindo a literatura, esse artigo utilizará variáveis temporais e espaciais.
+
 
 \section{Aquisição}
 
-Os dados\footnote{http://bit.ly/processed-data-2l5MaAG} provêm de dois cruzamentos na avenida Hélio Prates que cruza a Taguatinga e Ceilândia, duas cidades satélites do Distrito Federal (DF). Estes dados foram coletados e fornecidos pelo Departamento de Trânsito (\acrfull{DETRAN}\footnote{http://www.detran.df.gov.br/}) do \acrfull{DF}. Sendo a coleta feita por fiscalizadores eletrônicos localizados nos cruzamentos.
+Os dados\footnote{http://bit.ly/processed-data-2l5MaAG} provêm de dois cruzamentos na avenida Hélio Prates que cruza Taguatinga e Ceilândia, duas cidades satélites do Distrito Federal (DF). Estes dados foram coletados e fornecidos pelo Departamento de Trânsito (\acrfull{DETRAN}\footnote{http://www.detran.df.gov.br/}) do \acrfull{DF}. Sendo a coleta feita por fiscalizadores eletrônicos localizados nos cruzamentos.
 
 % TODO: colocar todos os fiscalizadores eletronicos
 % TODO: consertar o intervalo que recebemos
@@ -46,7 +45,7 @@ Nesses dados estão inclusos registros de todos os veículos que passaram pelo l
     \caption{Exemplo dos dados recebidos coletados pelo \acrshort{DETRAN}}
 \end{table}
 
-Os dados foram obtidos do equipamento de fiscalização eletrônica, os quais estão instalados em vias semafóricas. Por este motivo, é possível identificar momentos curtos onde não há fluxo de carros. Além disso, alguns dos equipamentos sofreram manutenção, resultando em alguns momentos mais longos sem registro de tráfego.
+Os dados foram obtidos de equipamentos de fiscalização eletrônica, os quais estão instalados em vias semafóricas. Por este motivo, é possível identificar momentos curtos onde não há fluxo de carros. Além disso, alguns dos equipamentos foram desativados por alguns momentos para receberem manutenções, resultando em alguns períodos mais longos sem registro de tráfego.
 
 \begin{figure}[t]
     \centering
@@ -58,7 +57,7 @@ Os dados foram obtidos do equipamento de fiscalização eletrônica, os quais es
 
 \section{Observações}
 
-% TODO: colocar referencia do tráfego piorando durante a Copa do Mundo
-Vale notar que os dados adquiridos foram de uma época com um tráfego mais intenso nas cidades do Brasil. Visto que a Copa do Mundo foi durante o intervalo adquirido. 
 
-Também vale notar que os fiscalizadores eletrônicos utilizados ficam próximos de semáforos, ou seja, existe momentos que o fluxo diminui bastante.
+Também é válido dizer que, inicialmente, os dados possuíam mais uma coluna: tamanho do veículo. Esta, porém, foi descartada devido à suas inconsistências, como por exemplo, apresentar registros nos quais o tamanho do veículo era 0.
+
+Por último, mas não menos importante, também deve-se notar que os fiscalizadores eletrônicos utilizados ficam próximos de semáforos, ou seja, existem momentos em que o fluxo diminui bastante, devido aos sinais vermelhos. 
