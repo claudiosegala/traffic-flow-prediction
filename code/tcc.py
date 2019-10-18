@@ -107,9 +107,8 @@ def clean_data(data, verbosity):
   f = lambda x : tm.strptime(x, '%H:%M:%S')
   data['Time'] = data['Time'].apply(f)
   
-  g = lambda x : dt.timedelta(hours=x.tm_hour,minutes=x.tm_min,seconds=x.tm_sec)
-  gl = lambda x : x.total_seconds()
-  data['Time'] = data['Time'].apply(gl)
+  g = lambda x : dt.timedelta(hours=x.tm_hour,minutes=x.tm_min,seconds=x.tm_sec).total_seconds()
+  data['Time'] = data['Time'].apply(g)
   
   h = lambda x : int(x)
   data['Time'] = data['Time'].apply(h)
