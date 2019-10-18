@@ -20,7 +20,7 @@
 
 \section{\acrfull{LSTM}}
 
-\acrshort{LSTM} é amplamente utilizado para predição de tráfego e de informações que derivam de dados sequenciais/séries temporais, sendo possível encontrar diversos trabalhos na literatura que mostram sua eficiência quando comparado a outros métodos. Como descrito em \cite{Zainab_2018} e em \cite{Xiaolei_2015}, \acrshort{LSTM} é um tipo de \acrfull{RNN} que utiliza de estados anteriores e do estado atual da rede para gerar sua saída. Ao utilizar dos estados anteriores, a \acrshort{RNN} acaba por simular uma memória, melhorando seu aprendizado. 
+\acrshort{LSTM} é amplamente utilizado para predição de tráfego e de informações que derivam de dados sequenciais/séries temporais, sendo possível encontrar diversos trabalhos na literatura que mostram sua eficiência quando comparado a outros métodos. Como descrito em \cite{Zainab_2018} e em \cite{Xiaolei_2015}, \acrshort{LSTM} é um tipo de \acrshort{RNN} que utiliza de estados anteriores e do estado atual da rede para gerar sua saída. Ao utilizar dos estados anteriores, a \acrshort{RNN} acaba por simular uma memória, melhorando seu aprendizado. 
 
 \begin{figure}[htb]
     \centering
@@ -31,9 +31,9 @@
 
 \footnotetext{https://colah.github.io/posts/2015-08-Understanding-LSTMs/}
 
-Porém, diferentemente de uma \acrshort{RNN}, o LSTM possui uma unidade a mais em seus blocos chamada de célula de memória. Esta célula é capaz de perceber as características mais latentes dos dados e descartar as menos importantes. Assim, o \acrshort{LSTM} consegue manter as características mais importantes na rede por mais tempo que uma \acrfull{RNN} comum. Por estes motivos, o \acrshort{LSTM} é excelente para modelar séries temporais e dados sequenciais.
+Porém, diferentemente de uma \acrshort{RNN}, o LSTM possui uma unidade a mais em seus blocos chamada de célula de memória. Esta célula é capaz de perceber as características mais latentes dos dados e descartar as menos importantes. Assim, o \acrshort{LSTM} consegue manter as características mais importantes na rede por mais tempo que uma \acrshort{RNN} comum. Por estes motivos, o \acrshort{LSTM} é excelente para modelar séries temporais e dados sequenciais.
 
-Nesta célula de memória existem estruturas que são responsáveis pela característica de memória a longo prazo do \arcshort[LSTM]. A Porta de Entrada, a Porta do esquecimento e a Porta de Saída. Abaixo, explicaremos como cada um deles funciona:
+Nesta célula de memória existem estruturas que são responsáveis pela característica de memória a longo prazo do \acrshort{LSTM}. A Porta de Entrada, a Porta do esquecimento e a Porta de Saída. Abaixo, explicaremos como cada um deles funciona:
 
 \begin{itemize}
   \item Porta de Entrada: 
@@ -47,10 +47,21 @@ Nesta célula de memória existem estruturas que são responsáveis pela caracte
 
 \section{\acrfull{RF}}
 
-\textit{\acrshort{RF}} é em uma união de métodos, no caso, é uma união de diversas árvores de decisão. Então para se entender \textit{\acrshort{RF}} é preciso primeiro entender árvores de decisão.
+% TODO: adicionar o criador
+
+% TODO: rf usa o bagging com decision tree
+
+\textit{\acrshort{RF}} é um método de aprendizagem de máquina muito utilizado para classificação e regressão. O método é uma evolução do método \textit{Bagging} (\textit{\textbf{B}ootstrap \textbf{Agg}regation}), que utiliza árvores de decisão, para evitar sobre-ajuste. Para isso, ele modifica o algoritmo de criação das árvores de decisão limitando a quantidade de características (\textit{features}) do conjunto de dados que vai ser utilizado. É comum implementações limitarem a quantidade de características (\textit{q}) para $ \sqrt{q} $ ou $ \frac{q}{3} $.
+
+\subsection{Bagging}
+
+
 
 \subsection{Árvores de Decisão}
 
+\subsubsection{Impureza de Gini}
+
+\subsection{\textit{\acrshort{RF}}}
 
 
 \section{\acrfull{SVM}}

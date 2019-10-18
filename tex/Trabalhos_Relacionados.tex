@@ -1,3 +1,5 @@
+% TODO: adicionar explicação de como vai funcionar o capitulo, quais artigos võa ser detalhados e um ultra resumo do que eles consistem.
+
 O objetivo deste capítulo é apresentar trabalhos relacionados à predição de tráfego urbano, mostrar suas contribuições e contextualizar nosso trabalho atual.
 
 \section{Trabalhos Relacionados}
@@ -13,7 +15,7 @@ Em  \cite{Zainab_2018} é apresentado um trabalho de predição de tráfego que 
 
 Dos três modelos apresentados, o mais eficiente foi o m-n, pois faz a previsão de tráfego em vários pontos diferentes da via e tem um custo computacional menor que o n-n, além disso, utiliza menos sensores, o que diminui os dados de entrada da rede neural. Esse Modelo foi comparado com outros usando as métricas \textit{\acrshort{RMSE}} e \textitit{\acrshort{MAE}}. O resultado dessas métricas é comparado com a acurácia de outros modelos como \textit{\acrfull{RNN}} e \textit{\acrfull{FFN}}. O erro calculado foi menor na metodologia proposta pelo autor em todos os casos, comprovando a eficácia do método (SLSTM).
 
-\cite{lv_6894591} propôs um trabalho semelhante de comparação de modelos de predição, mas utilizando \textit{\acrfull{SAE}}. O modelo de predição proposto pelo artigo é aplicado aos dados coletados por 15,000 sensores espalhados pelas estradas da Califórnia. As predições são divididas em intervalos de 15, 30, 45 e 60 minutos. Mais uma vez, a acurácia dos testes foi medida utilizando  \acrshort{MAE}, \acrshort{MRE} e \acrshort{RMSE} para cada intervalo de tempo e comparada com a acurácia de predição de outros métodos, como \acrfull{BPNN}, \acrfull{RW}, \acrfull{SVM} e \acrfull{RBFNN}. Novamente, o método apresentado pelo artigo foi o mais eficiente.      
+No artigo \cite{lv_6894591} foi proposto um trabalho semelhante de comparação de modelos de predição, mas utilizando \textit{\acrfull{SAE}}. O modelo de predição proposto pelo artigo é aplicado aos dados coletados por 15,000 sensores espalhados pelas estradas da Califórnia. As predições são divididas em intervalos de 15, 30, 45 e 60 minutos. Mais uma vez, a acurácia dos testes foi medida utilizando  \acrshort{MAE}, \acrshort{MRE} e \acrshort{RMSE} para cada intervalo de tempo e comparada com a acurácia de predição de outros métodos, como \acrfull{BPNN}, \acrfull{RW}, \acrfull{SVM} e \acrfull{RBFNN}. Novamente, o método apresentado pelo artigo foi o mais eficiente.      
 
 Um modelo mais próximo do utilizado em nossos testes é descrito em \cite{Seoul}. Diferentemente dos trabalhos relacionados apresentados nos parágrafos anteriores, \cite{Seoul} apresenta um estudo feito com dados coletados de vias urbanas de Seul, e não somente de rodovias expressas. O trabalha utiliza 3 base de dados diferentes:
 
