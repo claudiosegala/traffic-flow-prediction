@@ -49,15 +49,27 @@ Nesta célula de memória existem estruturas que são responsáveis pela caracte
 
 % TODO: adicionar o criador
 
+% TODO: ler o artigo do criador ou usar o artigo de alguém que tenha explicado  random forest
+
 % TODO: rf usa o bagging com decision tree
 
-\textit{\acrshort{RF}} é um método de aprendizagem de máquina muito utilizado para classificação e regressão. O método é uma evolução do método \textit{Bagging} (\textit{\textbf{B}ootstrap \textbf{Agg}regation}), que utiliza árvores de decisão, para evitar sobre-ajuste. Para isso, ele modifica o algoritmo de criação das árvores de decisão limitando a quantidade de características (\textit{features}) do conjunto de dados que vai ser utilizado. É comum implementações limitarem a quantidade de características (\textit{q}) para $ \sqrt{q} $ ou $ \frac{q}{3} $.
+% The random forest combines hundreds or thousands of decision trees, trains each one on a slightly different set of the observations, splitting nodes in each tree considering a limited number of the features. The final predictions of the random forest are made by averaging the predictions of each individual tree.
+
+% TODO: explicar o motivo da random forest não over-fitar tanto
+
+\textit{\acrshort{RF}} é um método de aprendizagem de máquina muito utilizado para classificação e regressão. O método é utiliza do \textit{Bagging} (\textit{\textbf{B}ootstrap \textbf{Agg}regation}) coma árvores de decisão, para evitar sobre-ajuste. Para isso, ele modifica o algoritmo de criação das árvores de decisão limitando a quantidade de características (\textit{features}) do conjunto de dados que vai ser utilizado. É comum implementações limitarem a quantidade de características (\textit{q}) para $ \sqrt{q} $ ou $ \frac{q}{3} $.
 
 \subsection{Bagging}
 
 
 
 \subsection{Árvores de Decisão}
+
+ Árvores de decisão sobre-ajustam muito fácil no conjunto de dados por ser muito flexível e poderoso, memorizando parte do conjunto de dados. Podendo, por exemplo, criar uma árvore que cada folha corresponde a somente um elemento.
+
+% https://towardsdatascience.com/an-implementation-and-explanation-of-the-random-forest-in-python-77bf308a9b76
+ Algoritmos podem ser flexíveis e correr risco de sobre-ajuste ou ser inflexíveis e não conseguir se ajustar nos dados. Modelos flexiveis demais podem  meomorizar os dados e modelos inflexiveis presupõe informações sobre os dados.
+ Árvore de decisão é flexível se não for limitar o tamanho da árvore e inflexível se vc limitar demais o tamanho da árvore. Isso é chamado de bias-variance tradeoff.
 
 \subsubsection{Impureza de Gini}
 

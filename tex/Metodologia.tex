@@ -2,6 +2,12 @@
 
 % TODO?: Usar a metodologia do Fábio como inspiração
 
+% TODO?: Colocar a versao das bibliotecas usadas
+
+% TODO?: Incluir métricas de precisão
+
+% TODO?: Falar sobre a especificação do ambiente
+
 Este capítulo tem como objetivo explicar como foram realizadas as comparações dos modelos quanto as suas predições. Desde a forma como os dados foram selecionados e tratados até os motivos pelos quais determinados modelos foram escolhidos, e suas principais diferenças. 
 
 \section{Modelos}
@@ -12,7 +18,7 @@ Visto que estamos prevendo o fluxo, cujo o domínio é contínuo, iremos utiliza
 % TODO: Adicionar referencia para mostrar que o ARIMA é um dos mais utilizados
 Dos modelos paramétricos, o mais utilizado na literatura para previsão de fluxo é o \textit{Autoregressive Integrated Average Mean} (ARIMA) e suas variações. Dos modelos não-paramétricos, se destacam o \textit{Long Short Term Memory Neural Networks} (LSTM), \textit{Gated Recurrent Unit Neural Network} (GRU), \textit{Support Vector Machine} (SVM) e \textit{Random Forest} (RF). 
 
-% TODO: Justificar que  a não inclusão de modelos paramétricos.
+% TODO: Justificar a não inclusão de modelos paramétricos.
 Todos os modelos não-paramétricos citados serão implementados para os nossos testes. Como LSTM e GRU são evoluções do \textit{Recurrent Neural Network} (RNN), este também será incluído na comparação. 
 
 \subsection{Modelos de Comparação}
@@ -20,8 +26,6 @@ Todos os modelos não-paramétricos citados serão implementados para os nossos 
 Utilizaremos dois modelos com o único propósito de estabelecer uma base de comparação inicial para os outros modelos. Serão eles o modelo randômico e a média móvel. O primeiro faz suas predições apenas escolhendo aleatoriamente um número de 0 até o maior número do nosso conjunto de dados. Com isso, conseguimos colocar em perspectiva nossos outros modelos e analisar se eles estão melhores do que simplesmente escolher valores possíveis ao acaso. Já o segundo faz a média dos valores da entrada, o que seria o método mais simples depois de escolher valores aleatórios.
 
 \subsection{Implementação}
-
-% TODO?: Colocar a versao das bibliotecas
 
 Nossos modelos foram implementados na linguagem \textit{Python} utilizando bibliotecas como \textit{Keras} com \textit{TensorFlow} e \textit{SKLearn}. Escolhemos utilizar essas bibliotecas, pois suas implementações já são robustas, otimizadas e bem testadas. Implementar todos os modelos sem o auxílio de nenhuma biblioteca seria ineficiente para o nosso objetivo,  prono a erros. Além disso, o uso das bibliotecas facilita a reprodução do experimento para os interessados em avançar ou verificar nosso trabalho.
 
@@ -116,11 +120,9 @@ Já os parâmetros escolhidos para \textit{\acrshort{RF}} foram:
 
 % TODO: worth a reading to complement the reason why we use normalised version (https://stats.stackexchange.com/questions/10289/whats-the-difference-between-normalization-and-standardization)
 
-% TODO: Incluir métricas que vamos avaliar, incluir as de precisão
+% TODO: Explicar porque tem que ser utilizado janela deslizante em séries temporais, onde acho um artigo sobre isso?
 
-% TODO: Explicar porque tem que ser utilizado janela deslizante em séries temporais
-
-% TODO: Falar das principais métricas usadas e colocar a referência.
+% TODO: Falar das principais métricas usadas na literatura e colocar a referência.
 
 Visto que nossos dados são séries temporais, realizaremos vários testes utilizando uma janela deslizante no conjunto de dados. Desta forma, podemos testar nossos modelos sobre um conjunto de testes maior. Tendo assim, uma melhor noção de como nosso modelo se comporta do que se avaliássemos ele apenas uma vez. Todos os modelos serão treinados e testados com os mesmos subconjuntos de dados, para fins de comparação. Como métricas, serão usados MAE, RMSE e NRMSE. 
 
@@ -146,8 +148,3 @@ As duas primeiras métricas são as mais utilizadas na literatura, a última é 
     \item único sensor uni-variado
     \item único sensor multi-variado
 \end{itemize}
-
-
-% TODO?: Falar sobre as métricas de precisão que coletamos
-
-% TODO?: Falar sobre a especificação do ambiente
