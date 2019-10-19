@@ -1,0 +1,147 @@
+%%% Sugestões de Temas
+% http://deic.uab.es/~iblanes/beamer_gallery/
+\useoutertheme{infolines}
+
+\usepackage{multicol}
+
+\input{themes.tex}
+
+\usefonttheme{professionalfonts}
+%\usefonttheme{structurebold}
+
+\usepackage[english,brazil,portuges]{babel} %hifenização em português e inglês
+\usepackage[T1]{fontenc} %caracteres acentuados
+\usepackage{ae}
+\usepackage[ansinew]{inputenc}
+\usepackage{graphicx,color}
+%\usepackage[ruled,linesnumbered,portuguese]{algorithm2e}%noend
+\usepackage{ifpdf}
+\usepackage{amssymb}
+\usepackage{xfrac}
+
+
+%package{algorithmic}
+%\usepackage{mathtools}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% definições prévias do documento
+
+\renewcommand{\arraystretch}{1.5}
+
+
+%\setbeamerfont{family=\rmfamily}
+
+\definecolor{custom_blue}{HTML}{395DBF}
+
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    \insertframenumber/\inserttotalframenumber
+}
+
+\newcommand{\sectionframe}[1]{
+\begin{frame}
+\begin{center}
+\Huge \textcolor{custom_blue}{\textbf{#1}}
+\end{center}
+\end{frame}
+}
+
+\newcommand{\seminarsection}[2]{
+\sectionframe{#1}
+\section{#1}
+  \input{chapters/#2}
+}
+
+\newcommand{\slide}[2]{
+\frame{\frametitle{#1}
+#2
+}
+}
+
+\newcommand{\popup}[2]{
+\begin{block}{#1}
+#2
+\end{block}
+}
+
+\newcommand{\columncontent}[2]{
+\begin{multicols}{#1}
+#2
+\end{multicols}
+}
+
+\newcommand{\equationsimp}[1]{
+\begin{equation}
+#1 \nonumber
+\end{equation}
+}
+
+\newcommand{\up}[2]{
+{#1}^{#2}
+}
+
+\newcommand{\sub}[2]{
+{#1}_{#2}
+}
+
+\newcommand{\upsub}[3]{
+{#1}^{#2}_{#3}
+}
+
+\newcommand{\switch}[1]{
+\begin{equation}
+\begin{cases}
+#1
+\end{cases}
+\end{equation}
+}
+
+\newcommand{\case}[2]{
+#2 & \text{if } #1 \nonumber \\
+}
+
+\newcommand{\itemsimple}[1]{
+\begin{itemize}
+    \item #1
+\end{itemize}
+}
+
+\newcommand{\seminardate}[2]{
+\date[#1]{#2}
+}
+
+%% ===== AUTHOR =====
+
+\newcommand{\lecturetitle}[1]{
+\title{#1}
+%\subtitle{}
+\author[Diego Santos Kieckbusch]{
+{\large Diego Santos Kieckbusch \\ \  \\ \small{Orientador: Prof. Li Weigang}\texttt{}} \\
+\vspace*{0.2cm}
+\vspace*{0.2cm}}
+%\date{\today}
+}
+
+%% ===== UnB Frame =====
+
+\newcommand{\unbframe}{
+%\frame{
+\begin{frame}[plain]
+	\begin{center}
+	\includegraphics[height=0.1\textheight]{img/unb_logo.png} \hspace*{0.0cm}
+	  \vspace*{0.2cm}
+	  \scriptsize	\\	  
+	  Universidade de Bras\'ilia \\
+	  Instituto de Ci\^encias Exatas \\
+	  Departamento de Ci\^encia da Computa\c{c}\~ao\\
+	  %Programa de P\'os-Gradua\c{c}\~ao em Inform\'atica\\
+	  %\vspace*{0.2cm}
+	  %Qualificação
+	  %\vspace*{0.2cm}
+	  \titlepage
+	\end{center}
+\end{frame}
+%\frame{\titlepage}
+}
