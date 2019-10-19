@@ -77,25 +77,26 @@
 \slide{Escolha dos Parâmetros e Hiper-parâmetros}{
     Parâmetros Gerais:
     \begin{itemize}
-        \item Memória do Passado
-        \item Janela de Treino
+        \item Memória do Passado \textbf{(1h a 8h, 1h)}
+        \item Janela de Treino \textbf{(0.30 a 0.80, 0.05)}
     \end{itemize}
 }
 
 \slide{Escolha dos Parâmetros e Hiper-parâmetros}{
     Específicos de Aprendizagem Profunda:
     \begin{itemize}
-        \item Quantidade de Neurônios
-        \item Funções de Ativação 
-        \item Otimizador do Modelo
+        \item Quantidade de Neurônios \textbf{(40 a 200, 10)}
+        \item Funções de Ativação \textbf{(Sigmoid, ReLu e Softmax)}
+        \item Otimizador do Modelo \textbf{(Adam, Adamax)} % https://keras.io/optimizers/
     \end{itemize}
 }
 
 \slide{Escolha dos Parâmetros e Hiper-parâmetros}{
     Específicos de Random Forest:
     \begin{itemize}
-        \item Números de Estimadores
-        \item Bootstrapping
+        \item Números de Estimadores \textbf{(50 a 400, 50)}
+        %\item Altura Máxima \textbf{(TODO)}
+        \item Bootstrapping \textbf{(True ou False)}
     \end{itemize}
 }
 
