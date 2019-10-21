@@ -893,6 +893,289 @@ def store_comparisons (title):
   with open(f"{TCC_PATH}results/comparison/{name+title}_slim.json", 'w') as json_file:
     json.dump(slim_comparison_data, json_file, sort_keys=True, indent=4)
 
+"""# Plot Util"""
+
+def plot_performance(metric, y_label, title):
+  """ Plot Performance
+  
+  Plot a bar graph of the performance of some metric
+  
+  Arguments:
+    metric: the name of the property of the metric
+    y_label: the name of the label of the metric
+    title: the title of the plot
+  """
+  
+  path = f"{TCC_PATH}plots/performances/bars/{title}"
+  
+  models = tuple(result_data['results'].keys())
+  y_pos = np.arange(len(models))
+  performance = [v[metric] for v in result_data['results'].values()]
+
+  plt.rcdefaults()
+  plt.bar(y_pos, performance, align='center', alpha=0.5)
+  plt.xticks(y_pos, models, rotation=90)
+  plt.ylabel(y_label)
+  plt.title(title)
+
+  plt.savefig(path + ".png", bbox_inches='tight')
+  plt.savefig(path + ".pdf")
+  
+  if VERBOSITY:
+    plt.show()
+    
+  plt.close('all')
+
+def plot_performance_improved(metric, y_label, title):
+  """ Plot Performance Improved
+  
+  Plot a box graph of the performance of some metric
+  
+  Arguments:
+    metric: the name of the property of the metric
+    y_label: the name of the label of the metric
+    title: the title of the plot
+  """
+  
+  path = f"{TCC_PATH}plots/performances/boxes/{title}"
+  
+  fig, ax_plot = plt.subplots()
+  
+  ax_plot.set_title(title)
+  ax_plot.set_xlabel(y_label)
+  ax_plot.set_ylabel('Model')
+  
+  bplot = ax_plot.boxplot([v['raw'][metric] for v in result_data['results'].values()], vert=False)
+  ax_plot.set_yticklabels(list(result_data['results'].keys()))
+  
+  plt.savefig(path + ".png", bbox_inches='tight')
+  plt.savefig(path + ".pdf")
+  
+  if VERBOSITY:
+    plt.show()
+    
+  plt.close('all')
+
+def plot_precision_bucket ():
+  """ Plot Precision Bucket 
+  
+  Plot a stack box graph of the precision mesuared by the buckets.
+  
+  """
+  
+  path = f"{TCC_PATH}plots/precision"
+  
+  N = len(result_data['results'])
+    
+  ind = np.arange(N)    # the x locations for the groups
+  width = 0.35       # the width of the bars: can also be len(x) sequence
+  
+  pre = []
+  bott = []
+  
+  models = list(result_data['results'].keys())
+
+  n_buckets = len(result_data['results'][models[0]]['PRE'])
+    
+  for i in range(n_buckets):
+    pre.append([v["PRE"][i] for v in result_data['results'].values()])
+    
+    if i == 0:
+      bott.append([0] * N)
+    else:
+      bott.append([bott[i-1][j] + pre[i-1][j]  for j in range(N)])
+  
+  p = []
+  leg_lin = []
+  leg_lab = []
+  
+  for i in range(n_buckets):
+    _p = plt.bar(ind, tuple(pre[i]), width, bottom=tuple(bott[i]))
+    
+    leg_lin.append(_p[0])
+    leg_lab.append(f"Bucket of {2**i}")
+    p.append(_p)
+
+  plt.ylabel('Scores')
+  plt.title('Precision by model and bucket')
+  plt.xticks(ind, list(result_data['results'].keys()), rotation=90)
+  plt.yticks(np.arange(0, 1.05, 0.05))
+  plt.legend(tuple(leg_lin), tuple(leg_lab))
+  
+  plt.savefig(path + ".png", bbox_inches='tight')
+  plt.savefig(path + ".pdf")
+
+  if VERBOSITY:
+    plt.show()
+
+  plt.close('all')
+
+"""# Comparison Util"""
+
+def plot_results_comparison(name, xlabel, xticks, metric):
+  path = f"{TCC_PATH}plots/{name.lower().replace(' ', '_')}_{metric.lower()}"
+  models = [*comparison_data[0]['results']]
+  
+  for model in models:
+    datapoints = [result['results'][model][metric] for result in comparison_data]
+    plt.plot(datapoints) 
+
+  plt.title(name)
+  plt.ylabel(metric)
+  plt.xlabel(xlabel)
+  plt.xticks(np.arange(len(xticks)), xticks)
+  plt.legend(models, loc='upper left')
+  plt.rcdefaults()
+
+  plt.savefig(path + ".png", bbox_inches='tight')
+  plt.savefig(path + ".pdf")
+
+  if VERBOSITY:
+    plt.show()
+    
+  plt.close('all')
+
+def compare_results_by_window_split(values):
+  global SET_SPLIT
+  global VERBOSITY
+  global result_data
+  global comparison_data
+  
+  aux = SET_SPLIT
+  
+  VERBOSITY = False
+  
+  result_data = {
+      'results': {},
+      'meta': {}
+  }
+  
+  comparison_data = []
+
+  for value in values:
+    SET_SPLIT = value
+
+    #random_guess_univariate(data)
+    moving_average(data)
+    naive(data)
+    logistic_regression(data, False)
+    logistic_regression(data, True)
+    random_forest(data, False)
+    random_forest(data, True)
+    support_vector_machine(data, False)
+    support_vector_machine(data, True)
+    rnn(data, False)
+    rnn(data, True)
+    lstm(data, False)
+    lstm(data, True)
+    gru(data, False)
+    gru(data, True)
+    
+    comparison_data.append(copy.deepcopy(result_data))
+
+  store_comparisons('_window_split_comparison')
+  
+  SET_SPLIT = aux
+
+def compare_results_by_seeable_past(values):
+  global SEEABLE_PAST
+  global N_STEPS
+  global VERBOSITY
+  global result_data
+  global comparison_data
+  
+  aux = SEEABLE_PAST
+  
+  VERBOSITY = False
+  
+  result_data = {
+      'results': {},
+      'meta': {}
+  }
+  
+  comparison_data = []
+
+  for value in values:
+    SEEABLE_PAST = value
+    N_STEPS = SEEABLE_PAST * 60 // FLOW_INTERVAL
+
+    #random_guess_univariate(data)
+    moving_average(data)
+    naive(data)
+    logistic_regression(data, False)
+    logistic_regression(data, True)
+    random_forest(data, False)
+    random_forest(data, True)
+    support_vector_machine(data, False)
+    support_vector_machine(data, True)
+    rnn(data, False)
+    rnn(data, True)
+    lstm(data, False)
+    lstm(data, True)
+    gru(data, False)
+    gru(data, True)
+    
+    comparison_data.append(copy.deepcopy(result_data))
+
+  store_comparisons('_seeable_past_comparison')
+  
+  SEEABLE_PAST = aux
+  N_STEPS = SEEABLE_PAST * 60 // FLOW_INTERVAL
+
+def compare_results_by_flow_interval(values):
+  global FLOW_INTERVAL
+  global N_STEPS
+  global N_FUTURE
+  global DAY_SIZE
+  global WEEK_SIZE
+  global VERBOSITY
+  global result_data
+  global comparison_data
+  
+  aux = FLOW_INTERVAL
+  
+  VERBOSITY = False
+  
+  result_data = {
+      'results': {},
+      'meta': {}
+  }
+  
+  comparison_data = []
+
+  for value in values:
+    FLOW_INTERVAL = value
+    N_STEPS = SEEABLE_PAST * 60 // FLOW_INTERVAL
+    N_FUTURE = PREDICT_IN_FUTURE * 60 // FLOW_INTERVAL
+    DAY_SIZE = (24 * 3600) // FLOW_INTERVAL  
+    WEEK_SIZE = 7 * DAY_SIZE
+
+    #random_guess_univariate(data)
+    moving_average(data)
+    naive(data)
+    logistic_regression(data, False)
+    logistic_regression(data, True)
+    random_forest(data, False)
+    random_forest(data, True)
+    support_vector_machine(data, False)
+    support_vector_machine(data, True)
+    rnn(data, False)
+    rnn(data, True)
+    lstm(data, False)
+    lstm(data, True)
+    gru(data, False)
+    gru(data, True)
+    
+    comparison_data.append(copy.deepcopy(result_data))
+
+  store_comparisons('_flow_interval_comparison')
+  
+  FLOW_INTERVAL = aux
+  N_STEPS = SEEABLE_PAST * 60 // FLOW_INTERVAL
+  N_FUTURE = PREDICT_IN_FUTURE * 60 // FLOW_INTERVAL
+  DAY_SIZE = (24 * 3600) // FLOW_INTERVAL  
+  WEEK_SIZE = 7 * DAY_SIZE
+
 """# Train&Test
 
 Run all the models and store the results at the end
@@ -969,124 +1252,6 @@ gru(data, True)
 
 store_results()
 
-"""# Plot
-
-## Util
-"""
-
-def plot_performance(metric, y_label, title):
-  """ Plot Performance
-  
-  Plot a bar graph of the performance of some metric
-  
-  Arguments:
-    metric: the name of the property of the metric
-    y_label: the name of the label of the metric
-    title: the title of the plot
-  """
-  
-  path = f"{TCC_PATH}plots/performances/bars/{title}"
-  
-  models = tuple(result_data['results'].keys())
-  y_pos = np.arange(len(models))
-  performance = [v[metric] for v in result_data['results'].values()]
-
-  plt.rcdefaults()
-  plt.bar(y_pos, performance, align='center', alpha=0.5)
-  plt.xticks(y_pos, models, rotation=90)
-  plt.ylabel(y_label)
-  plt.title(title)
-
-  plt.savefig(path + ".png", bbox_inches='tight')
-  plt.savefig(path + ".pdf")
-  
-  plt.show()
-  plt.close('all')
-
-def plot_performance_improved(metric, y_label, title):
-  """ Plot Performance Improved
-  
-  Plot a box graph of the performance of some metric
-  
-  Arguments:
-    metric: the name of the property of the metric
-    y_label: the name of the label of the metric
-    title: the title of the plot
-  """
-  
-  path = f"{TCC_PATH}plots/performances/boxes/{title}"
-  
-  fig, ax_plot = plt.subplots()
-  
-  ax_plot.set_title(title)
-  ax_plot.set_xlabel(y_label)
-  ax_plot.set_ylabel('Model')
-  
-  bplot = ax_plot.boxplot([v['raw'][metric] for v in result_data['results'].values()], vert=False)
-  ax_plot.set_yticklabels(list(result_data['results'].keys()))
-  
-#   plt.xticks(rotation=90)
-  
-  plt.savefig(path + ".png", bbox_inches='tight')
-  plt.savefig(path + ".pdf")
-  
-  plt.show()
-  plt.close('all')
-
-def plot_precision_bucket ():
-  """ Plot Precision Bucket 
-  
-  Plot a stack box graph of the precision mesuared by the buckets.
-  
-  """
-  
-  path = f"{TCC_PATH}plots/precision"
-  
-  N = len(result_data['results'])
-    
-  ind = np.arange(N)    # the x locations for the groups
-  width = 0.35       # the width of the bars: can also be len(x) sequence
-  
-  pre = []
-  bott = []
-  
-  models = list(result_data['results'].keys())
-
-  n_buckets = len(result_data['results'][models[0]]['PRE'])
-    
-  for i in range(n_buckets):
-    pre.append([v["PRE"][i] for v in result_data['results'].values()])
-    
-    if i == 0:
-      bott.append([0] * N)
-    else:
-      bott.append([bott[i-1][j] + pre[i-1][j]  for j in range(N)])
-  
-  p = []
-  leg_lin = []
-  leg_lab = []
-  
-  for i in range(n_buckets):
-    _p = plt.bar(ind, tuple(pre[i]), width, bottom=tuple(bott[i]))
-    
-    leg_lin.append(_p[0])
-    leg_lab.append(f"Bucket of {2**i}")
-    p.append(_p)
-
-  plt.ylabel('Scores')
-  plt.title('Precision by model and bucket')
-  plt.xticks(ind, list(result_data['results'].keys()), rotation=90)
-  plt.yticks(np.arange(0, 1.05, 0.05))
-  plt.legend(tuple(leg_lin), tuple(leg_lab))
-  
-  plt.savefig(path + ".png", bbox_inches='tight')
-  plt.savefig(path + ".pdf")
-
-  plt.show()
-  plt.close('all')
-
-"""## Run"""
-
 plot_precision_bucket()
 
 plot_performance_improved('TIME', 'Seconds', 'Training Time Comparison')
@@ -1099,114 +1264,6 @@ plot_performance_improved('MAE', 'MAE', 'Max Absolute Error Comparison')
 
 plot_performance_improved('HR', 'Percentage', 'Hit Ratio Comparison')
 
-"""# Compare By Window"""
-
-def plot_results_comparison(name, xlabel, xticks, metric):
-  path = f"{TCC_PATH}plots/window_comparison"
-  models = [*comparison_data[0]['results']]
-  
-  for model in models:
-    datapoints = [result['results'][model][metric] for result in comparison_data]
-    plt.plot(datapoints) 
-
-  plt.title(name)
-  plt.ylabel(metric)
-  plt.xlabel(xlabel)
-  plt.xticks(np.arange(len(xticks)), xticks)
-  plt.legend(models, loc='upper left')
-  plt.rcdefaults()
-
-  plt.savefig(path + ".png", bbox_inches='tight')
-  plt.savefig(path + ".pdf")
-
-  plt.show()
-  plt.close('all')
-
-def compare_results_by_window_split(values):
-  global SET_SPLIT
-  global VERBOSITY
-  global result_data
-  global comparison_data
-  
-  aux = SET_SPLIT
-  
-  VERBOSITY = False
-  
-  result_data = {
-      'results': {},
-      'meta': {}
-  }
-  
-  comparison_data = []
-
-  for value in values:
-    SET_SPLIT = value
-
-    #random_guess_univariate(data)
-    moving_average(data)
-    naive(data)
-    logistic_regression(data, False)
-    logistic_regression(data, True)
-    random_forest(data, False)
-    random_forest(data, True)
-    support_vector_machine(data, False)
-    support_vector_machine(data, True)
-    rnn(data, False)
-    rnn(data, True)
-    lstm(data, False)
-    lstm(data, True)
-    gru(data, False)
-    gru(data, True)
-    
-    comparison_data.append(copy.deepcopy(result_data))
-
-  store_comparisons('_window_split_comparison')
-  
-  SET_SPLIT = aux
-
-def compare_results_by_flow_interval(values):
-  global FLOW_INTERVAL
-  global VERBOSITY
-  global result_data
-  global comparison_data
-  
-  aux = FLOW_INTERVAL
-  
-  VERBOSITY = False
-  
-  result_data = {
-      'results': {},
-      'meta': {}
-  }
-  
-  comparison_data = []
-
-  for value in values:
-    FLOW_INTERVAL = value
-
-    #random_guess_univariate(data)
-    moving_average(data)
-    naive(data)
-    logistic_regression(data, False)
-    logistic_regression(data, True)
-    random_forest(data, False)
-    random_forest(data, True)
-    support_vector_machine(data, False)
-    support_vector_machine(data, True)
-    rnn(data, False)
-    rnn(data, True)
-    lstm(data, False)
-    lstm(data, True)
-    gru(data, False)
-    gru(data, True)
-    
-    comparison_data.append(copy.deepcopy(result_data))
-
-
-  store_comparisons('_flow_interval_comparison')
-  
-  FLOW_INTERVAL = aux
-
 window_splits = [0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85]
 compare_results_by_window_split(window_splits)
 
@@ -1215,6 +1272,15 @@ plot_results_comparison('Windows Size for Training Comparison', 'Window Size', w
 plot_results_comparison('Windows Size for Training Comparison', 'Window Size', window_splits, 'RMSE')
 
 plot_results_comparison('Windows Size for Training Comparison', 'Window Size', window_splits, 'MAE')
+
+seeable_pasts = [60, 120, 180, 210, 240, 270, 300, 360, 420]
+compare_results_by_seeable_past(seeable_pasts)
+
+plot_results_comparison('Seeable Past for Training Comparison', 'Seeable Past in Seconds', seeable_pasts, 'NRMSE')
+
+plot_results_comparison('Seeable Past for Training Comparison', 'Seeable Past in Seconds', seeable_pasts, 'RMSE')
+
+plot_results_comparison('Seeable Past for Training Comparison', 'Seeable Past in Seconds', seeable_pasts, 'MAE')
 
 flow_intervals = [60, 150, 300, 450]
 compare_results_by_flow_interval(flow_intervals)
