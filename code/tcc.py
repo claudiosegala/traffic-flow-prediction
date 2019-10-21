@@ -89,12 +89,17 @@ def retrieve_data(verbosity):
   data = pd.read_csv(path, ';', header=None, names=col_names)
   
   if verbosity:
-    data.head()
-    # data.describe()
-  
+    print(f"It contains {len(data['Sensor'])} entries\n\n")
+    print(data.head(), end="\n\n")
+    print(data.describe(), end="\n\n")
+    
   return data
 
 def clean_data(data, verbosity):
+  if verbosity:
+    print(f"This dataset contains {len(set(data['Sensor']))} sensors.")
+    print(f"We will be using only one.")
+  
   # Extract data from just one sensor
   data = data[data['Sensor'] == 'RSI128']
   
@@ -131,11 +136,10 @@ def clean_data(data, verbosity):
     end = data['Date'].max()
     print(f"This data is from <{start}> to <{end}>. {end - start} days.\n")
 
-    print(f"It contains {len(data['Date'])} entries\n")
+    print(f"It contains {len(data['Date'])} entries\n\n")
 
-        
-    data.head()
-    # data.describe()
+    print(data.head(), end="\n\n")
+    print(data.describe(), end="\n\n")
   
   return data
 
@@ -440,7 +444,7 @@ def evaluate_raw (expected, observed, times):
     'NRMSE': [0] * n,
     'MAE': [0] * n,
     'HR': [0] * n,
-    'PRE': [0] * n,
+    #'PRE': [0] * n,
   }
   
   for i in range(n):
@@ -452,7 +456,7 @@ def evaluate_raw (expected, observed, times):
     raw['RMSE'][i] = np.sqrt(sklm.mean_squared_error(Y, Y_hat))
     raw['NRMSE'][i] = raw['RMSE'][i] / np.std(Y)
     raw['HR'][i] = evaluate_precision_hit_ratio(Y, Y_hat)
-    raw['PRE'][i] = evaluate_precision_bucket(Y, Y_hat)
+    #raw['PRE'][i] = evaluate_precision_bucket(Y, Y_hat)
     
     if VERBOSITY:
       print(f"({i+1}/{n}) Test Size: {len(Y)}, Time: {time}s")
@@ -494,8 +498,8 @@ def evaluate (expected, observed, times, desnormalize):
   
   raw = evaluate_raw(expected, observed, times)
   
-  n_buckets = len(raw['PRE'])
-  _pre = [[pre[i] for pre in raw['PRE']] for i in range(n_buckets)]
+  #n_buckets = len(raw['PRE'])
+  #_pre = [[pre[i] for pre in raw['PRE']] for i in range(n_buckets)]
   
   eva = {
     'TIME': int(sum(times)),
@@ -503,7 +507,7 @@ def evaluate (expected, observed, times, desnormalize):
     'NRMSE': float(np.mean(raw['NRMSE'])),
     'MAE': float(np.mean(raw['MAE'])),
     'HR': float(np.mean(raw['HR'])),
-    'PRE': [float(np.mean(p)) for p in _pre],
+    #'PRE': [float(np.mean(p)) for p in _pre],
     'has_negative': (min(flatten(observed)) < 0),
     'raw': raw
   }
@@ -515,9 +519,30 @@ def evaluate (expected, observed, times, desnormalize):
     print(f"\tNRMSE: {eva['NRMSE']}")
     print(f"\tMAE: {eva['MAE']}")
     print(f"\tHit Ratio: {eva['HR'] * 100}%")
-    print(f"\tPrecision: {eva['PRE']}")
+    #print(f"\tPrecision: {eva['PRE']}")
     
   return eva
+
+def generate_dataset(data, isMulti, flow_interval, n_step, n_future, verbosity):
+  multivariateData = get_flow(data, flow_interval, False)
+  univariateData = multivariateData['Flow']
+  
+#   if NORMALIZE_FEATS:
+#     lenth = len(univariateData)
+#     univariateData = np.asarray(univariateData).reshape((-1, 1))
+#     scaler = MinMaxScaler(feature_range=(0,1))
+#     scaler = scaler.fit(univariateData)
+#     normalizedData = scaler.transform(univariateData)
+#     univariateData = np.asarray(normalizedData).reshape(lenth,)
+#     univariateData = pd.DataFrame(univariateData)
+  
+  return reshape_flow(
+      multivariateData if isMulti else univariateData, 
+      isMulti, 
+      n_step, 
+      n_future, 
+      False
+  )
 
 """## Random (Baseline)
 
@@ -526,8 +551,10 @@ This implementation just guess a random number in the [0, 100] interval for ever
 
 import random as rnd # random
 
-def random_guess_univariate (Y):
+def random_guess_univariate (data):
   global result_data
+  
+  X, Y = generate_dataset(data, False, FLOW_INTERVAL, N_STEPS, N_FUTURE, VERBOSITY)
 
   name = "Random Guess"
   m = max(Y)
@@ -554,8 +581,10 @@ def random_guess_univariate (Y):
 This implementation just get the mean of every flow value in the input and place it as output.
 """
 
-def moving_average (X, Y):
+def moving_average (data):
   global result_data
+  
+  X, Y = generate_dataset(data, False, FLOW_INTERVAL, N_STEPS, N_FUTURE, VERBOSITY)
   
   name = "Moving Average"
   expected, observed, times = [], [], []
@@ -582,8 +611,10 @@ def moving_average (X, Y):
 This implementation just use the last value of input as output.
 """
 
-def naive (X, Y):
+def naive (data):
   global result_data
+  
+  X, Y = generate_dataset(data, False, FLOW_INTERVAL, N_STEPS, N_FUTURE, VERBOSITY)
   
   name = "Naive"
   expected, observed, times = [], [], []
@@ -605,15 +636,49 @@ def naive (X, Y):
   if VERBOSITY:
     plot_prediction(expected, observed, name)
 
+"""## Logistic Regression"""
+
+from sklearn.linear_model import LogisticRegression
+
+def logistic_regression(data, isMulti):
+  global result_data
+  
+  X, Y = generate_dataset(data, isMulti, FLOW_INTERVAL, N_STEPS, N_FUTURE, VERBOSITY)
+  
+  name = "LR Multivariate" if isMulti else "LR Univariate"
+  
+  model = LogisticRegression()
+
+  expected, observed, times = [], [], []
+  pointers = split_dataset(len(X), SET_SPLIT, TEST_SPLIT)
+  
+  X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])
+  
+  for i, j, k in pointers:
+    start = tm.time()
+    
+    model.fit(X[i:j], Y[i:j])
+    
+    expected.append(Y[j:k])
+    observed.append(model.predict(X[j:k]))
+    times.append(tm.time() - start)
+    
+  result_data['results'][name] = evaluate(expected, observed, times, NORMALIZE_FEATS)
+  
+  if VERBOSITY:
+    plot_prediction(expected, observed, name)
+
 """## Random Forest
 
 This implementation is based on [Random Forest Algorithm with Python and Scikit-Learn](https://stackabuse.com/random-forest-algorithm-with-python-and-scikit-learn/)
 """
 
-from sklearn.ensemble.forest import RandomForestRegressor
+from sklearn.ensemble import RandomForestRegressor
 
-def random_forest(X, Y, isMulti):
+def random_forest(data, isMulti):
   global result_data
+  
+  X, Y = generate_dataset(data, isMulti, FLOW_INTERVAL, N_STEPS, N_FUTURE, VERBOSITY)
   
   name = "RF Multivariate" if isMulti else "RF Univariate"
   
@@ -642,8 +707,10 @@ def random_forest(X, Y, isMulti):
 
 from sklearn import svm
 
-def support_vector_machine(X, Y, isMulti):
+def support_vector_machine(data, isMulti):
   global result_data
+  
+  X, Y = generate_dataset(data, isMulti, FLOW_INTERVAL, N_STEPS, N_FUTURE, VERBOSITY)
   
   name = "SVM Multivariate" if isMulti else "SVM Univariate"
   
@@ -672,8 +739,10 @@ def support_vector_machine(X, Y, isMulti):
 
 from keras.layers import SimpleRNN
 
-def rnn (X, Y, isMulti): 
+def rnn (data, isMulti): 
   global result_data
+  
+  X, Y = generate_dataset(data, isMulti, FLOW_INTERVAL, N_STEPS, N_FUTURE, VERBOSITY)
   
   name = "RNN Multivariate" if isMulti else "RNN Univariate"
   
@@ -708,8 +777,10 @@ def rnn (X, Y, isMulti):
 
 from keras.layers import LSTM
 
-def lstm (X, Y, isMulti): 
+def lstm (data, isMulti): 
   global result_data
+  
+  X, Y = generate_dataset(data, isMulti, FLOW_INTERVAL, N_STEPS, N_FUTURE, VERBOSITY)
   
   name = "LSTM Multivariate" if isMulti else "LSTM Univariate"
   
@@ -744,8 +815,10 @@ def lstm (X, Y, isMulti):
 
 from keras.layers import GRU
 
-def gru (X, Y, isMulti): 
+def gru (data, isMulti): 
   global result_data
+  
+  X, Y = generate_dataset(data, isMulti, FLOW_INTERVAL, N_STEPS, N_FUTURE, VERBOSITY)
   
   name = "GRU Multivariate" if isMulti else "GRU Univariate"
   
@@ -795,20 +868,20 @@ def store_results ():
   }
   
   with open(f"{TCC_PATH}results/{name}.json", 'w') as json_file:
-    json.dump(result_data, json_file)
+    json.dump(result_data, json_file, sort_keys=True, indent=4)
     
   slim_result_data = copy.deepcopy(result_data)
   for model in slim_result_data['results']:
       del slim_result_data['results'][model]['raw']
     
   with open(f"{TCC_PATH}results/{name}_slim.json", 'w') as json_file:
-    json.dump(slim_result_data, json_file)
+    json.dump(slim_result_data, json_file, sort_keys=True, indent=4)
 
-def store_comparisons ():
-  name = int(tm.time())
+def store_comparisons (title):
+  name = str(int(tm.time()))
   
-  with open(f"{TCC_PATH}results/comparison/{name}.json", 'w') as json_file:
-    json.dump(comparison_data, json_file)
+  with open(f"{TCC_PATH}results/comparison/{name+title}.json", 'w') as json_file:
+    json.dump(comparison_data, json_file, sort_keys=True, indent=4)
     
   slim_comparison_data = copy.deepcopy(comparison_data)
   for i in range(len(slim_comparison_data)):
@@ -817,8 +890,8 @@ def store_comparisons ():
       del slim_comparison_data[i]['results'][model]['raw']
     
     
-  with open(f"{TCC_PATH}results/comparison/{name}_slim.json", 'w') as json_file:
-    json.dump(slim_comparison_data, json_file)
+  with open(f"{TCC_PATH}results/comparison/{name+title}_slim.json", 'w') as json_file:
+    json.dump(slim_comparison_data, json_file, sort_keys=True, indent=4)
 
 """# Train&Test
 
@@ -831,7 +904,7 @@ SEEABLE_PAST = 180 # in minutes
 
 PREDICT_IN_FUTURE = 60 # in minutes
 
-FLOW_INTERVAL = 360 # the interval size for each flow
+FLOW_INTERVAL = 450 # the interval size for each flow
 
 NORMALIZE_FEATS = False #Decide if we gonna use normalized flow and speed values, or not
 
@@ -864,47 +937,35 @@ all_data = retrieve_data(VERBOSITY)
 
 data = clean_data(all_data, VERBOSITY)
 
-multivariateData = get_flow(data, FLOW_INTERVAL, VERBOSITY)
-univariateData = multivariateData['Flow']
+random_guess_univariate(data)
 
-if NORMALIZE_FEATS:
-  lenth = len(univariateData)
-  univariateData = np.asarray(univariateData).reshape((-1, 1))
-  scaler = MinMaxScaler(feature_range=(0,1))
-  scaler = scaler.fit(univariateData)
-  normalizedData = scaler.transform(univariateData)
-  univariateData = np.asarray(normalizedData).reshape(lenth,)
-  univariateData = pd.DataFrame(univariateData)
+moving_average(data)
 
-X_uni, Y_uni= reshape_flow(univariateData, False, N_STEPS, N_FUTURE, VERBOSITY)
+naive(data)
 
-X_multi, Y_multi= reshape_flow(multivariateData, True, N_STEPS, N_FUTURE, VERBOSITY)
+logistic_regression(data, False)
 
-random_guess_univariate(Y_uni)
+logistic_regression(data, True)
 
-moving_average(X_uni, Y_uni)
+random_forest(data, False)
 
-naive(X_uni, Y_uni)
+random_forest(data, True)
 
-random_forest(X_uni, Y_uni, False)
+support_vector_machine(data, False)
 
-random_forest(X_multi, Y_multi, True)
+support_vector_machine(data, True)
 
-support_vector_machine(X_uni, Y_uni, False)
+rnn(data, False)
 
-support_vector_machine(X_multi, Y_multi, True)
+rnn(data, True)
 
-rnn(X_uni, Y_uni, False)
+lstm(data, False)
 
-rnn(X_multi, Y_multi, True)
+lstm(data, True)
 
-lstm(X_uni, Y_uni, False)
+gru(data, False)
 
-lstm(X_multi, Y_multi, True)
-
-gru(X_uni, Y_uni, False)
-
-gru(X_multi, Y_multi, True)
+gru(data, True)
 
 store_results()
 
@@ -958,13 +1019,13 @@ def plot_performance_improved(metric, y_label, title):
   fig, ax_plot = plt.subplots()
   
   ax_plot.set_title(title)
-  ax_plot.set_xlabel('Model')
-  ax_plot.set_ylabel(y_label)
+  ax_plot.set_xlabel(y_label)
+  ax_plot.set_ylabel('Model')
   
-  bplot = ax_plot.boxplot([v['raw'][metric] for v in result_data['results'].values()])
-  ax_plot.set_xticklabels(list(result_data['results'].keys()))
+  bplot = ax_plot.boxplot([v['raw'][metric] for v in result_data['results'].values()], vert=False)
+  ax_plot.set_yticklabels(list(result_data['results'].keys()))
   
-  plt.xticks(rotation=90)
+#   plt.xticks(rotation=90)
   
   plt.savefig(path + ".png", bbox_inches='tight')
   plt.savefig(path + ".pdf")
@@ -1036,34 +1097,38 @@ plot_performance_improved('NRMSE', 'NRMSE', 'Normalized Root Mean Square Error C
 
 plot_performance_improved('MAE', 'MAE', 'Max Absolute Error Comparison')
 
-plot_performance_improved('HR', 'HR', 'Hit Ratio Comparison')
+plot_performance_improved('HR', 'Percentage', 'Hit Ratio Comparison')
 
 """# Compare By Window"""
 
-def plot_results_by_window_split():
+def plot_results_comparison(name, xlabel, xticks, metric):
   path = f"{TCC_PATH}plots/window_comparison"
   models = [*comparison_data[0]['results']]
   
   for model in models:
-    datapoints = [result['results'][model]['NRMSE'] for result in comparison_data]
+    datapoints = [result['results'][model][metric] for result in comparison_data]
     plt.plot(datapoints) 
 
-  plt.title('Windows Size for Training Comparison')
-  plt.ylabel('NRMSE')
-  plt.xlabel('Window Size')
+  plt.title(name)
+  plt.ylabel(metric)
+  plt.xlabel(xlabel)
+  plt.xticks(np.arange(len(xticks)), xticks)
   plt.legend(models, loc='upper left')
   plt.rcdefaults()
 
   plt.savefig(path + ".png", bbox_inches='tight')
   plt.savefig(path + ".pdf")
 
+  plt.show()
   plt.close('all')
 
-def compare_results_by_window_split():
+def compare_results_by_window_split(values):
   global SET_SPLIT
   global VERBOSITY
   global result_data
   global comparison_data
+  
+  aux = SET_SPLIT
   
   VERBOSITY = False
   
@@ -1071,39 +1136,94 @@ def compare_results_by_window_split():
       'results': {},
       'meta': {}
   }
+  
   comparison_data = []
 
-  for split in splitting_windows:
-    SET_SPLIT = split
+  for value in values:
+    SET_SPLIT = value
 
-    random_guess_univariate(Y_uni)
-    moving_average(X_uni, Y_uni)
-    naive(X_uni, Y_uni)
-    random_forest(X_uni, Y_uni, False)
-    random_forest(X_multi, Y_multi, True)
-    support_vector_machine(X_uni, Y_uni, False)
-    support_vector_machine(X_multi, Y_multi, True)
-    rnn(X_uni, Y_uni, False)
-    rnn(X_multi, Y_multi, True)
-    lstm(X_uni, Y_uni, False)
-    lstm(X_multi, Y_multi, True)
-    gru(X_uni, Y_uni, False)
-    gru(X_multi, Y_multi, True)
+    #random_guess_univariate(data)
+    moving_average(data)
+    naive(data)
+    logistic_regression(data, False)
+    logistic_regression(data, True)
+    random_forest(data, False)
+    random_forest(data, True)
+    support_vector_machine(data, False)
+    support_vector_machine(data, True)
+    rnn(data, False)
+    rnn(data, True)
+    lstm(data, False)
+    lstm(data, True)
+    gru(data, False)
+    gru(data, True)
     
-    print([*result_data['results']])
+    comparison_data.append(copy.deepcopy(result_data))
 
+  store_comparisons('_window_split_comparison')
+  
+  SET_SPLIT = aux
+
+def compare_results_by_flow_interval(values):
+  global FLOW_INTERVAL
+  global VERBOSITY
+  global result_data
+  global comparison_data
+  
+  aux = FLOW_INTERVAL
+  
+  VERBOSITY = False
+  
+  result_data = {
+      'results': {},
+      'meta': {}
+  }
+  
+  comparison_data = []
+
+  for value in values:
+    FLOW_INTERVAL = value
+
+    #random_guess_univariate(data)
+    moving_average(data)
+    naive(data)
+    logistic_regression(data, False)
+    logistic_regression(data, True)
+    random_forest(data, False)
+    random_forest(data, True)
+    support_vector_machine(data, False)
+    support_vector_machine(data, True)
+    rnn(data, False)
+    rnn(data, True)
+    lstm(data, False)
+    lstm(data, True)
+    gru(data, False)
+    gru(data, True)
+    
     comparison_data.append(copy.deepcopy(result_data))
 
 
-  store_comparisons()
-
-#splitting_windows = [0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90]
+  store_comparisons('_flow_interval_comparison')
   
-splitting_windows = [0.20, 0.30, 0.40, 0.50, 0.60, 0.70]
+  FLOW_INTERVAL = aux
 
-#compare_results_by_window_split()
+window_splits = [0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85]
+compare_results_by_window_split(window_splits)
 
-#plot_results_by_window_split()
+plot_results_comparison('Windows Size for Training Comparison', 'Window Size', window_splits, 'NRMSE')
+
+plot_results_comparison('Windows Size for Training Comparison', 'Window Size', window_splits, 'RMSE')
+
+plot_results_comparison('Windows Size for Training Comparison', 'Window Size', window_splits, 'MAE')
+
+flow_intervals = [60, 150, 300, 450]
+compare_results_by_flow_interval(flow_intervals)
+
+plot_results_comparison('Flow Interval for Training Comparison', 'Flow Size in Seconds', flow_intervals, 'NRMSE')
+
+plot_results_comparison('Flow Interval for Training Comparison', 'Flow Size in Seconds', flow_intervals, 'RMSE')
+
+plot_results_comparison('Flow Interval for Training Comparison', 'Flow Size in Seconds', flow_intervals, 'MAE')
 
 """# Observations:
 
