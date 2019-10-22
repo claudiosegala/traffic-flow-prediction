@@ -15,7 +15,7 @@ Os grandes centros urbanos não estão conseguindo acompanhar a constante expans
 
 Neste contexto, surgiram várias pesquisas na área de mobilidade urbana e transporte que visam contornar estes problemas. Dentre essas pesquisas, um dos meios encontrados de amenizar o congestionamento é tentar prever quando ele irá acontecer. Uma vez que os cidadãos saibam que um engarrafamento irá ocorrer, eles podem se planejar melhor e tomar rotas alternativas, distribuindo de maneira mais eficiente os carros na malha viária. Já organizações governamentais poderiam usar os dados para ter uma noção em tempo real de como está o fluxo pela cidade, podendo agir redirecionando vias e reprogramando semáforos. Além disso, a previsão do tráfego possibilitaria a implementação ou a evolução de sistemas mais complexos, como um sistemas de controle semafóricos dinâmicos ou sistema de auxílio de decisão para controle da malha viária.
 
-A literatura está repleta de artigos de predição de fluxo utilizando aprendizagem de máquina. Porém, a maioria desses artigos coletam dados e fazem suas análises em cima de rodovias expressas. Nessas não há intersecções, ou barreiras semafóricas. Nosso estudo tem como desafio realizar a predição de fluxo em cenários que se assemelhem mais a centros urbanos, onde as vias públicas possuem cruzamentos e radares de velocidade que impactam de maneira significativa no comportamento do fluxo de veículos.
+A literatura está repleta de artigos que tentam prever a quantidade de veículos que iram passam em um intervalo de tempo (predição de fluxo) utilizando aprendizagem de máquina. Porém, a maioria desses artigos coletam dados e fazem suas análises em cima de rodovias expressas. Nessas não há intersecções, ou barreiras semafóricas. Nosso estudo tem como desafio realizar a predição de fluxo em cenários que se assemelhem mais a centros urbanos, onde as vias públicas possuem cruzamentos e radares de velocidade que impactam de maneira significativa no comportamento do fluxo de veículos.
 
 \section{Objetivo}
 
@@ -42,7 +42,7 @@ Para se fazer a previsão serão desconsiderados certos cenários em que a captu
     \item Carros transitando em velocidades ilegais na falta de presença de fiscalização eletrônica.
 \end{itemize}
 
-Além disso, o modelo será treinado com dados de uma só cidade, recolhidos de sensores instalados em locais específicos. Logo, os resultados podem não ser os mesmos quando a metodologia for utilizada em outras localidades. O modo como os cidadãos dirigem e como as vias são feitas também vão influenciar. Para a previsão perfeita seriam necessárias muitas variáveis, as quais não estão disponíveis.
+Além disso, o modelo será treinado com dados de uma só cidade, recolhidos de sensores instalados em locais específicos e por apenas 3 meses. Logo, os resultados podem não ser os mesmos quando a metodologia for utilizada em outras localidades ou outros meses. O modo como os cidadãos dirigem e como as vias são feitas também vão influenciar. Para a previsão perfeita seriam necessárias muitas variáveis, as quais não estão disponíveis.
 
 \section{Metodologia de Comparação}
 
