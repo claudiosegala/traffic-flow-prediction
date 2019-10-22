@@ -1,11 +1,10 @@
 % TODO: adicionar explicação de como vai funcionar o capitulo, quais artigos võa ser detalhados e um ultra resumo do que eles consistem.
 
+\label{chap:trabalhos_relacionados}
+
 O objetivo deste capítulo é apresentar trabalhos relacionados à predição de tráfego urbano, mostrar suas contribuições e contextualizar nosso trabalho atual.
 
-\section{Trabalhos Relacionados}
-\label{sec:trabalhos_relacionados}
-
-Em  \cite{Zainab_2018} é apresentado um trabalho de predição de tráfego que tem como objetivo antecipar congestionamentos em rodovias de Estocolmo, Suécia, utilizando aprendizagem profunda. No caso o autor propõe uma variação do \textit{\acrshort{LSTM}}, mais precisamente \textit{\acrfull{SLSTM}}. Para tal, são utilizados dados coletados por sensores do sistema de controle da autoestrada da cidade. Tais sensores monitoram as principais vias da metrópole e coletam informações como fluxo e velocidade de cada faixa a cada 1 minuto. O trabalho propõe três modelos de predição:
+Em  \cite{Zainab_2018} é apresentado um trabalho de predição de tráfego (calculando a densidade da via em vez do fluxo, como é feito usualmente) que tem como objetivo antecipar congestionamentos em rodovias de Estocolmo, Suécia, utilizando aprendizagem profunda. No caso, o autor propõe uma variação do \textit{\acrshort{LSTM}}, mais precisamente \textit{\acrfull{SLSTM}}. Para tal, são utilizados dados coletados por sensores do sistema de controle da autoestrada da cidade. Tais sensores monitoram as principais vias da metrópole e coletam informações como fluxo e velocidade de cada faixa a cada 1 minuto. O trabalho propõe três modelos de predição de densidade da via:
  
 \begin{itemize}
     \item O (1-1) Modelo utilizando apenas um sensor que faz a predição apenas do local daquele sensor
@@ -13,7 +12,13 @@ Em  \cite{Zainab_2018} é apresentado um trabalho de predição de tráfego que 
     \item O (m-n) Modelo que utiliza os m sensores mais significantes de uma área que contém um total de n sensores e que faz a predição para todos os n locais.
 \end{itemize}
 
-Dos três modelos apresentados, o mais eficiente foi o m-n, pois faz a previsão de tráfego em vários pontos diferentes da via e tem um custo computacional menor que o n-n, além disso, utiliza menos sensores, o que diminui os dados de entrada da rede neural. Esse Modelo foi comparado com outros usando as métricas \textit{\acrshort{RMSE}} e \textitit{\acrshort{MAE}}. O resultado dessas métricas é comparado com a acurácia de outros modelos como \textit{\acrfull{RNN}} e \textit{\acrfull{FFN}}. O erro calculado foi menor na metodologia proposta pelo autor em todos os casos, comprovando a eficácia do método (SLSTM).
+\begin{equation}\label{eq:solve}
+k = q / v
+\end{equation}
+Fórmula do cálculo da densidade utilizada pelo trabalho ~\ref{eq:solve}
+
+
+Dos três modelos apresentados, o mais eficiente foi o m-n, pois faz a previsão de tráfego em vários pontos diferentes da via e tem um custo computacional menor que o n-n, além disso, utiliza menos sensores, o que diminui os dados de entrada da rede neural. Esse Modelo foi comparado com outros usando as métricas \textit{\acrshort{RMSE}} e \textitit{\acrshort{MAE}}. O resultado dessas métricas é comparado com a acurácia de outros modelos como \textit{\acrfull{RNN}} e \textit{\acrfull{FFN}}. O erro calculado foi menor na metodologia proposta pelo autor em todos os casos, comprovando a eficácia do modelo apresentado (SLSTM).
 
 No artigo \cite{lv_6894591} foi proposto um trabalho semelhante de comparação de modelos de predição, mas utilizando \textit{\acrfull{SAE}}. O modelo de predição proposto pelo artigo é aplicado aos dados coletados por 15,000 sensores espalhados pelas estradas da Califórnia. As predições são divididas em intervalos de 15, 30, 45 e 60 minutos. Mais uma vez, a acurácia dos testes foi medida utilizando  \acrshort{MAE}, \acrshort{MRE} e \acrshort{RMSE} para cada intervalo de tempo e comparada com a acurácia de predição de outros métodos, como \acrfull{BPNN}, \acrfull{RW}, \acrfull{SVM} e \acrfull{RBFNN}. Novamente, o método apresentado pelo artigo foi o mais eficiente.      
 
