@@ -58,15 +58,17 @@ Na célula de memória citada anteriormente, existem estruturas que são respons
 
 % TODO: explicar o motivo da random forest não over-fitar tanto
 
-\textit{\acrshort{RF}} é um método de aprendizagem de máquina muito utilizado para classificação e regressão. O método é utiliza do \textit{Bagging} (\textit{\textbf{B}ootstrap \textbf{Agg}regation}) coma árvores de decisão, para evitar sobre-ajuste. Para isso, ele modifica o algoritmo de criação das árvores de decisão limitando a quantidade de características (\textit{features}) do conjunto de dados que vai ser utilizado. É comum implementações limitarem a quantidade de características (\textit{q}) para $ \sqrt{q} $ ou $ \frac{q}{3} $.
+% TODO: checar se a tradução está correta (frase pega do abstract do artigo)
+Criado por Breiman em \textit{Random Forest} \cite{Breiman:2001:RF:570181.570182}, \textit{\acrshort{RF}} é um método de aprendizagem de máquina utilizado tanto para classificação quanto para regressão. Segundo o autor, o método é uma combinação de árvores de decisão onde cada árvore de decisão depende de uma amostra aleatória independente do conjunto de dados e que todas as árvores de decisão tenham a mesma distribuição.
+
+O método é utiliza do \textit{Bagging} (\textit{\textbf{B}ootstrap \textbf{Agg}regation}) coma árvores de decisão, para evitar sobre-ajuste. Para isso, ele modifica o algoritmo de criação das árvores de decisão limitando a quantidade de características (\textit{features}) do conjunto de dados que vai ser utilizado. É comum implementações limitarem a quantidade de características (\textit{q}) para $ \sqrt{q} $ ou $ \frac{q}{3} $.
 
 \subsection{Bagging}
 
+Criado também por Breiman em \textit{Bagging Predictors} \cite{}
 
 
 \subsection{Árvores de Decisão}
-
-Segundo \citet{}
 
  Árvores de decisão sobre-ajustam muito fácil no conjunto de dados por ser muito flexível e poderoso, memorizando parte do conjunto de dados. Podendo, por exemplo, criar uma árvore que cada folha corresponde a somente um elemento.
 
