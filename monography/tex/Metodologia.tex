@@ -12,17 +12,15 @@ Este capítulo tem como objetivo explicar como foram realizadas as comparações
 
 \section{Modelos}
 
-% TODO: checar novamente a referência
-
-
-
-Visto que estamos prevendo o fluxo, cujo o domínio é contínuo, iremos utilizar de modelos regressores para encontrar um padrão nos dados. Ou seja, iremos utilizar modelos guiados por dados. Segundo \cite{parametric}, estes modelos podem ser classificados em dois grupos: paramétricos e não-paramétricos. Modelos paramétricos usam um número fixo de parâmetros para tentar descrever os dados, assumindo assim que os dados seguem uma distribuição específica. Um exemplo de modelo paramétrico seria a regressão linear, que utiliza uma equação com parâmetros fixos para traçar uma reta que melhor representa a distribuição dos dados. Já modelos não-paramétricos possuem um número variável de parâmetros que dependem dos dados utilizados. Assim, não assumindo uma distribuição específica nos dados.
+Visto que estamos prevendo o fluxo, cujo o domínio é contínuo, iremos utilizar de modelos de regressão para encontrar um padrão nos dados. Ou seja, iremos utilizar modelos guiados por dados. Segundo \cite{parametric}, estes modelos podem ser classificados em dois grupos: paramétricos e não-paramétricos. Modelos paramétricos usam um número fixo de parâmetros para tentar descrever os dados, assumindo assim que os dados seguem uma distribuição específica. Um exemplo de modelo paramétrico seria a regressão linear, que utiliza uma equação com parâmetros fixos para traçar uma reta que melhor representa a distribuição dos dados. Já modelos não-paramétricos possuem um número variável de parâmetros que dependem dos dados utilizados. Assim, não assumindo uma distribuição específica nos dados.
 
 % TODO: Adicionar referencia para mostrar que o ARIMA é um dos mais utilizados
-Dos modelos paramétricos, o mais utilizado na literatura para previsão de fluxo é o \textit{Autoregressive Integrated Average Mean} (ARIMA) e suas variações. Dos modelos não-paramétricos, se destacam o \textit{Long Short Term Memory Neural Networks} (LSTM), \textit{Gated Recurrent Unit Neural Network} (GRU), \textit{Support Vector Machine} (SVM) e \textit{Random Forest} (RF). 
+Dos modelos paramétricos, o mais utilizado na literatura para previsão de fluxo é o \textit{Autoregressive Integrated Average Mean} (ARIMA) e suas variações. Dos modelos não-paramétricos, se destacam o \textit{\acrfull{LSTM}} e o \textit{\acrfull{GRU}}.
 
-% TODO: Justificar a não inclusão de modelos paramétricos.
-Todos os modelos não-paramétricos citados serão implementados para os nossos testes. Como LSTM e GRU são evoluções do \textit{Recurrent Neural Network} (RNN), este também será incluído na comparação. 
+% TODO: modify
+\textit{\acrfull{SVM}} e \textit{\acrfull{RF}} embora considerados não-paramêtricos e não se destacam muito, eles são difernetes
+
+Todos os modelos não-paramétricos citados serão implementados para os nossos testes. Testamos dois modelos paramêtricos, sendo eles \textit{\acrfull{ARIMA}} e \textit{\acrfull{LR}}. Porém ambos não tiveram resultados muito bons e devido há limitações de poder computacional decidimos removê-los das análises.
 
 \subsection{Modelos de Comparação}
 
@@ -56,7 +54,7 @@ Se utilizássemos a coluna \texttt{Data} sem tratá-la, ficaria a cargo dos mode
 
 \subsection{Acumulação dos registros}
 
-O tráfego pode ser visto de várias formas diferentes. Pode ser visto como a quantidade de veículos que passaram por um ponto em um determinado intervalo de tempo, ou seja, o fluxo. Também pode ser visto como a média de velocidade dos veículos em uma certo espaço, ou seja, a densidade. Ou como uma média de velocidade em um intervalo de tempo, a velocidade média.
+O tráfego pode ser interpretado de várias formas diferentes. Pode ser visto como a quantidade de veículos que passaram por um ponto em um determinado intervalo de tempo, ou seja, o fluxo. Também pode ser visto como a média de velocidade dos veículos em uma certo espaço, ou seja, a densidade. Ou como uma média de velocidade em um intervalo de tempo, a velocidade média.
 
 % TODO: conferir isso
 Como grande parte da literatura acerca da previsão de fluxo de veículos utiliza o fluxo para fazer o treinamento de suas redes neurais, também optamos por utilizá-lo. Além disso, como o domínio dos valores do nosso fluxo é menor que o domínio dos valores da densidade e da velocidade média, nossos modelos tendem a ter uma maior facilidade para realizar a previsão.
