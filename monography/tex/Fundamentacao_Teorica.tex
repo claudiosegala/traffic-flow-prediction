@@ -1,5 +1,5 @@
 % TODO: Para cada modelo colocar como que é a entrada na forma de uma expressão matemática
-Este capítulo tem como objetivo apresentar uma base teórica mínima de todos os conceitos necessários para o entendimento das demais seções deste trabalho.
+Este capítulo tem como objetivo apresentar uma base teórica mínima de todos os conceitos necessários para o entendimento das demais seções deste trabalho. Primeiramente, serão explicados os conceitos básicos de uma rede neural artificial e suas diferenças em relação a uma rede neural recorrente. Subsequentemente, serão explicados os conceitos principais de cada modelo utilizado neste trabalho.
 \section{Tráfego}
 
 
@@ -56,7 +56,13 @@ Na célula de memória citada anteriormente, existem estruturas que são respons
 
 \section{\acrfull{GRU}}
 
+\acrofull{GRU} é um tipo de \acrofull{RNN} semelhante ao \acrofull{LSTM}, porém, mais simples. Sua arquitetura consiste em:
 
+\begin{itemize}
+    \item 
+    \item
+    \item
+\end{itemize}
 
 \section{Árvores de Decisão}
 
@@ -97,8 +103,55 @@ Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizage
 
 \footnotetext{https://dsc-spidal.github.io/harp/img/4-5-1.png}
 
+% RESOURCE: to learn better how random forest work (https://stackabuse.com/random-forest-algorithm-with-python-and-scikit-learn/)
 
 \section{\acrfull{SVM}}
 
-% RESOURCE: to learn better how random forest work (https://stackabuse.com/random-forest-algorithm-with-python-and-scikit-learn/)
+\textit{\acrshort{SVM}} foi criado originalmente por Vapnik nos anos 60 e foi evoluindo até se tornar o que é hoje, segundo Smola et. al. \cite{Smola03atutorial}. A ideia básica por trás do método pode ser usada tanto para classificação quanto para regressão. 
+
+No caso da regressão, tenta-se criar uma função  de forma que se \(y(x)\) é a função que perfeitamente descreve o conjunto de dados e \(\epsilon\) seja a dimensão do erro, o ideal seria \(\abs{y(x) - f(x)} \leq \epsilon \)
+
+Além disso, é SVM possui um truque chamado "kernel trick", esse truque é utilizado para mudar a dimensão do pontos de forma a representar o dataset em outra dimensão. Permitindo trabalhar melhor
+
+Além disso, SVM possuem "kernels", isto é, funções que mudam a dimensão da entrada. 
+
+Funções kernel são responsáveis por mapear entradas em uma dimensão para outras. Podendo essa outra ser uma dimensão superior a entrada. Isso é útil caso o conjunto de dados esteja uma dimensão que é difícil criar uma função resolva a equação.
+
+O kernel trick é a capacidade de fazer as transformações das entradas de forma mais eficiente.
+
+Dependendo do kernel, pode levar a overfitting
+
+Variável C indica quanto os erros penalizam. Se for baixo, erros não serão mt penalizados e se for alto os erros serão mt penalizados
+
+Variável Gamma é uma variável do kernel que ajuda a controlar o bias variance tradeoff. Valores baixos de Gamma podem resultar em
+
+Variável Gamma diz quanto de influência os suport vector tem uma alta influência na classificação de um próximo elemento de uma forma inversamente proporcional. Quanto maior o valor, menor a influência do support vector, quanto menor o valor, maior o influenciaml. Valores baixos pode levar a um bias alto e variância baixa, prono a . Já valores altos podem levar a um boas baixo e variância alta, prono a overfitting.
+
+Gamma é inversamente proporcional a bias e diretamente proporcional a variaca
+
+Nem todo kernel tem a variável Gamma, na implementação utilizada no trabalho somente os kernels rbf, poly e sigmoid 
+Reference: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html
+
+
+
+
+Existem várias funções kernel como linear, não linear, radial basis function, polinomial,, entre outros
+
++ Vou precisar falar do boas variavnce tradeoff para explicar Gamma
+
+% TODO: explicar como ele é lerdo para tamanhos mt grandes já que ele tende a ser cúbico
+% TODO: parece que ele pode overfitar com um grande número de features
+% TODO: explicar um pouco como funciona o Kernel
+% TODO: falar sobre como funciona o parâmetro C
+% TODO: falar sobre como funciona o parâmetro Gamma
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=1.0]{monography/img/svr_example.png}
+    \label{figure:rf}
+    \caption{Representação do funcionamento de uma Árvore de Decisão\footnotemark}
+\end{figure}
+
+\footnotetext{https://www.researchgate.net/figure/Schematic-of-the-one-dimensional-support-vector-regression-SVR-model-Only-the-points_fig5_320916953}
+
 
