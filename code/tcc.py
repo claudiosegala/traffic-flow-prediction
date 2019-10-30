@@ -49,6 +49,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 from keras.models import Sequential
 from keras.layers import Dense, Activation
+from keras.wrappers.scikit_learn import KerasClassifier
 
 """# Configurations"""
 
@@ -647,6 +648,41 @@ def naive (data):
 
 from sklearn.linear_model import LogisticRegression
 
+def logistic_regression_grid(data, isMulti):		
+  global result_data		
+      
+  X, Y = generate_dataset(data, isMulti, FLOW_INTERVAL, N_STEPS, N_FUTURE, NORMALIZE, VERBOSITY)		
+  X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])		
+        
+  cv=[(slice(None), slice(None))] # to ignore the cross-validation		
+  param_grid = {		
+    "C": np.logspace(-3,3,7), 		
+    "penalty": ["l1","l2"]		
+  }		
+      
+  model = LogisticRegression()		
+      
+  gs = skl.model_selection.GridSearchCV(estimator=model, param_grid=param_grid, scoring='neg_mean_squared_error', cv=cv, n_jobs=-1, verbose=2)		
+      
+  i, j, k = 0, int(len(X) * (1 - TEST_SPLIT)), len(X)		
+    
+  gs.fit(X[i:j], Y[i:j])		
+  print(gs.best_params_)		
+      
+      
+  best = gs.best_estimator_		
+  predictions = best.predict(X[j:k])                         		
+          
+  mae = sklm.mean_absolute_error(Y[j:k], predictions)		
+  rmse = np.sqrt(sklm.mean_squared_error(Y[j:k], predictions))		
+  nrmse = rmse / np.std(Y[j:k])		
+  hr = evaluate_precision_hit_ratio(Y[j:k], predictions)		
+      
+  print(f"MAE = {mae}")		
+  print(f"RMSE = {rmse}")		
+  print(f"NRMSE = {nrmse}")		
+  print(f"HR = {hr}")
+
 def logistic_regression(data, isMulti):
   global result_data
   
@@ -687,17 +723,15 @@ def random_forest_grid(data, isMulti):
   
   X, Y = generate_dataset(data, isMulti, FLOW_INTERVAL, N_STEPS, N_FUTURE, NORMALIZE, VERBOSITY)
   X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])
-  
-  name = "RF Multivariate" if isMulti else "RF Univariate"
-  
+    
   cv=[(slice(None), slice(None))] # to ignore the cross-validation
   param_grid = {
     'bootstrap': [True, False],
     'max_depth': [30, 40, 50, 60, 70, None],
-    'max_features': [1, 3, 5, 7, 9],
+    'max_features': [7, 9, 11, 13],
 #     'min_samples_leaf': [5, 10, 15],
 #     'min_samples_split': [5, 10, 15],
-    'n_estimators': [100, 125, 150, 175, 200, 225]
+    'n_estimators': [75, 100, 125, 150, 175]
   }
   
   model = skl.ensemble.RandomForestRegressor(random_state=0)
@@ -759,9 +793,7 @@ def support_vector_machine_grid(data, isMulti):
   
   X, Y = generate_dataset(data, isMulti, FLOW_INTERVAL, N_STEPS, N_FUTURE, NORMALIZE, VERBOSITY)
   X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])
-  
-  name = "SVM Multivariate" if isMulti else "SVM Univariate"
-  
+    
   cv=[(slice(None), slice(None))]
   param_grid = {
     'C': [1, 25, 50, 75, 100],
@@ -818,19 +850,59 @@ def support_vector_machine(data, isMulti):
   if VERBOSITY:
     plot_prediction(expected, observed, name)
 
-"""## RNN"""
+"""## RNN
+
+The optimzation was based on [How to Grid Search Hyperparameters for Deep Learning Models in Python With Keras](https://machinelearningmastery.com/grid-search-hyperparameters-deep-learning-models-python-keras/).
+"""
 
 from keras.layers import SimpleRNN
 
 def create_rnn(input_shape):
-  model = Sequential()
-  
-  model.add(SimpleRNN(50, activation='relu', input_shape=input_shape))
-  model.add(Dense(1, activation='sigmoid' if NORMALIZE else 'relu'))
-  
-  model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])
-  
-  return model
+  def create(optimizer='adam'):
+    model = Sequential()		
+
+    model.add(SimpleRNN(50, activation='relu', input_shape=input_shape))		
+    model.add(Dense(1, activation='sigmoid' if NORMALIZE else 'relu'))		
+
+    model.compile(optimizer=optimizer, loss='mse', metrics = ["accuracy"])		
+
+    return model		
+
+  return create
+
+def rnn_grid(data, isMulti):		
+  global result_data		
+
+  X, Y = generate_dataset(data, isMulti, FLOW_INTERVAL, N_STEPS, N_FUTURE, NORMALIZE, VERBOSITY)
+
+  cv=[(slice(None), slice(None))]		
+  param_grid = {		
+    'optimizer': ['Adam', 'Adamax'],		
+    'batch_size': [32, 64],		
+    'epochs': [15, 20]		
+  }		
+
+  model = KerasClassifier(build_fn=create_rnn((X.shape[1], X.shape[2])), verbose=0)
+
+  gs = skl.model_selection.GridSearchCV(estimator=model, param_grid=param_grid, scoring='neg_mean_squared_error', cv=cv, n_jobs=-1, verbose=2)		
+
+  i, j, k = 0, int(len(X) * (1 - TEST_SPLIT)), len(X)		
+
+  gs.fit(X[i:j], Y[i:j])		
+  print(gs.best_params_)		
+
+  best = gs.best_estimator_		
+  predictions = best.predict(X[j:k])                         		
+
+  mae = sklm.mean_absolute_error(Y[j:k], predictions)		
+  rmse = np.sqrt(sklm.mean_squared_error(Y[j:k], predictions))		
+  nrmse = rmse / np.std(Y[j:k])		
+  hr = evaluate_precision_hit_ratio(Y[j:k], predictions)		
+
+  print(f"MAE = {mae}")		
+  print(f"RMSE = {rmse}")		
+  print(f"NRMSE = {nrmse}")		
+  print(f"HR = {hr}")
 
 def rnn (data, isMulti): 
   global result_data
@@ -839,7 +911,7 @@ def rnn (data, isMulti):
   
   name = "RNN Multivariate" if isMulti else "RNN Univariate"
   
-  model = create_rnn((X.shape[1], X.shape[2]))
+  model = create_rnn((X.shape[1], X.shape[2]))()
   
   expected, observed, times = [], [], []
   pointers = split_dataset(len(X), SET_SPLIT, TEST_SPLIT)
@@ -866,14 +938,51 @@ def rnn (data, isMulti):
 from keras.layers import LSTM
 
 def create_lstm(input_shape):
-  model = Sequential()
-  
-  model.add(LSTM(50, activation='relu', input_shape=input_shape))
-  model.add(Dense(1, activation='sigmoid' if NORMALIZE else 'relu'))
-  
-  model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])
-  
-  return model
+  def create(optimizer='adam'):
+    model = Sequential()		
+
+    model.add(LSTM(50, activation='relu', input_shape=input_shape))		
+    model.add(Dense(1, activation='sigmoid' if NORMALIZE else 'relu'))		
+
+    model.compile(optimizer=optimizer, loss='mse', metrics = ["accuracy"])		
+
+    return model		
+
+  return create
+
+def lstm_grid(data, isMulti):		
+  global result_data		
+        
+  X, Y = generate_dataset(data, isMulti, FLOW_INTERVAL, N_STEPS, N_FUTURE, NORMALIZE, VERBOSITY)
+
+  cv=[(slice(None), slice(None))]		
+  param_grid = {		
+    'optimizer': ['Adam', 'Adamax'],		
+    'batch_size': [32, 64],		
+    'epochs': [15, 20]		
+  }		
+      
+  model = KerasClassifier(build_fn=create_lstm((X.shape[1], X.shape[2])), verbose=0)		
+    
+  gs = skl.model_selection.GridSearchCV(estimator=model, param_grid=param_grid, scoring='neg_mean_squared_error', cv=cv, n_jobs=-1, verbose=2)		
+      
+  i, j, k = 0, int(len(X) * (1 - TEST_SPLIT)), len(X)		
+    
+  gs.fit(X[i:j], Y[i:j])		
+  print(gs.best_params_)		
+        
+  best = gs.best_estimator_	
+  predictions = best.predict(X[j:k])                         		
+          
+  mae = sklm.mean_absolute_error(Y[j:k], predictions)		
+  rmse = np.sqrt(sklm.mean_squared_error(Y[j:k], predictions))		
+  nrmse = rmse / np.std(Y[j:k])		
+  hr = evaluate_precision_hit_ratio(Y[j:k], predictions)		
+        
+  print(f"MAE = {mae}")
+  print(f"RMSE = {rmse}")		
+  print(f"NRMSE = {nrmse}")		
+  print(f"HR = {hr}")
 
 def lstm (data, isMulti): 
   global result_data
@@ -882,7 +991,7 @@ def lstm (data, isMulti):
   
   name = "LSTM Multivariate" if isMulti else "LSTM Univariate"
   
-  model = create_lstm((X.shape[1], X.shape[2]))
+  model = create_lstm((X.shape[1], X.shape[2]))()
   
   expected, observed, times = [], [], []
   pointers = split_dataset(len(X), SET_SPLIT, TEST_SPLIT)
@@ -909,14 +1018,51 @@ def lstm (data, isMulti):
 from keras.layers import GRU
 
 def create_gru(input_shape):
-  model = Sequential()
-  
-  model.add(GRU(50, activation='relu', input_shape=input_shape))
-  model.add(Dense(1, activation='sigmoid' if NORMALIZE else 'relu'))
-  
-  model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])
-  
-  return model
+  def create(optimizer='adam'):
+    model = Sequential()		
+
+    model.add(GRU(50, activation='relu', input_shape=input_shape))		
+    model.add(Dense(1, activation='sigmoid' if NORMALIZE else 'relu'))		
+
+    model.compile(optimizer=optimizer, loss='mse', metrics = ["accuracy"])		
+
+    return model		
+    
+  return create
+
+def gru_grid(data, isMulti):		
+  global result_data		
+        
+  X, Y = generate_dataset(data, isMulti, FLOW_INTERVAL, N_STEPS, N_FUTURE, NORMALIZE, VERBOSITY)
+        
+  cv=[(slice(None), slice(None))]		
+  param_grid = {		
+    'optimizer': ['Adam', 'Adamax'],		
+    'batch_size': [32, 64],		
+    'epochs': [15, 20]		
+  }		
+        
+  model = KerasClassifier(build_fn=create_gru((X.shape[1], X.shape[2])), verbose=0)
+    
+  gs = skl.model_selection.GridSearchCV(estimator=model, param_grid=param_grid, scoring='neg_mean_squared_error', cv=cv, n_jobs=-1, verbose=2)		
+      
+  i, j, k = 0, int(len(X) * (1 - TEST_SPLIT)), len(X)		
+    
+  gs.fit(X[i:j], Y[i:j])		
+  print(gs.best_params_)		
+      
+  best = gs.best_estimator_		
+  predictions = best.predict(X[j:k])                         		
+          
+  mae = sklm.mean_absolute_error(Y[j:k], predictions)		
+  rmse = np.sqrt(sklm.mean_squared_error(Y[j:k], predictions))		
+  nrmse = rmse / np.std(Y[j:k])		
+  hr = evaluate_precision_hit_ratio(Y[j:k], predictions)		
+      
+  print(f"MAE = {mae}")		
+  print(f"RMSE = {rmse}")		
+  print(f"NRMSE = {nrmse}")		
+  print(f"HR = {hr}")
 
 def gru (data, isMulti): 
   global result_data
@@ -925,7 +1071,7 @@ def gru (data, isMulti):
   
   name = "GRU Multivariate" if isMulti else "GRU Univariate"
   
-  model = create_gru((X.shape[1], X.shape[2]))
+  model = create_gru((X.shape[1], X.shape[2]))()
 
   expected, observed, times = [], [], []
   pointers = split_dataset(len(X), SET_SPLIT, TEST_SPLIT)
@@ -1387,7 +1533,23 @@ data = clean_data(all_data, VERBOSITY)
 
 random_forest_grid(data, False)
 
+random_forest_grid(data, True)
+
 support_vector_machine_grid(data, False)
+
+support_vector_machine_grid(data, True)
+
+rnn_grid(data, False)
+
+rnn_grid(data, True)
+
+lstm_grid(data, False)
+
+lstm_grid(data, True)
+
+gru_grid(data, False)
+
+gru_grid(data, True)
 
 #random_guess_univariate(data)
 
