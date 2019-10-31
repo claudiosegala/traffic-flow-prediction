@@ -1,36 +1,39 @@
 % TODO: Para cada modelo colocar como que é a entrada na forma de uma expressão matemática
 Este capítulo tem como objetivo apresentar uma base teórica mínima de todos os conceitos necessários para o entendimento das demais seções deste trabalho. Primeiramente, serão explicados os conceitos básicos de uma rede neural artificial e suas diferenças em relação a uma rede neural recorrente. Subsequentemente, serão explicados os conceitos principais de cada modelo utilizado neste trabalho.
-\section{Tráfego}
 
+%\section{Tráfego}
 
-\section{\acrfull{NN} e \acrfull{RNN}}
+\section{Bias Variance Tradeoff}
 
-Redes neurais recorrentes surgiram da necessidade de avaliar os estados passados de uma rede neural para decidir sua saída atual. Redes neurais artificiais comuns, ou do tipo \textit{feedforward} precisam apenas do estímulo atual para gerar sua saída. Para exemplificar, tome como exemplo um problema de classificação, onde, a partir de uma imagem de um cachorro, ou gato, uma rede neural deva ser capaz de dizer corretamente qual animal a imagem representa. Para cada rodada de classificação, a imagem utilizada na rodada passada não importa, pois uma não tem relação direta com a outra. 
+% TODO: mt parecido com wikipedia
+% TODO: explorar mais 
+% TODO: citar algum artigo que prova isso
 
-Porém, existem determinados tipos de atividades que exigem certa correlação entre os dados, como por exemplo, ler um texto, entender o contexto de um filme, avaliar a oscilação de uma bolsa de valores ao longo do tempo. Nesses exemplos, um dado isolado não tem tanto significado quanto o conjunto como um todo, o que exige um conceito de memória. Para simular este efeito de memória, redes neurais recorrentes dispõe de uma arquitetura onde a saída da célula anterior é utilizada como entrada na célula seguinte, juntamente com a entrada nova atual da rede. Abaixo pode ser visto uma fórmula com mais detalhes.
+Bias Variance Tradeoff é uma propridade que se aplica a modelos de aprendizagem de máquina. Esta propriedade se refere ao bias e variance serem indiretamente proporcionais, isto é, quanto maior o bias, menor o varience e vice-versa
+
+\section{\acrfull{RNN}}
+% RESOURCE: to explain recurrent neural networks (http://d2l.ai/chapter_recurrent-neural-networks/index.html)
+
+% TODO: adiconar referência de onde vc tirou essa explicação
+
+% TODO: Falar que sofre de memória curta e outros defeitos
+
+% TODO: veja esse coisa apra explicar melhor LSTM e RNN (https://www.youtube.com/watch?v=6niqTuYFZLQ)
+
+\textit{\acrshort{RNN}} surgiu da incapacidade de \textit{\acrfull{NN}} de levar em consideração resultados anteriores da rede para computar o resultado atual. Redes neurais artificiais comuns, ou do tipo \textit{feedforward} utilizam apenas do seu estado atual para gerar sua saída. Para exemplificar, tome como exemplo um problema de classificação, onde, a partir de uma imagem de um cachorro, ou gato, uma rede neural deva ser capaz de dizer corretamente qual animal a imagem representa. Para cada rodada de classificação, a imagem utilizada na rodada passada não importa, pois uma não tem relação direta com a outra. 
+
+Porém, existem determinados problemas que exigem certa correlação entre os dados, como por exemplo, interpretar um documento, entender o contexto de um filme, ou avaliar a oscilação de uma bolsa de valores ao longo do tempo. Nesse tipo de problema, dados isolados não tem tanto significado quanto o conjunto, o que exige um conceito de memória. Para simular este efeito de memória, \textit{\acrshort{RNN}} dispõe de uma arquitetura onde a saída da célula anterior é utilizada como entrada na célula seguinte, juntamente com a entrada nova atual da rede. Na Figura \ref{figure:rnn} é exemplificada a arquitetura, onde o último resultado utiliza como entrada valores resultantes das últimas execuções.
 
 \begin{figure}[htb]
     \centering
     \includegraphics[scale=0.4]{rnnExample.png}
-    \label{figure:eixo}
+    \label{figure:rnn}
     \caption[Representação simples do conceito de um RNN]{Representação simples do conceito de uma RNN \footnotemark}
 \end{figure}
 
-\subsection{Funções de ativação}
-
-% RESOURCE: to explain recurrent neural networks (http://d2l.ai/chapter_recurrent-neural-networks/index.html)
-
-% TODO: Falar que nem todos os dados são independentes, então a RNN serve para lembrar de alguns dados que já passaram pelo modelo para melhorar a performance.
-
-% TODO: Falar que é melhor para predição aparentemente (pode ser algo a ver com o tipo de dados que temos)
-
-% TODO: Falar que sofre de memória curta e outros defeitos
-
-% TODO?: Falar que basicamente é um modelo feito para lidar com dados dependentes
-
 \section{\acrfull{LSTM}}
 
-\acrshort{LSTM} é utilizado para predição de tráfego e de informações que derivam de dados sequenciais/séries temporais, sendo possível encontrar diversos trabalhos na literatura que mostram sua eficiência quando comparado a outros métodos. Como descrito em \cite{Zainab_2018} e em \cite{Xiaolei_2015}, \acrshort{LSTM} é um tipo de \acrshort{RNN} que utiliza de estados anteriores e do estado atual da rede para gerar sua saída. Ao utilizar dos estados anteriores, a \acrshort{RNN} acaba por simular uma memória, melhorando sua capacidade de aprender. 
+\acrshort{LSTM} é utilizada para predição de informações que derivam de dados sequenciais e séries temporais, sendo possível encontrar diversos trabalhos na literatura que mostram sua eficiência quando comparado a outros métodos. Como descrito em \cite{Zainab_2018} e em \cite{Xiaolei_2015}, \acrshort{LSTM} é um tipo de \acrshort{RNN} que utiliza de estados anteriores e do estado atual da rede para gerar sua saída. Ao utilizar dos estados anteriores, a \acrshort{RNN} acaba por simular uma memória, melhorando sua capacidade de aprender. 
 
 \begin{figure}[htb]
     \centering
@@ -54,9 +57,11 @@ Na célula de memória citada anteriormente, existem estruturas que são respons
 
 % TODO: Falar que podemos responder a quantidade de camadas da LSTM com o problema que RNN tem com back-propagation que o gradiente começa a diminuir exponencialmente. Mas tem que dar uma conferida melhor.
 
+\subsection{Funções de ativação}
+
 \section{\acrfull{GRU}}
 
-\acrofull{GRU} é um tipo de \acrofull{RNN} semelhante ao \acrofull{LSTM}, porém, mais simples. Sua arquitetura consiste em:
+\textit{\acrshort{GRU}} é um tipo de \textit{\acrshort{RNN}} semelhante ao \textit{\acrshort{LSTM}}, porém, mais simples. Sua arquitetura consiste em:
 
 \begin{itemize}
     \item 
@@ -64,35 +69,17 @@ Na célula de memória citada anteriormente, existem estruturas que são respons
     \item
 \end{itemize}
 
-\section{Árvores de Decisão}
-
-% TODO: talk abiut overfitting
-
-Árvores de decisão sobre-ajustam muito fácil no conjunto de dados por ser muito flexível e poderoso, memorizando parte do conjunto de dados. Podendo, por exemplo, criar uma árvore que cada folha corresponde a somente um elemento.
-
-% https://towardsdatascience.com/an-implementation-and-explanation-of-the-random-forest-in-python-77bf308a9b76
- Algoritmos podem ser flexíveis e correr risco de sobre-ajuste ou ser inflexíveis e não conseguir se ajustar nos dados. Modelos flexiveis demais podem  meomorizar os dados e modelos inflexiveis presupõe informações sobre os dados.
- Árvore de decisão é flexível se não for limitar o tamanho da árvore e inflexível se vc limitar demais o tamanho da árvore. Isso é chamado de bias-variance tradeof.
- 
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=1.5]{monography/img/decision_tree.png}
-    \label{figure:rf}
-    \caption{Representação do funcionamento de uma Árvore de Decisão\footnotemark}
-\end{figure}
-
-\footnotetext{Corte de uma imagem de uma \textit{\acrshort{RF}} https://dsc-spidal.github.io/harp/img/4-5-1.png}
-
 \section{\acrfull{RF}}
 
 % TODO: checar se a tradução está correta (frase pega do abstract do artigo)
-Criado por Leo Breiman em \textit{Random Forest} \cite{Breiman:2001:RF:570181.570182}, \textit{\acrshort{RF}} é um método de aprendizagem de máquina utilizado tanto para classificação quanto para regressão. Segundo o autor, o método é uma combinação de árvores de decisão onde cada árvore de decisão depende de uma amostra aleatória independente do conjunto de dados e que todas as árvores de decisão tenham a mesma distribuição. 
+Criado por Leo Breiman em \textit{Random Forest} \cite{Breiman:2001:RF:570181.570182}, \textit{\acrshort{RF}} é um método de aprendizagem de máquina utilizado tanto para classificação quanto para regressão. Segundo o autor, o método é uma combinação de árvores de decisões onde cada árvore de decisão depende de uma amostra aleatória, sendo esta amostra independente do conjunto de dados. Além disso, todas as árvores devem possuir a mesma distribuição. 
 
-Mais especificamente, a construção das árvores de decisão são feitas utilizando do método \textit{Bagging} (\textit{\textbf{B}ootstrap \textbf{Agg}regation}) criado por Leo Breiman em \textit{Bagging Predictors} \cite{Breiman:1996:BP:231986.231989}. Este método gera várias versões de um mesmo modelo e agrega os resultados dos mesmos. As versões do modelo utilizam réplicas do conjunto de dados com a mesma distribuição e com apenas uma parte do mesmo selecionada de forma aleatória.
+A construção das árvores de decisão é feita utilizando o método \textit{Bagging} (\textit{\textbf{B}ootstrap \textbf{Agg}regation}), criado por Leo Breiman em \textit{Bagging Predictors} \cite{Breiman:1996:BP:231986.231989}. Este método gera várias versões de um mesmo modelo e agrega os resultados dos mesmos. As versões do modelo utilizam amostras do conjunto de dados selecionadas aleatoriamente, mas com a mesma distribuição.
 
-Porém, diferente de \textit{Bagging}, \textit{\acrshort{RF}} utiliza de mais uma técnica para diminuir o sobre-ajuste (\textit{overfitting}). Há uma modificação no algoritmo de criação das árvores de decisão limitando a quantidade de características (\textit{features}) do conjunto de dados que vai ser utilizado. Para selecionar a quantidade ideal de características o autor sugere utilizar de estimativas \textit{out-of-bag}, mas é comum implementações limitarem a quantidade de características (\textit{q}) para $ \sqrt{q} $ ou $ \frac{q}{3} $.
+% TODO: referencia apra algo que falar sobre a quantidade fixa de caracteristicas
+Porém, diferente de \textit{Bagging}, \textit{\acrshort{RF}} utiliza mais uma técnica para diminuir o sobre-ajuste (\textit{overfitting}). Há uma modificação no algoritmo de criação das árvores de decisão limitando a quantidade de características (\textit{features}) do conjunto de dados que vai ser utilizada. Para selecionar a quantidade ideal de características o autor sugere utilizar de estimativas \textit{out-of-bag}, explicadas no artigo, mas é comum implementações limitarem a quantidade de características (\textit{q}) para $ \sqrt{q} $ ou $ \frac{q}{3} $.
 
-Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizagem de máquina, este pode ser classificado como um Comitê de Máquinas (\textit{Ensemble Learning}). A forma como as respostas de cada uma das máquinas são combinadas depende do problema, para classificação pode ser usado uma votação (voto da maioria) e para um problema de regressão pode ser usado uma média dos valores, assim como mostrado na Figura \ref{figure:rf}.
+Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizagem de máquina, ela pode ser classificada como um Comitê de Máquinas (\textit{Ensemble Learning}). A forma como as respostas de cada uma das máquinas são combinadas depende do problema. Para classificação pode ser usado uma votação (voto da maioria) e para um problema de regressão pode ser usado uma média dos valores, assim como mostrado na Figura \ref{figure:rf}.
 
 \begin{figure}[h]
     \centering
@@ -104,6 +91,25 @@ Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizage
 \footnotetext{https://dsc-spidal.github.io/harp/img/4-5-1.png}
 
 % RESOURCE: to learn better how random forest work (https://stackabuse.com/random-forest-algorithm-with-python-and-scikit-learn/)
+
+\section{Árvores de Decisão}
+
+% TODO: talk abiut overfitting
+
+Árvores de decisão sobre-ajustam muito fácil no conjunto de dados por ser muito flexível e poderoso, memorizando parte do conjunto de dados. Podendo, por exemplo, criar uma árvore que cada folha corresponde a somente um elemento.
+
+% https://towardsdatascience.com/an-implementation-and-explanation-of-the-random-forest-in-python-77bf308a9b76
+ Algoritmos podem ser flexíveis e correr risco de sobre-ajuste ou ser inflexíveis e não conseguir se ajustar nos dados. Modelos flexiveis demais podem  meomorizar os dados e modelos inflexiveis presupõe informações sobre os dados.
+ Árvore de decisão é flexível se não for limitar o tamanho da árvore e inflexível se vc limitar demais o tamanho da árvore. Isso é chamado de bias-variance tradeof.
+ 
+ \begin{figure}[h]
+    \centering
+    \includegraphics[scale=1.5]{monography/img/decision_tree.png}
+    \label{figure:rf}
+    \caption{Representação do funcionamento de uma Árvore de Decisão\footnotemark}
+\end{figure}
+
+\footnotetext{Corte de uma imagem de uma \textit{\acrshort{RF}} https://dsc-spidal.github.io/harp/img/4-5-1.png}
 
 \section{\acrfull{SVM}}
 

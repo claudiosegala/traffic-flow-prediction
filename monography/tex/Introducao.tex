@@ -15,14 +15,11 @@ A literatura está repleta de artigos que tentam prever a quantidade de veículo
 
 \section{Hipótese}
 
-%TODO: fazer uma frase de efeito
-
-Visto isso, temos como hipótese que os modelos utilizados serão capazes de prever, de maneira eficaz se comparado aos modelos base, o fluxo de veículos nos cruzamentos para curtos prazos. Mais especificamente, que os modelos serão capazes de prever o fluxo de veículos para 15, 30, 45 e 60 minutos no futuro.
+Tendo em mente todas as informações citadas anteriormente, este trabalho tem como hipótese que os modelos utilizados para predição de fluxo de veículos em vias livres serão capazes de prever, também a curto prazo, o fluxo de veículos em cruzamentos. Mais especificamente, serão capazes de prever 15, 30, 45 e 60 minutos no futuro. Sobretudo, eles serão capazes também de prever o fluxo mais precisamente do que as bases de comparação utilizadas neste trabalho.
 
 \section{Objetivo}
 
-%TODO: botar referencia para o comumente 
-Este trabalho busca realizar a predição de curto prazo de fluxo de veículos em vias urbanas, mais especificamente, cruzamentos. Para tal, serão utilizados alguns dos métodos mais explorados na literatura. No caso, \textit{\acrfull{LSTM}}, \textit{\acrfull{GRU}}, \textit{\acrfull{RF}} e \textit{\acrfull{SVM}}. Como tais métodos são comumente utilizados para o cálculo de fluxo em vias livres, este trabalho tem como objetivo propor uma análise do comportamento destes mesmos métodos sob novas condições (vias urbanas com cruzamentos) e comparar a eficácia da predição de cada um deles.
+Este trabalho busca realizar a predição de fluxo de veículos em vias urbanas a curto prazo, mais especificamente, para 15, 30, 45 e 60 minutos no futuro. Para tal fim, serão utilizados os modelos \textit{\acrfull{LSTM}}, \textit{\acrfull{GRU}}, \textit{\acrfull{RF}} e \textit{\acrfull{SVM}}. Como base de comparação, serão utilizados os modelos \textit{Moving Average} e \textit{Naive}. Portanto, este trabalho tem como objetivo propor uma análise do comportamento destes mesmos métodos, utilizados na literatura para predições em vias livres, sob novas condições (vias urbanas com cruzamentos) e comparar a eficácia da predição de cada um deles.
 
 Para alcançar nossos objetivos precisaremos:
 
@@ -35,18 +32,21 @@ Para alcançar nossos objetivos precisaremos:
     \item Analisar o comportamento dos modelos quanto a distância no futuro da predição;
 \end{itemize}
 
-\section{Resultados Esperados}
+\section{Resultados Esperados} % everything we validate on methodology
 
 Ao fim deste trabalho, espera-se que os seguintes resultados tenham sido atingidos com sucesso:
 
 \begin{itemize}
-    \item Os modelos de aprendizagem de máquina tenham melhor desempenho que os modelos utilizados como base de comparação;
-    \item 
-    \item
+    \item  Os modelos utilizados tenham melhor desempenho que os modelos de base de comparação;
+    \item Os modelos utilizados piorem a medida que as predições fiquem mais distantes no futuro;
+    \item Os modelos utilizados tenham melhor desempenho quanto mais tempo do passado puderem receberem como entrada;
+    \item Os modelos de aprendizagem profunda tenham um tempo de treinamento maior que os modelos tradicionais;
+    \item Os modelos utilizados terão um desempenho melhor quando recebem mais do que só o fluxo como entrada;
+    \item Os modelos propostos são capazes de prever se o fluxo vai aumentar ou diminuir de maneira mais precisa que os modelos de base.
+    \item Os modelos utilizados serão capazes de prever melhor que os modelos de base inferindo a partir de apenas algumas horas.
 \end{itemize}
 
 \section{Limitações}
-
 Para se fazer a previsão serão desconsiderados certos cenários em que a captura e o relacionamentos dos dados obtidos são muito imprecisos e/ou pontuais. Esses eventos podem influenciar nos resultados obtidos e dependendo da escala do evento, podem causar uma disparidade significante entre a predição e a realidade. Entre eles estão:
 
 \begin{itemize}
@@ -66,6 +66,7 @@ Iremos realizar a comparação dos modelos  \textit{\acrshort{LSTM}}, \textit{\a
 \begin{enumerate}
     \item Implementação dos Modelos: construção das arquiteturas;
     \item Pré-Processamento dos Dados: verificar, limpar e transformar os dados para facilitar a aprendizagem dos modelos;
+    \item Treinamento dos Modelos: implementação do espaço de treinamento dos modelos levando em consideração as propriedades de séries temporais;
     \item Escolha de Parâmetros e Hiper-Parâmetros: adaptação dos modelos para melhora dos resultados;
     \item Avaliação: captura métricas das predições para que seja possível compara-las;
 \end{enumerate}
