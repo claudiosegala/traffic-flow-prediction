@@ -1,16 +1,16 @@
 % TODO: Usar a análise de dados do Fábio como inspiração para ver se tem mais algo que podemos escrever aqui
 
-Neste capítulo, é apresentada uma análise do conjunto de dados utilizado para treinar os modelos para realizar suas predições. Primeiramente, é explicado de que forma o tráfego e suas características podem influenciar nos registros. Subsequentemente, é explicitado como os dados foram adquiridos e suas características.
+Neste capítulo, é apresentada uma análise do conjunto de dados utilizado para treinar e testar os modelos. Primeiramente, é explicado de que forma o tráfego e suas características podem influenciar nos registros. Subsequentemente, é explicitado como os dados foram adquiridos e suas características.
 
 \section{Características do Tráfego}
 
 % TODO: arranjar referência
-É importante salientar que o tráfego é afetado por diversos fatores: temporais, espaciais e aleatórios. Os fatores temporais são, por exemplo, o horário do expediente dos trabalhadores que possuem veículos. Os fatores espaciais são, por exemplo, como a malha rodoviário se distribui em uma localização, ou a quantidade de empresas em uma área. Já fatores aleatórios são, por exemplo, acidentes que possam vir a ocorrer, ou meteorologia do dia. Sendo assim, modelos de previsões podem ter desempenhos diferentes dependendo de onde e quando os dados forem coletados. Isso sem levar em conta a impossibilidade de se prever os fatores aleatórios.
+É importante salientar que o tráfego é afetado por diversos fatores: temporais, espaciais e aleatórios. Os fatores temporais são, por exemplo, o horário do expediente dos trabalhadores que possuem veículos. Os fatores espaciais são, por exemplo, como a malha rodoviário se distribui em uma localização, ou a quantidade de empresas em uma área. Já fatores aleatórios são, por exemplo, acidentes que possam vir a ocorrer, ou meteorologia do dia. Sendo assim, modelos de previsões podem ter desempenhos diferentes dependendo de onde e quando os dados forem coletados. Isso já descartando os fatores aleatórios, que são difíceis de prever.
 
 % TODO: botar referência
 Dessa forma, é comum na literatura optar-se por usar apenas dados com fatores espaciais e temporais. Ao desconsiderar-se o fator aleatório, é feita uma suposição de que exista uma tendência no fluxo que pode ser prevista e que, embora as variáveis aleatórias possam afetar o fluxo, elas não afetam o bastante para mudar a tendência no longo prazo. Portanto, seguindo a literatura, esse artigo utilizará variáveis temporais e espaciais.
 
-\section{Aquisição}
+\section{Aquisição dos Dados}
 
 Os dados\footnote{http://bit.ly/processed-data-2l5MaAG} provêm de dois cruzamentos na avenida Hélio Prates que pode ser vista na Figura \ref{figure:helio}. Esta cruza Taguatinga e Ceilândia, que são duas cidades satélites do \acrfull{DF}. Estes dados foram coletados por fiscalizadores eletrônicos localizados nos cruzamentos e foram fornecidos pelo \acrfull{DETRAN}\footnote{http://www.detran.df.gov.br/} do \acrshort{DF}. Neste conjunto de dados estão inclusos registros de todos os veículos que passaram pelo local nos meses de maio a julho de 2016 em forma de uma série temporal. Mais especificamente, do primeiro dia de maio ao último de julho de 2016, totalizando 13 semanas e 1 dia, 92 dias. 
 
@@ -54,6 +54,8 @@ Os dados\footnote{http://bit.ly/processed-data-2l5MaAG} provêm de dois cruzamen
     \caption{Exemplo dos dados recebidos coletados pelo \acrshort{DETRAN}}
 \end{table}
 
+\section{Características dos Dados}
+
 % TODO: verificar com Vinícius se isso ta correto
 Quanto as características das colunas, o conjunto de dados possui tanto colunas quantitativas quanto qualitativas. Só existe uma coluna qualitativa, \texttt{Id Equipamento}, sendo ela ordinal, pois em seu nome ocorre uma numeração. Todas as outras colunas são quantitativas, sendo a de tamanho a única contínua e o resto discreto. Porém a coluna de \texttt{km/h Max} tem seu valor constante constante.  Os registros são de 8 sensores com um total de 10.801.781 registros de veículos, sendo a quantidade de registros por sensor não distribuídos igualmente:
 
@@ -67,6 +69,10 @@ Quanto as características das colunas, o conjunto de dados possui tanto colunas
     \item \textbf{RSI129:} 578.652 registros de veículos
     \item \textbf{RSI128:} 536.879 registros de veículos
 \end{itemize}
+
+% TODO: falar que os outros sensores vêm do cruzamento de outras vias com a Helio Prates como a via M1.
+
+Visto que o sensores contém dados de um mesmo período, os sensores com maior quantidade de veículos tiveram um tráfego mais intenso. Vale notar que os quatro sensores com maior fluxo pertencem a via principal, assim como pode ser visto na Figura \ref{figure:helio_cruzamento_1} e \ref{figure:helio_cruzamento_2}.
 
 Vale salientar que não foram encontrados atributos incompletos ou nulos. Porém uma das colunas possui dados inconsistentes com a realidade. Isso acontece pois, como pode ser visto na Tabela \ref{table:data} existem veículos com tamanho 0, o que é impossível. Por último, mas não menos importante, também deve-se notar que os fiscalizadores eletrônicos utilizados ficam próximos de semáforos, ou seja, existem momentos em que o fluxo diminui bastante, devido aos sinais vermelhos. 
 
@@ -82,13 +88,13 @@ Vale salientar que não foram encontrados atributos incompletos ou nulos. Porém
 \begin{figure}[t]
     \centering
     \includegraphics[scale=0.6]{monography/img/maps/cruzamento_1.png}
-    \label{figure:helio}
+    \label{figure:helio_cruzamento_1}
     \caption[Visão Espacial do Cruzamento referente aos sensores \textbf{RSI128}, \textbf{RSI129}, \textbf{RSI017} e \textbf{RSI018}]{Visão Espacial do Cruzamento referente aos sensores \textbf{RSI128}, \textbf{RSI129}, \textbf{RSI017} e \textbf{RSI018}}
 \end{figure}
 
 \begin{figure}[t]
     \centering
     \includegraphics[scale=0.6]{monography/img/maps/cruzamento_2.png}
-    \label{figure:helio}
+    \label{figure:helio_cruzamento_2}
     \caption[Visão Espacial do Cruzamento referente aos sensores \textbf{RSI131}, \textbf{RSI132}, \textbf{RSI032} e \textbf{RSI033}]{Visão Espacial do Cruzamento referente aos sensores \textbf{RSI131}, \textbf{RSI132}, \textbf{RSI032} e \textbf{RSI033}}
 \end{figure}

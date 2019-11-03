@@ -6,24 +6,28 @@
 
 % TODO?: Falar sobre a especificação do ambiente
 
-Este capítulo tem como objetivo explicar como foram realizadas as comparações dos modelos quanto as suas predições. Primeiramente será discutido os pré-processamentos dos dados, seguindo para os modelos, incluindo a razão por estes terem sido incluídos. Logo após será discutido como as otimizações foram feitas e como fora feita a avaliação dos modelos.
+Este capítulo tem como objetivo explicar como foram realizadas as comparações dos modelos quanto as suas predições, assim como mostrado na Figura \ref{figure:metodologia}. Primeiramente será discutido os pré-processamentos dos dados, seguindo para os modelos, incluindo a razão por estes terem sido incluídos. Logo após será discutido como as otimizações foram feitas e como fora feita a avaliação dos modelos.
 
-\begin{figure}[H]
+% TODO: botar quatro modelos
+% TODO: colocar o nome dos modelos
+% TODO: mudar a cor da box de fluxo de veículos
+% TODO: mudar a cor da box da Comparação
+
+\begin{figure}
     \centering
-    \includegraphics[scale=0.4]{monography/img/fluxogramaTCC.png}
-    \label{figure:rf}
+    \includegraphics[scale=0.4]{monography/img/tccFlux.png}
+    \label{figure:metodologia}
     \caption[Fluxograma da metodologia]{Fluxograma da metodologia}
 \end{figure}
 
 \section{Pré-Processamento dos Dados}
 % TODO: Adicionar gráfico (fluxo por tempo) em tratamento de dados.
 
-Nesta etapa serão feitas remoções de inconsistências e as transformações nos dados da Tabela \ref{table:data} para melhorar o aprendizado dos modelos. Além disso, como a partir disso foram criados os conjunto de dados de treinamento e teste.
+Nesta etapa serão feitas remoções de inconsistências e as transformações nos dados da Tabela \ref{table:data} para melhorar o aprendizado dos modelos. Além disso, como, a partir disso, foram criados os conjunto de dados de treinamento e teste.
 
 \subsection{Limpeza dos Dados}
 
 Nem todas as colunas são úteis para o aprendizado dos modelos, em especial, as colunas \texttt{Faixa}, \texttt{Hora}, \texttt{Limite de Velocidade da Via} e \texttt{Tamanho do Veículo}. \texttt{Faixa} será removido, pois nas transformações que virão a seguir esse dado se tornará desnecessário. \texttt{Hora} será removido, pois para ter algum efeito positivo no aprendizado dos modelos, seria preciso um estudo mais minucioso. \texttt{Limite de Velocidade da Via} será removido, pois este dado tem seu valor repetido ao longo de todos os registros, ou seja, é uma constante em todo o conjunto de dados. \texttt{Tamanho do Veículo} será removido, pois este não foi medido de forma precisa, visto que existem registros com veículos de tamanho nulo.
-
 
 \subsection{Transformação dos Dados}
 
@@ -88,6 +92,8 @@ Sendo assim, será transformado o conjunto de dados de uma série temporal de re
 \end{table}
 
 No final do pré-processamento o resultado possuirá 3 colunas quantitativas e 7 qualitativas. As colunas de \textit{Density} e \textit{Average Speed} são contínuas e a coluna \textit{Flow} é discreto. As outras 7 colunas representam uma classificação indicando é ou não (0 representa falso e 1 verdadeiro) um certo dia da semana, sendo assim uma coluna qualitativa ordinal.
+
+Vale notar que como o período é o mesmo para qualquer dos sensores, ao se acumular os registros, o tamanho do conjunto de dados será o mesmo. Isto é, será equivalente ao intervalo de tempo do conjunto de dados, 92 dias, divido pelo tempo de agregação, 7.5 minutos, o que gera 17.664 registros de fluxo.
 
 \subsection{Normalização dos Dados}
 % TODO: adicionar referência do porque normalizar dados
@@ -162,7 +168,7 @@ Dos modelos paramétricos, o mais utilizado na literatura para previsão de flux
 
 % TODO: falar que estamos utilizando um modelo para cada tipo de viés (rf para arvores, etc)
 
-Todos os modelos não-paramétricos citados foram implementados para este trabalho. Quanto aos modelos paramétricos, foram testados dois modelos, sendo eles o \textit{\acrshort{ARIMA}} e o \textit{\acrshort{LR}}. Porém, ambos tiveram resultados inferiores em relação aos modelos não-paramétricos testados. Além disso, \textit{\acrshort{ARIMA}} se mostrou extremamente custosos computacionalmente de se treinar e otimizar. Por estes dois motivos citados, os modelos paramétricos foram retirados dos experimentos.
+Todos os modelos não-paramétricos citados foram implementados para este trabalho. Quanto aos modelos paramétricos, foram testados dois modelos, sendo eles o \textit{\acrshort{ARIMA}} e o \textit{\acrshort{LR}}. Porém, ambos tiveram resultados inferiores em relação aos modelos não-paramétricos testados, sendo que ambos estavam utilizando os parâmetros padrões da biblioteca \textit{StatModels}. Além disso, \textit{\acrshort{ARIMA}} se mostrou extremamente custosos computacionalmente de se treinar e otimizar. Por estes dois motivos citados, os modelos paramétricos foram retirados dos experimentos.
 
 %TODO: EXPLICAR NAIVE
 \subsection{Modelos de Comparação}
@@ -220,7 +226,7 @@ Já os parâmetros escolhidos para \textit{\acrshort{RF}} foram:
 
 % TODO: Falar das principais métricas usadas na literatura e colocar a referência.
 
-Visto que os dados deste trabalho são séries temporais, realizou-se vários testes utilizando uma janela deslizante. Desta forma, foi possível testar os modelos sobre um conjunto de testes maior. Dessa forma, foi possível ter uma análise melhor de como os modelos se comportam com diferentes janelas de treinamento e teste. Todos os modelos serão treinados e testados com os mesmos subconjuntos de dados, para fins de comparação. Como métricas, fora utilizados \acrshot{MAE}, \acrshort{RMSE} e \acrshort{NRMSE}. 
+Visto que os dados deste trabalho são séries temporais, realizou-se vários testes utilizando uma janela deslizante. Desta forma, foi possível testar os modelos sobre um conjunto de testes maior. Dessa forma, foi possível ter uma análise melhor de como os modelos se comportam com diferentes janelas de treinamento e teste. Todos os modelos serão treinados e testados com os mesmos subconjuntos de dados, para fins de comparação. Como métricas, fora utilizados \acrshort{MAE}, \acrshort{RMSE} e \acrshort{NRMSE}. 
 
 \begin{equation}
 MAE = \frac{1}{n} \times \sum_{i=1}^{n} \quad \abs{result_i - expected_i}
