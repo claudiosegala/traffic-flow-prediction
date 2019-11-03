@@ -62,12 +62,13 @@ Na célula de memória citada anteriormente, existem estruturas que são respons
 
 \section{\acrfull{GRU}}
 
-\textit{\acrshort{GRU}} é um tipo de \textit{\acrshort{RNN}} semelhante ao \textit{\acrshort{LSTM}} e, assim como ele, também faz uso de mecanismos chamados de Portas que possibilitam que e a informação seja atualizada ou esquecida ao ser transferida de uma célula para outra. Ou seja, \textit{\acrshort{GRU}} também é capaz de guardar informações importantes na rede de maneira mais eficaz que uma \textit{\acrshort{RNN}} comum. As portas de uma \textit{\acrshort{GRU}} consistem de:
+
+%TODO: explicar diferenca entre porta da reinicializacao e porta da atualizacao, adicionando as fórmulas de cada uma
+\textit{\acrshort{GRU}} é um tipo de \textit{\acrshort{RNN}} semelhante ao \textit{\acrshort{LSTM}} e, assim como ele, também faz uso de mecanismos chamados de Portas que possibilitam que a informação seja atualizada ou esquecida ao ser transferida de uma célula para outra. Ou seja, \textit{\acrshort{GRU}} também é capaz de guardar informações importantes na rede de maneira mais eficaz que uma \textit{\acrshort{RNN}} comum. Apesar de parecidos, \textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}} possuem algumas diferenças, como pode ser visto abaixo, o \textit{\acrshort{GRU}} possui apenas duas Portas para fazer o tratamento da informação e simular o efeito de memória:
 
 \begin{itemize}
-    \item 
-    \item
-    \item
+    \item Porta da atualização: A porta de atualização tem um papel semelhante às Portas de Entrada e Porta de Esquecimento do \textit{\acrshort{LSTM}}. Nela, é decidido quais dos valores provindos das células passadas serão adicionados a rede.
+    \item Porta da reinicialização: Já o portão de reinicialização decide quanto da informação vinda das células passadas será esquecido.
 \end{itemize}
 
 \section{\acrfull{RF}}
@@ -80,12 +81,12 @@ A construção das árvores de decisão é feita utilizando o método \textit{Ba
 % TODO: referencia apra algo que falar sobre a quantidade fixa de caracteristicas
 Porém, diferente de \textit{Bagging}, \textit{\acrshort{RF}} utiliza mais uma técnica para diminuir o sobre-ajuste (\textit{overfitting}). Há uma modificação no algoritmo de criação das árvores de decisão limitando a quantidade de características (\textit{features}) do conjunto de dados que vai ser utilizada. Para selecionar a quantidade ideal de características o autor sugere utilizar de estimativas \textit{out-of-bag}, explicadas no artigo, mas é comum implementações limitarem a quantidade de características (\textit{q}) para $ \sqrt{q} $ ou $ \frac{q}{3} $.
 
-Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizagem de máquina, ela pode ser classificada como um Comitê de Máquinas (\textit{Ensemble Learning}). A forma como as respostas de cada uma das máquinas são combinadas depende do problema. Para classificação pode ser usado uma votação (voto da maioria) e para um problema de regressão pode ser usado uma média dos valores, assim como mostrado na Figura \ref{figure:rf}.
+Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizagem de máquina, ela pode ser classificada como um Comitê de Máquinas (\textit{Ensemble Learning}). A forma como as respostas de cada uma das máquinas são combinadas depende do problema. Para classificação pode ser usado uma votação (voto da maioria) e para um problema de regressão pode ser usado uma média dos valores, assim como mostrado na Figura \ref{figure:random_forest}.
 
 \begin{figure}[h]
     \centering
     \includegraphics[scale=0.8]{monography/img/random_forest.png}
-    \label{figure:rf}
+    \label{figure:random_forest}
     \caption[Representação do funcionamento de uma \textit{\acrshort{RF}}]{Representação do funcionamento de uma \textit{\acrshort{RF}}\footnotemark}
 \end{figure}
 
@@ -106,7 +107,7 @@ Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizage
  \begin{figure}[h]
     \centering
     \includegraphics[scale=1.5]{monography/img/decision_tree.png}
-    \label{figure:rf}
+    \label{figure:decision_tree}
     \caption[Representação do funcionamento de uma Árvore de Decisão]{Representação do funcionamento de uma Árvore de Decisão\footnotemark}
 \end{figure}
 
@@ -155,10 +156,8 @@ Existem várias funções kernel como linear, não linear, radial basis function
 \begin{figure}[h]
     \centering
     \includegraphics[scale=1.0]{monography/img/svr_example.png}
-    \label{figure:rf}
+    \label{figure:support_vector_machine}
     \caption[Representação do funcionamento de uma \textit{\acrshort{SVM}}]{Representação do funcionamento de uma \textit{\acrshort{SVM}}\footnotemark}
 \end{figure}
 
 \footnotetext{https://www.researchgate.net/figure/Schematic-of-the-one-dimensional-support-vector-regression-SVR-model-Only-the-points_fig5_320916953}
-
-

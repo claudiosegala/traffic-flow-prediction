@@ -48,7 +48,7 @@ Como grande parte da literatura acerca da previsão de fluxo de veículos utiliz
 % TODO: Falar que aproveitamos e adicionamos no multivariado a densidade e a velocidade média
 Sendo assim, será transformado o conjunto de dados de uma série temporal de registro de veículos para uma série temporal de fluxos. Isto é, será calculado a quantidade de veículos que passaram por um local em um determinado intervalo de tempo. Para definir o intervalo que utilizaríamos, testamos os valores de intervalo para 1, 2.5, 5 e 7.5 minutos. No caso, os melhores resultados foram com a acumulação dos registros em um intervalo de 7.5 minutos. Isso se deve, em parte, ao fato de que quando se acumula os registros em um intervalo de tempo muito pequeno, o conjunto de dados apresenta muito ruído, dificultando a aprendizagem e afetando a qualidade da previsão. Em contrapartida, ao se aumentar o intervalo, o conjunto de dados pode se tornar muito pequeno, o que pode dificultar a aprendizagem. Tendo isso em mente, 7.5 minutos teve o melhor resultado, pois como nossa primeira previsão é para 15 minutos no futuro, não poderíamos utilizar um intervalo que não fosse divisor de 15, nem maior que 15. Ao final da transformação, temos um conjunto de dados similar ao mostrado na Tabela \ref{table:data_pre}.
 
-\begin{table}[h]
+\begin{table}[htbp]
     \begin{tabular}{cccccccccc}
     \toprule
     \multicolumn{1}{l}{\textbf{Flow}} & \multicolumn{1}{l}{\textbf{Density}} & \multicolumn{1}{l}{\textbf{Average Speed}} & \multicolumn{1}{l}{\textbf{Sun}} &
@@ -101,7 +101,7 @@ Na área de aprendizagem de máquina, é comum vermos modelos de predições par
 
 Além disso, em função do modo de como alguns dos modelos funcionam, como o \textit{\acrshort{LSTM}}, serão utilizados as versões normalizados dos conjuntos de dados para tornar mais efetivo o treinamento dos mesmos. Vale notar que ao normalizar, a coluna de \texttt{Flow} se tornou quantitativa contínua.
 
-\begin{table}[h]
+\begin{table}[htbp]
     \begin{tabular}{cccccccccc}
     \toprule
     \multicolumn{1}{l}{\textbf{Flow}} & \multicolumn{1}{l}{\textbf{Density}} & \multicolumn{1}{l}{\textbf{Average Speed}} & \multicolumn{1}{l}{\textbf{Sun}} &
@@ -109,35 +109,50 @@ Além disso, em função do modo de como alguns dos modelos funcionam, como o \t
     \multicolumn{1}{l}{\textbf{Fri}} &
     \multicolumn{1}{l}{\textbf{Sat}} \\
     \midrule
-    0.063830 & 0.081838 & 0.412281 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 \\
+    0.063830 & 0.081838 & 0.412281 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 
+    \\
     \midrule
-    0.180851 & 0.186387 & 0.512900 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 \\
+    0.180851 & 0.186387 & 0.512900 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 
+    \\
     \midrule
-    0.159574 & 0.192835 & 0.437427 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 \\
+    0.159574 & 0.192835 & 0.437427 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 
+    \\
     \midrule
-    0.191489 & 0.209804 & 0.482456 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 \\
+    0.191489 & 0.209804 & 0.482456 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 
+    \\
     \midrule
-    0.148936 & 0.230127 & 0.342105 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 \\
+    0.148936 & 0.230127 & 0.342105 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 
+    \\
     \midrule
-    0.148936 & 0.218141 & 0.360902 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 \\
+    0.148936 & 0.218141 & 0.360902 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 
+    \\
     \midrule
-    0.063830 & 0.107843 & 0.312865 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 \\
+    0.063830 & 0.107843 & 0.312865 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 
+    \\
     \midrule
-    0.085106 & 0.125854 & 0.357456 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 \\
+    0.085106 & 0.125854 & 0.357456 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 
+    \\
     \midrule
-    0.117021 & 0.174705 & 0.354067 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 \\
+    0.117021 & 0.174705 & 0.354067 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 
+    \\
     \midrule
-    0.159574 & 0.204887 & 0.411696 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 \\
+    0.159574 & 0.204887 & 0.411696 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 
+    \\
     \midrule
-    0.106383 & 0.181093 & 0.310526 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 \\
+    0.106383 & 0.181093 & 0.310526 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 
+    \\
     \midrule
-    0.138298 & 0.222009 & 0.329285 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 \\
+    0.138298 & 0.222009 & 0.329285 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 
+    \\
     \midrule
-    0.117021 & 0.245472 & 0.251994 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 \\
+    0.117021 & 0.245472 & 0.251994 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 
+    \\
     \midrule
-    0.085106 & 0.127417 & 0.353070 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 \\
+    0.085106 & 0.127417 & 0.353070 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 
+    \\
     \midrule
-    0.085106 & 0.107969 & 0.416667 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 \\
+    0.085106 & 0.107969 & 0.416667 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 0.0 & 1.0 
+    \\
     \bottomrule
     \end{tabular}
     \label{table:data_pre_norm}
