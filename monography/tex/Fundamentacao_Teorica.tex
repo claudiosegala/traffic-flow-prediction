@@ -71,6 +71,16 @@ Na célula de memória citada anteriormente, existem estruturas que são respons
     \item Porta da reinicialização: Já o portão de reinicialização decide quanto da informação vinda das células passadas será esquecido.
 \end{itemize}
 
+Por ter uma arquitetura mais simples que uma \textit{\acrshort{LSTM}}, o \textit{\acrshort{GRU}} precisa de menos tempo para ser treinado e, geralmente, de menos dados também.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.8]{monography/img/GRU.png}
+    \label{figure:random_forest}
+    \caption[Representação do funcionamento do GRU
+\end{figure}
+
 \section{\acrfull{RF}}
 
 % TODO: checar se a tradução está correta (frase pega do abstract do artigo)
@@ -145,7 +155,7 @@ Reference: https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.htm
 
 Existem várias funções kernel como linear, não linear, radial basis function, polinomial,, entre outros
 
-+ Vou precisar falar do boas variavnce tradeoff para explicar Gamma
+Vou precisar falar do boas variavnce tradeoff para explicar Gamma
 
 % TODO: explicar como ele é lerdo para tamanhos mt grandes já que ele tende a ser cúbico
 % TODO: parece que ele pode overfitar com um grande número de features
