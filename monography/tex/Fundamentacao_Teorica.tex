@@ -24,7 +24,7 @@ Bias Variance Tradeoff é uma propridade que se aplica a modelos de aprendizagem
 
 Porém, existem determinados problemas que exigem certa correlação entre os dados, como por exemplo, interpretar um documento, entender o contexto de um filme, ou avaliar a oscilação de uma bolsa de valores ao longo do tempo. Como descrito por Mtichell em \cite{mitchell1997}, \textit{\acrshort{RNN}} são mais adequadas para estas situações, pois nesse tipo de problema, dados isolados não tem tanto significado quanto o conjunto, o que exige um conceito de memória. Para simular este efeito de memória, \textit{\acrshort{RNN}} dispõe de uma arquitetura onde a saída da célula anterior é utilizada como entrada na célula seguinte, juntamente com a entrada nova atual da rede. Na Figura \ref{figure:rnn} é exemplificada a arquitetura, onde o último resultado utiliza como entrada valores resultantes das últimas execuções.
 
-\begin{figure}[htb]
+\begin{figure}[htbp]
     \centering
     \includegraphics[scale=0.4]{rnnExample.png}
     \label{figure:rnn}
@@ -35,7 +35,7 @@ Porém, existem determinados problemas que exigem certa correlação entre os da
 
 \acrshort{LSTM} é utilizada para predição de informações que derivam de dados sequenciais e séries temporais, sendo possível encontrar diversos trabalhos na literatura que mostram sua eficiência quando comparado a outros métodos. Como descrito em \cite{Zainab_2018} e em \cite{Xiaolei_2015}, \acrshort{LSTM} é um tipo de \acrshort{RNN} que utiliza de estados anteriores e do estado atual da rede para gerar sua saída. Ao utilizar dos estados anteriores, a \acrshort{RNN} acaba por simular uma memória, melhorando sua capacidade de aprender. 
 
-\begin{figure}[htb]
+\begin{figure}[htbp]
     \centering
     \includegraphics[scale=0.4]{lstm3.png}
     \label{figure:eixo}
@@ -83,7 +83,7 @@ Porém, diferente de \textit{Bagging}, \textit{\acrshort{RF}} utiliza mais uma t
 
 Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizagem de máquina, ela pode ser classificada como um Comitê de Máquinas (\textit{Ensemble Learning}). A forma como as respostas de cada uma das máquinas são combinadas depende do problema. Para classificação pode ser usado uma votação (voto da maioria) e para um problema de regressão pode ser usado uma média dos valores, assim como mostrado na Figura \ref{figure:random_forest}.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
     \includegraphics[scale=0.8]{monography/img/random_forest.png}
     \label{figure:random_forest}
@@ -104,7 +104,7 @@ Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizage
  Algoritmos podem ser flexíveis e correr risco de sobre-ajuste ou ser inflexíveis e não conseguir se ajustar nos dados. Modelos flexiveis demais podem  meomorizar os dados e modelos inflexiveis presupõe informações sobre os dados.
  Árvore de decisão é flexível se não for limitar o tamanho da árvore e inflexível se vc limitar demais o tamanho da árvore. Isso é chamado de bias-variance tradeof.
  
- \begin{figure}[h]
+ \begin{figure}[htbp]
     \centering
     \includegraphics[scale=1.5]{monography/img/decision_tree.png}
     \label{figure:decision_tree}
@@ -153,7 +153,7 @@ Existem várias funções kernel como linear, não linear, radial basis function
 % TODO: falar sobre como funciona o parâmetro C
 % TODO: falar sobre como funciona o parâmetro Gamma
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
     \includegraphics[scale=1.0]{monography/img/svr_example.png}
     \label{figure:support_vector_machine}
