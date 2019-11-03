@@ -55,9 +55,7 @@ Os dados\footnote{http://bit.ly/processed-data-2l5MaAG} provêm de dois cruzamen
 \end{table}
 
 % TODO: verificar com Vinícius se isso ta correto
-Quanto as características das colunas, o conjunto de dados possui tanto colunas quantitativas quanto qualitativas. Só existe uma coluna qualitativa, sendo ela ordinal, pois em seu nome ocorre uma numeração. Todas as outras colunas são quantitativas, sendo a de tamanho a única contínua e o resto discreto. Porém a coluna de km/h Max tem seu valor constante constante. 
-
-Para cada registro se tem uma identificação do fiscalizador eletrônico, data, hora, faixa de via, velocidade, limite de velocidade da via e tamanho do veículo, assim como mostrado na tabela \ref{table:data}. Os registros são de 8 sensores com um total de 10.801.781 registros de veículos, sendo a quantidade de registros por sensor não distribuídos igualmente:
+Quanto as características das colunas, o conjunto de dados possui tanto colunas quantitativas quanto qualitativas. Só existe uma coluna qualitativa, \texttt{Id Equipamento}, sendo ela ordinal, pois em seu nome ocorre uma numeração. Todas as outras colunas são quantitativas, sendo a de tamanho a única contínua e o resto discreto. Porém a coluna de \texttt{km/h Max} tem seu valor constante constante.  Os registros são de 8 sensores com um total de 10.801.781 registros de veículos, sendo a quantidade de registros por sensor não distribuídos igualmente:
 
 \begin{itemize}
     \item \textbf{RSI033:} 2.382.754 registros de veículos
@@ -74,7 +72,23 @@ Vale salientar que não foram encontrados atributos incompletos ou nulos. Porém
 
 \begin{figure}[t]
     \centering
-    \includegraphics[scale=0.45,angle=90]{monography/img/avenida_helio_prates.png}
+    \includegraphics[scale=0.55,angle=90]{monography/img/maps/avenida_helio_prates.png}
     \label{figure:helio}
-    \caption{Visão Espacial da Avenida Hélio Prates Provindos do Apple Maps}
+    \caption[Visão Espacial da Avenida Hélio Prates Provindos do Apple Maps]{Visão Espacial da Avenida Hélio Prates Provindos do Apple Maps}
+\end{figure}
+
+% TODO: especificar melhor onde estão os sensores e qual o cruzamento modificando a imagem, que nem a imagem maps/example.png
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.6]{monography/img/maps/cruzamento_1.png}
+    \label{figure:helio}
+    \caption[Visão Espacial do Cruzamento referente aos sensores \textbf{RSI128}, \textbf{RSI129}, \textbf{RSI017} e \textbf{RSI018}]{Visão Espacial do Cruzamento referente aos sensores \textbf{RSI128}, \textbf{RSI129}, \textbf{RSI017} e \textbf{RSI018}}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[scale=0.6]{monography/img/maps/cruzamento_2.png}
+    \label{figure:helio}
+    \caption[Visão Espacial do Cruzamento referente aos sensores \textbf{RSI131}, \textbf{RSI132}, \textbf{RSI032} e \textbf{RSI033}]{Visão Espacial do Cruzamento referente aos sensores \textbf{RSI131}, \textbf{RSI132}, \textbf{RSI032} e \textbf{RSI033}}
 \end{figure}

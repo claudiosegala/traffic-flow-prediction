@@ -8,13 +8,19 @@
 
 Este capítulo tem como objetivo explicar como foram realizadas as comparações dos modelos quanto as suas predições. Primeiramente será discutido os pré-processamentos dos dados, seguindo para os modelos, incluindo a razão por estes terem sido incluídos. Logo após será discutido como as otimizações foram feitas e como fora feita a avaliação dos modelos.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.4]{monography/img/fluxogramaTCC.png}
+    \label{figure:rf}
+    \caption[Fluxograma da metodologia]{Fluxograma da metodologia}
+\end{figure}
+
 \section{Pré-Processamento dos Dados}
 % TODO: Adicionar gráfico (fluxo por tempo) em tratamento de dados.
 
-Nesta etapa serão feitas remoções e transformações dos dados mostrados na Tabela \ref{table:data} para melhorar o aprendizado dos modelos.
+Nesta etapa serão feitas remoções de inconsistências e as transformações nos dados da Tabela \ref{table:data} para melhorar o aprendizado dos modelos. Além disso, como a partir disso foram criados os conjunto de dados de treinamento e teste.
 
 \subsection{Limpeza dos Dados}
-% TODO?: Botar hora no multivariate
 
 Nem todas as colunas são úteis para o aprendizado dos modelos, em especial, as colunas \texttt{Faixa}, \texttt{Hora}, \texttt{Limite de Velocidade da Via} e \texttt{Tamanho do Veículo}. \texttt{Faixa} será removido, pois nas transformações que virão a seguir esse dado se tornará desnecessário. \texttt{Hora} será removido, pois para ter algum efeito positivo no aprendizado dos modelos, seria preciso um estudo mais minucioso. \texttt{Limite de Velocidade da Via} será removido, pois este dado tem seu valor repetido ao longo de todos os registros, ou seja, é uma constante em todo o conjunto de dados. \texttt{Tamanho do Veículo} será removido, pois este não foi medido de forma precisa, visto que existem registros com veículos de tamanho nulo.
 
@@ -32,12 +38,11 @@ Caso fosse utilizado a coluna \texttt{Data} sem tratamento, ficaria a cargo dos 
 
 O tráfego pode ser interpretado de várias formas diferentes. Pode ser visto como a quantidade de veículos que passaram por um ponto em um determinado intervalo de tempo, ou seja, o fluxo. Também pode ser visto como o fluxo dividido pela média de velocidade dos veículos em um certo espaço de tempo, ou seja, a densidade. Ou como uma média de velocidade em um intervalo de tempo, a velocidade média.
 
-% TODO: conferir isso
-Como grande parte da literatura acerca da previsão de fluxo de veículos utiliza o fluxo para fazer o treinamento de suas redes neurais, também optamos por utilizá-lo. Além disso, como o domínio dos valores do nosso fluxo é menor que o domínio dos valores da densidade e da velocidade média, nossos modelos tendem a ter uma maior facilidade para realizar a previsão.
-%Para o nosso trabalho escolhemos utilizar o fluxo, pois seus valores estão inclusos no conjunto dos números inteiros positivos. Já os outros jeitos de ver o tráfego tem seus valores inclusos no conjunto dos números naturais. Como o domínio do fluxo é menor que os outros, os modelos tem uma maior facilidade de fazer a previsão.
+% TODO: mudar isso, ta errado
+Como grande parte da literatura acerca da previsão de fluxo de veículos utiliza o fluxo para fazer o treinamento de suas redes neurais, também foi optado nesse trabalho por utilizá-lo. Além disso, como o domínio dos valores do nosso fluxo é menor que o domínio dos valores da densidade e da velocidade média, nossos modelos tendem a ter uma maior facilidade para realizar a previsão.
 
 % TODO: Falar que aproveitamos e adicionamos no multivariado a densidade e a velocidade média
-Sendo assim, iremos transformar o conjunto de dados de uma série temporal de registro de veículos para uma série temporal de fluxos. Isto é, iremos calcular a quantidade de veículos que passaram por um local em um determinado intervalo de tempo. Para definir o intervalo que utilizaríamos, testamos os valores de intervalo para 1, 2.5, 5 e 7.5 minutos. No caso, os melhores resultados foram com a acumulação dos registros em um intervalo de 7.5 minutos. Isso se deve, em parte, ao fato de que quando se acumula os registros em um intervalo de tempo muito pequeno, o conjunto de dados apresenta muito ruído, dificultando a aprendizagem e afetando a qualidade da previsão. Em contrapartida, ao se aumentar o intervalo, o conjunto de dados pode se tornar muito pequeno, o que pode dificultar a aprendizagem. Tendo isso em mente, 7.5 minutos teve o melhor resultado, pois como nossa primeira previsão é para 15 minutos no futuro, não poderíamos utilizar um intervalo que não fosse divisor de 15, nem maior que 15. Ao final da transformação, temos um conjunto de dados similar ao mostrado na Tabela \ref{table:data_pre}.
+Sendo assim, será transformado o conjunto de dados de uma série temporal de registro de veículos para uma série temporal de fluxos. Isto é, será calculado a quantidade de veículos que passaram por um local em um determinado intervalo de tempo. Para definir o intervalo que utilizaríamos, testamos os valores de intervalo para 1, 2.5, 5 e 7.5 minutos. No caso, os melhores resultados foram com a acumulação dos registros em um intervalo de 7.5 minutos. Isso se deve, em parte, ao fato de que quando se acumula os registros em um intervalo de tempo muito pequeno, o conjunto de dados apresenta muito ruído, dificultando a aprendizagem e afetando a qualidade da previsão. Em contrapartida, ao se aumentar o intervalo, o conjunto de dados pode se tornar muito pequeno, o que pode dificultar a aprendizagem. Tendo isso em mente, 7.5 minutos teve o melhor resultado, pois como nossa primeira previsão é para 15 minutos no futuro, não poderíamos utilizar um intervalo que não fosse divisor de 15, nem maior que 15. Ao final da transformação, temos um conjunto de dados similar ao mostrado na Tabela \ref{table:data_pre}.
 
 \begin{table}[h]
     \begin{tabular}{cccccccccc}
@@ -85,12 +90,10 @@ Sendo assim, iremos transformar o conjunto de dados de uma série temporal de re
 No final do pré-processamento o resultado possuirá 3 colunas quantitativas e 7 qualitativas. As colunas de \textit{Density} e \textit{Average Speed} são contínuas e a coluna \textit{Flow} é discreto. As outras 7 colunas representam uma classificação indicando é ou não (0 representa falso e 1 verdadeiro) um certo dia da semana, sendo assim uma coluna qualitativa ordinal.
 
 \subsection{Normalização dos Dados}
-% TODO: Falar o motivo do porque se normaliza
-% TODO: Justificar o porquê não normalizamos os dados
-%TODO: Checar o maior e o menor valor de fluxo calculado 
-Na área de aprendizagem de máquina, é comum vermos modelos de predições para diferentes tipo de variáveis. Por vezes, os valores assumidos por essas variáveis podem apresentar um domínio grande demais, como no caso da predição de valores de ações da bolsa de valores. Com valores em um intervalo tão grande, o treinamento dos modelos tende a piorar. Para contornar este problema, é comum utilizar técnicas que visam diminuir o intervalo de valores que as variáveis podem assumir. Uma destas técnicas é a normalização. Em um dos tipos da normalização, utiliza-se o maior e o menor valor que o seu conjunto de dados atinge para ajustar os valores intermediários. No nosso deste trabalho, o maior fluxo calculado foi 60 e o menor foi 20. Assim, ajustamos os valores do conjunto de dados dentro de um intervalo entre 0 e 1, com 0 representando o menor valor e 60, o maior valor. 
+% TODO: adicionar referência do porque normalizar dados
+Na área de aprendizagem de máquina, é comum vermos modelos de predições para diferentes tipo de variáveis. Por vezes, os valores assumidos por essas variáveis podem apresentar um domínio grande demais, como no caso da predição de valores de ações da bolsa de valores. Com valores em um intervalo tão grande, o treinamento dos modelos tende a piorar. Para contornar este problema, é comum utilizar técnicas que visam diminuir o intervalo de valores que as variáveis podem assumir. Uma destas técnicas é a normalização. Em um dos tipos da normalização, utiliza-se o maior e o menor valor que o seu conjunto de dados atinge para ajustar os valores intermediários. O maior fluxo calculado foi 94 para o sensor \textbf{RSI128} e o menor foi 0. Assim, ajustamos os valores do conjunto de dados dentro de um intervalo entre 0 e 1, com 0 representando o menor valor e 60, o maior valor. 
 
-Além disso, em função do modo de como alguns dos modelos funcionam, como o \textit{\acrshort{LSTM}}, serão utilizados as versões normalizados dos conjuntos de dados para tornar mais efetivo o treinamento dos mesmos. Vale notar que ao normalizar, a coluna de \textit{Flow} se tornou quantitativa contínua.
+Além disso, em função do modo de como alguns dos modelos funcionam, como o \textit{\acrshort{LSTM}}, serão utilizados as versões normalizados dos conjuntos de dados para tornar mais efetivo o treinamento dos mesmos. Vale notar que ao normalizar, a coluna de \texttt{Flow} se tornou quantitativa contínua.
 
 \begin{table}[h]
     \begin{tabular}{cccccccccc}
@@ -132,15 +135,23 @@ Além disso, em função do modo de como alguns dos modelos funcionam, como o \t
     \bottomrule
     \end{tabular}
     \label{table:data_pre_norm}
-    \caption{Amostra do pré-processamento normalizado dos dados ao se utilizar 7.5 minutos de intervalo do sensor RSI128}
+    \caption{Amostra do pré-processamento normalizado dos dados ao se utilizar 7.5 minutos de intervalo do sensor \textbf{RSI128}}
 \end{table}
 
-\subsection{Sazonalidade dos Dados}
+Importante notar que nessa transformação existe uma diminuição significativa do conjunto de dados. Por exemplo, o sensor \textbf{RSI128} que possuía 536.879 registros de passagem de veículos passou a ter 17.664 registros de fluxo.
+
+% \subsection{Sazonalidade dos Dados}
 
 
 \subsection{Produção dos Conjunto de Dados}
 
-Para fins de análise, utiliza-se o conjunto de dados pré processados para gerar um outro conjunto de dados mais simples. Este conjunto mais seimples possuirá somente o fluxo, permitindo assim verificar se as variáveis escolhidas (\textit{Velocidade Média} e \textit{Dia da Semana}) melhoram a performance do modelo. Deste modo, tem-se um conjunto de dados uni-variado, isto é, possuirá somente uma variável, o fluxo. E o outro será multi-variado, isto é, possuirá várias variáveis, sendo elas o fluxo, a velocidade média no intervalo e o dia da semana.
+Será utilizado o conjunto de dados pré-processados para gerar o conjunto de dados de treino e teste. Cada elemento do conjunto de treino será série temporal de atributos. Ou seja, cada elemento de treino terá \(n\) instâncias do passado, cada instância será uma das linhas da Tabela \ref{table:data_pre_norm}. Para o conjunto de testes, cada elemento será o fluxo corresponde no futuro.
+
+% TODO: adicionar imagem ou formulas matemáticas para melhorar o entendimento
+
+Para se adaptar aos modelos, serão gerados duas versões do conjunto de dados de treino e teste. Uma versão será para os modelos tradicionais (\textit{\acrshort{RF}} e \textit{\acrshort{SVM}}), que terá somente duas dimensões (amostras por atributos) e a outra para os modelos de aprendizagem profunda (\textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}}) com três dimensões (amostras por passos por atributos).
+
+Para fins de análise, utiliza-se o conjunto de dados de treino para gerar um outro conjunto de dados de treino mais simples. Este conjunto mais simples possuirá somente o fluxo, permitindo assim verificar se as colunas de \texttt{VelocidadeMédia}, \texttt{Density} e as de dias da semana melhoram a performance do modelo. Deste modo, tem-se um conjunto de dados uni-variado, isto é, possuirá somente um tipo de variável, o fluxo. E o outro será multi-variado, isto é, possuirá vários tipos de variáveis, sendo elas o fluxo, a velocidade média no intervalo e o dia da semana.
 
 \section{Modelos}
 
@@ -153,50 +164,51 @@ Dos modelos paramétricos, o mais utilizado na literatura para previsão de flux
 
 Todos os modelos não-paramétricos citados foram implementados para este trabalho. Quanto aos modelos paramétricos, foram testados dois modelos, sendo eles o \textit{\acrshort{ARIMA}} e o \textit{\acrshort{LR}}. Porém, ambos tiveram resultados inferiores em relação aos modelos não-paramétricos testados. Além disso, \textit{\acrshort{ARIMA}} se mostrou extremamente custosos computacionalmente de se treinar e otimizar. Por estes dois motivos citados, os modelos paramétricos foram retirados dos experimentos.
 
-\subsection{Entrada}
-
-Devido ao custo computacional, seria inviável treinar e fazer previsões com um número muito grande de fluxos do passado. Baseado nisso, utilizamos somente uma quantidade fixa referente a algumas horas no passado.
-
 %TODO: EXPLICAR NAIVE
 \subsection{Modelos de Comparação}
 
-Serão utilizados também dois modelos com o único propósito de estabelecer uma base de comparação inicial para os outros modelos. Serão eles o \textit{Naive} e \textit{Moving Average}. O primeiro faz suas predições apenas escolhendo aleatoriamente um número de 0 até o maior número do nosso conjunto de dados. Dessa forma, é possível colocar em perspectiva o desempenho dos outros modelos e analisar se eles estão melhores do que um modelo que simplesmente escolhe valores possíveis ao acaso. Já o segundo faz a média dos valores da entrada, o que seria o método mais simples depois de escolher valores aleatórios.
+Serão utilizados também dois modelos com o único propósito de estabelecer uma base de comparação inicial para os outros modelos. Serão eles o \textit{Naive} e \textit{Moving Average}. O primeiro faz suas predições apenas escolhendo o valor de fluxo mais recente dos que recebeu de entrada. Já o segundo faz a média dos valores de fluxo recebidos na entrada. Dessa forma, é possível colocar em perspectiva o desempenho dos modelos escolhidos. Também fora implementado o \textit{Random Guess} cujo respondia aleatoriamente para qualquer entrada (valores entre o menor e maior elemento encontrado no conjunto), porém este era muito inferior e decidimos retirá-lo.
 
 \subsection{Implementação}
 
 As arquiteturas utilizadas neste trabalho foram implementados na linguagem \textit{Python} utilizando bibliotecas como \textit{Keras} com \textit{TensorFlow} e \textit{SKLearn}. Decidiu-se por utilizar essas bibliotecas, pois suas implementações já são robustas, otimizadas e bem testadas. Implementar todos os modelos sem o auxílio de nenhuma biblioteca seria ineficiente para objetivo dos experimentos e prono a erros. Além disso, o uso das bibliotecas facilita a reprodução dos experimentos para os interessados em avançar ou verificar este projeto.
 
-\textit{Keras} foi utilizado para implementar os modelos de \acrshort{RNN}, \acrshort{LSTM} e \acrshort{GRU} e optou-se por usar como base dessa biblioteca o \textit{TensorFlow}, visto que este é o \textit{framework} com suporte para aprendizado de máquina mais utilizado dentre os desenvolvedores, segundo um \textit{survey} feito em 2018 pelo \textit{StackOverflow} \cite{stack_2018}. Já \textit{SKLearn} foi utilizado para implementar os modelos \acrshort{RF} e \acrshort{SVM}. Além disso, utilizou-se a biblioteca \textit {Hyperas} para a escolha dos melhores valores para cada um dos hiper-parâmetros.
+\textit{Keras} foi utilizado para implementar os modelos de \textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}} e optou-se por usar como base dessa biblioteca o \textit{TensorFlow}, visto que este é o \textit{framework} com suporte para aprendizado de máquina mais utilizado dentre os desenvolvedores, segundo um questionário feito em 2018 pelo \textit{Stack Overflow} \cite{stack_2018}. Já \textit{SKLearn} foi utilizado para implementar os modelos \acrshort{RF} e \acrshort{SVM}. Além disso, utilizou-se a biblioteca \textit {SKLearn} para realizar uma pesquisa dos melhores parâmetros e hiper-parâmetros.
 
 \section{Escolha de Parâmetros e Hiper-Parâmetros}
 
-Para a escolha dos parâmetros e hiper-parâmetros será feito uma busca dos melhores para cada modelo. 
-
-Para os modelos de aprendizagem profunda, isto é, \textit{\acrshort{RNN}}, \textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}} será utilizada a biblioteca \textit{Hyperas} que já possui integração com a biblioteca \textit{Keras}. Os parâmetros e hiper-parâmetros escolhidos foram:
+Para a escolha dos parâmetros e hiper-parâmetros será feito uma busca total dos melhores para cada modelo. Para os modelos de aprendizagem profunda (\textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}}) será feita a pesquisa nos seguintes hiper-parâmetros.
 
 % TODO: Explicar para que serve cada parametro
 
 \begin{itemize}
-    \item \textbf{Tamanho do \textit{Batch}:} 1, 32 e 64; \newline
+    \item \textbf{Tamanho do \textit{Batch}:} 16, 32 e 64; \newline
     O tamanho do batch serve para...
-    \item \textbf{Otimizador do Modelo:} Adam;
-    \item \textbf{Função de Ativação:} Sigmoid, Relu;
-    \item \textbf{Quantidade de Células:} 20, 30, 40;
+    \item \textbf{Otimizador do Modelo:} Adam; \newline
+    O otimizador do modelo serve para...
+    \item \textbf{Quantidade de Células:} 20, 30, 40; \newline
+    A quantidade de células serve para...
 \end{itemize}
 
-Para os modelos tradicionais, isto é, \textit{\acrshort{SVM}} e \textit{\acrshort{RF}} será utilizado da técnica de \textit{Grid Search}. Para a \textit{\acrshort{SVM}} foram escolhidos os parâmetros:
+Para a \textit{\acrshort{SVM}} foram escolhidos os hiper-parâmetros:
 
 \begin{itemize}
     \item \textbf{Gamma:} Scale;
-    \item \textbf{C:} 1.0;
-    \item \textbf{Epsilon:} 0.2;
+    \item \textbf{C:} [1, 25, 50, 75, 100];
+    \item \textbf{Kernel:} RBF e Linear;
 \end{itemize}
 
 Já os parâmetros escolhidos para \textit{\acrshort{RF}} foram:
 
 \begin{itemize}
-    \item \textbf{Número de Estimadores:} 100 a 1000 de 100 em 100;
     \item \textbf{\textit{Bootstrap}:} Ativado e Desativado;
+    O bootstrap serve para...
+    \item \textbf{Número de Estimadores:} 75, 100, 125, 150 e 175;
+    O número de estimadores ajuda a tornar mais preciso os resultados, uma vez que aumenta a probabilidade de terem mais árvores que acharam melhor padrão.
+    \item \textbf{Altura Máxima da Árvore:} 30, 40, 50, 60, 70 e a padrão;
+    Limitar a altura máxima das árvores de decisão auxilia a evitar o sobre-ajuste, pois torna mais difícil da árvore "decorar" as respostas das entradas.
+    
+    
 \end{itemize}
 
 \section{Avaliação Final}
@@ -227,3 +239,4 @@ NRMSE = \frac{RMSE(result, expected)}{\sigma(expected)}
 \end{equation}
 
 As duas primeiras métricas podem ser encontradas na literatura para avaliação dos modelos de predição de fluxo, a última é uma métrica utilizada para permitir comparações entre modelos que usam conjunto de dados diferentes, visto que ao ser normalizado ele perde a correlação com o conjunto de dados. Essas medições serão feitas para cada tempo de previsão discutido.
+

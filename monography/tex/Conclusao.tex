@@ -1,20 +1,32 @@
 % TODO?: Adicionar Ensemble Methods (7 LSTM, uma para cada dia da semana)
+Este capítulo tem como objetivo apresentar as conclusões dos experimentos discutidos nas seções anteriores e traçar possíveis trabalhos futuros.
 
-\section{Considerações Finais}
+\section{Conclusão}
+
+Esta monografia apresentou um trabalho de comparação de modelos tradicionais de aprendizagem de máquina com modelos de aprendizagem profunda para predição de fluxo de veículos. Por meio dos resultados das comparações, este trabalho confirmou a hipótese de que modelos utilizados para predição de fluxo em vias livres podem ser aplicados a cenários de vias com cruzamentos.
+
+Primeiramente, foi discutido o tráfego e suas características, assim como os fatores que podem influenciar no seu comportamento. Foi visto que existem os fatores espaciais, temporais e aleatórios, assim como os motivos que foram considerados para não utilizar-se os fatores aleatórios. Subsequentemente, foi feita uma análise dos dados utilizados como entrada dos modelos de predição. Foram explicitadas todas as colunas disponíveis nos registros disponibilizados pelo \textit{\acrshort{DETRAN}}, assim como quais destas colunas foram descartadas e porquê. 
+
+Discutiu-se também a metodologia empregada nos experimentos. Mostrou-se como foi feita a transformação dos dados do conjunto inicial de registros para um outro conjunto contendo o fluxo de veículos por intervalo de tempo. Também foi explicado o tratamento adicional dado a algumas colunas, como a técnica de \textit{One Hot Enconding} que foi utilizada na coluna \textit{Data}. Por último, nesta seção também foi feita uma análise de sazonalidade dos dados, o que explicou o motivo de certos períodos de tempo terem apresentado valores menores de fluxo.
+
+Ainda referente a metodologia, também foi explicado quais os modelos utilizados para as comparações e experimentos, assim como, de que maneira eles diferem entre si e quais as caraterísticas principais de cada um. Por último, foi mostrado como se deu a escolha dos melhores valores de parâmetros e hiper-parâmetros.
+
+Por fim, foram mostrados os resultados dos experimentos para a predição de fluxo de veículos para 15, 30, 45 e 60 minutos no futuro. Como esperado, todos os modelos de aprendizagem de máquina tiveram melhores resultados que os modelos de base de comparação. Também foi possível observar que dentre os modelos propostos, o que apresentou os melhores valores de predição, no geral, foi o \textit{\acrshort{RF}}. Portanto, todos os objetivos e resultados esperados traçados no início desta monografia foram atingidos.
+
 
 \section{Trabalhos Futuros}
 
-Como demonstrado, este trabalho possui limitações e ainda tem muito espaço para explorar e melhorar. Sendo eles:
+Como explicado anteriormente, este trabalho possui limitações e ainda permite espaço para melhoras e ajustes. Dentre os trabalhos futuros possíveis, segue alguns dos mais relevantes:
 
 \begin{itemize}
-    \item Treinar os modelos com pelo 1 ano de dados;
+    \item Treinar os modelos com pelo 1 ano de dados para permitir uma abordagem mais abrangente quanto a sazonalidade dos dados e como eles impactam no comportamento do fluxo (e sua predição);
     \item Verificar como os modelos reagem com uma representação mais complexa do dia e hora;
-    \item Aplicar os modelos desenvolvidos com um conjunto de dados de vias urbanas expressas para comparação;
-    \item Verificar se utilizarmos múltiplos sensores haveria uma melhora das métricas;
-    \item Utilizar modelos paramétricos para servir de comparação, como \textit{\acrshort{ARIMA}}.
-    \item Utilizar modelos mais complexos como \textit{\acrshort{SLSTM}} discutidos no capítulo \ref{chapter:trabalhos_relacionados};
+    \item Aplicar os modelos desenvolvidos a um conjunto de dados referente a vias urbanas expressas, para fins de comparação;
+    \item Verificar se ao se utilizar uma arquitetura com múltiplos sensores haveria uma melhora nas predições;
+    \item Incluir nos experimentos modelos paramétricos, como o \textit{\acrshort{ARIMA}};
+    \item Incluir modelos não paramétricos mais complexos, como \textit{\acrshort{SLSTM}} discutidos no capítulo \ref{chapter:trabalhos_relacionados};
     \item Utilizar um intervalo maior de dados para verificar se os modelos poderiam melhorar com um espaço de treino maior;
-    \item Aprofundar a escolha de parâmetros e hiper-parâmetros com mais opções.
+    \item Aprofundar a escolha de parâmetros e hiper-parâmetros com mais opções;f
     % TODO: cite articles that prove this
-    \item Utilizar versão \textit{boosted} da \textit{\acrshort{RF}} que tem se mostrado superior em problemas onde a versão \textit{bootstrapping} se saiu bem.
+    \item Incluir nos experimentos a versão \textit{boosted} da \textit{\acrshort{RF}} que tem se mostrado superior em problemas onde a versão \textit{bootstrapping} teve resultados promissores.
 \end{itemize}

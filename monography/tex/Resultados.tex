@@ -12,15 +12,15 @@
 
 Este capítulo tem como objetivo apresentar uma discussão acerca dos resultados dos experimentos. Primeiramente, serão discutidos como os modelos reagem à variação dos principais parâmetros, tamanho de janela, passado visível e tamanho do intervalo do fluxo. Subsequentemente, será feita uma breve análise da melhora das predições dos modelos ao se utilizar dados normalizados. Após essa breve análise serão discutidos como os modelos reagem para a escolha dos valores de hiper-parâmetros. Por fim, serão discutidos os resultados das previsões de fluxo de cada modelo nos curtos prazos de 15, 30, 45 e 60 minutos.
 
-\subsection{Resultados das escolhas de Parâmetros}
+\section{Resultados das escolhas de Parâmetros}
 
 Após o tratamento dos dados, foram realizados diversos testes para definir os melhores parâmetros de cada modelo. Na lista abaixo podem ser vistos os parâmetro que foram levados em consideração nos estudos de caso deste trabalho.
 
 
 \begin{enumerate}
-	\item Tamanho da Janela: tamanho da janela utilizada para separar o conjunto de dados em treinamento e teste. O primeiro valor considerado foi 0.30. A partir deste valor incial, o valor foi aumentado em 0.05 até atingir 0.85
+	\item Tamanho da Janela: tamanho da janela utilizada para separar o conjunto de dados em treinamento e teste. O primeiro valor considerado foi 0.30. A partir deste valor inicial, o valor foi aumentado em 0.05 até atingir 0.85
 	\item Passado Visível: Parâmetro que define qual a janela de tempo no passado que será visível no treinamento do modelo. O valor inicial considerado foi de 60 minutos. Os valores de 120, 180, 210. 240, 270, 300, 360 e 420 minutos também foram testados.
-	\item Tamanho do intervalo do fluxo: Parâmetro que define o intervalo de tempo no qual será acumulado a quantidade de veículos para o cáculo do fluxo. O valor inicial de teste foi 60 minutos. Foram realizados testes para as variações de 150, 300 e 450 minutos também.
+	\item Tamanho do intervalo do fluxo: Parâmetro que define o intervalo de tempo no qual será acumulado a quantidade de veículos para o cálculo do fluxo. O valor inicial de teste foi 60 minutos. Foram realizados testes para as variações de 150, 300 e 450 minutos também.
 \end{enumerate}
 
 
@@ -28,7 +28,7 @@ Após o tratamento dos dados, foram realizados diversos testes para definir os m
     \centering
     \includegraphics[scale=0.8]{monography/img/windows_size_for_training_comparison_rmse.png}
     \label{figure:rf}
-    \caption{Resposta dos modelos à variação dos valores de tam. de janela \textit{\acrshort{}}\footnotemark}
+    \caption[Resposta dos modelos à variação dos valores de tamanho de janela]{Resposta dos modelos à variação dos valores de tamanho de janela}
 \end{figure} 
 
 
@@ -38,7 +38,7 @@ Como pode ser observado no gráfico acima, os modelos de aprendizagem de máquin
     \centering
     \includegraphics[scale=0.8]{monography/img/seeable_past_for_training_comparison_rmse.png}
     \label{figure:rf}
-    \caption{Resposta dos modelos à variação dos valores de passado visível \textit{\acrshort{}}\footnotemark}
+    \caption[Resposta dos modelos à variação dos valores de passado visível]{Resposta dos modelos à variação dos valores de passado visível}
 \end{figure}
 
 Quanto à resposta dos modelos em relação à variação do passado visível, é perceptível que a mudança do valor deste parâmetro não teve tanto impacto na predição dos modelos de aprendizagem de máquina e aprendizagem de máquina profunda. Porém, observando a média móvel, podemos perceber que a raíz do erro quadrado médio sobe quase que linearmente à medida que o passado visível aumenta.
@@ -54,10 +54,10 @@ Quanto à resposta dos modelos em relação à variação do passado visível, �
 Por último, pode-se notar que o tamanho do intervalo do fluxo adotado impacta de maneira significativa a qualidade das predições dos modelos. Em todos os casos o erro quadrado médio das predições diminuiu com intervalos de fluxo maiores sendo utilizados durante o treinamento. Isso se dá pelo fato de que ao se aumentar o intervalo de fluxo, diminui-se a quantidade de ruídos presentes.
 
 
-\subsection{Resultados das normalização dos Dados}
+\section{Resultados das normalização dos Dados}
 
 %TODO: COLOCAR REFERENCIA
-Também é válido notar que os valores de entrada dos modelos estão normalizados. Para os modelos uni-variados, normalizamos o valor do fluxo utilizando a biblioteca \textit{Sklearn}, onde o menor valor é mapeado como 0 e o maior valor como 1. Segundo [Citar fonte que mostra que dados normalizados tendem a ter um melhor resultado], valores normalizados entre 0 e 1 tendem a ter um melhor resultado para algoritmos que utilizam funções de ativação sigmoidais, além de evitar que o modelo fique enviesado para os valores com maiores ordens de grandeza. Porém, como pode ser visto na tabela 1, no caso do \acrfull{LSTM}, o \acrfull{RMSE} ficou levemente menor para as predições utilizando valores normalizados em seu treinamento. Este aumento pouco significativo na melhora das predições pode ser justificado pelo fato dos valores dos intervalos do fluxo oriundo dos dados deste trabalho não serem tão grande,sendo o menor valor 0 e o maior valor 60. Com um intervalo como esse, a normalização pode não ter tido um impacto tão significativo, pois 0 e 60 estão apenas a uma ordem de grandeza de diferença.
+Também é válido notar que os valores de entrada dos modelos estão normalizados. Para os modelos uni-variados, normalizamos o valor do fluxo utilizando a biblioteca \textit{Sklearn}, onde o menor valor é mapeado como 0 e o maior valor como 1. Segundo [Citar fonte que mostra que dados normalizados tendem a ter um melhor resultado], valores normalizados entre 0 e 1 tendem a ter um melhor resultado para algoritmos que utilizam funções de ativação sigmoidais, além de evitar que o modelo fique enviesado para os valores com maiores ordens de grandeza. Porém, como pode ser visto na tabela 1, no caso do \acrfull{LSTM}, o \acrfull{RMSE} ficou levemente menor para as predições utilizando valores normalizados em seu treinamento. Este aumento pouco significativo na melhora das predições pode ser justificado pelo fato dos valores dos intervalos do fluxo oriundo dos dados deste trabalho não serem tão grandes, sendo o menor valor 0 e o maior valor 60. Com um intervalo como esse, a normalização pode não ter tido um impacto tão significativo, pois 0 e 60 estão apenas a uma ordem de grandeza de diferença.
 
 \begin{table}[H]
     \caption{Comparação das predições para os modelos univariados com e sem normalização para predições de 15 minutos}
@@ -102,7 +102,7 @@ O mesmo raciocínio pode ser utilizado para explicar a tabela 2, onde podemos ob
     \end{center}
 \end{table}
 
-\subsection{Resultados das escolhas de Hiper-parâmetros}
+\section{Resultados das escolhas de Hiper-parâmetros}
 
 O próximo passo foi escolher os melhores valores de hiper-parâmetros de cada modelo. Para os modelos de aprendizagem de máquina e aprendizagem profunda utilizou-se a biblioteca \textit{Hyperas} para descobrir os melhores valores dos seguintes hiper-parâmetros:
 
@@ -155,7 +155,7 @@ Abaixo podem ser vistos os valores resultantes dos testes para cada modelo:
 
 Como pode ser visto nos gráficos/tabelas acima, todos os modelos tiveram uma melhora de performance ao serem utilizados os parâmetros resultantes dos testes.
 
-\subsection{Teste de Predição para 15, 30, 45 e 60 minutos}
+\section{Teste de Predição para 15, 30, 45 e 60 minutos}
 
 Por fim, após refinar todos os modelos e chegar às suas melhores versões, foram realizados os testes de predição para 15, 30, 45 e 60 minutos.
 
