@@ -37,7 +37,7 @@ Como pode ser observado no gráfico acima, os modelos de aprendizagem de máquin
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.8]{monography/img/seeable_past_for_training_comparison_rmse.png}
-    \label{figure:rf}
+    \label{figure:res_past}
     \caption[Resposta dos modelos à variação dos valores de passado visível]{Resposta dos modelos à variação dos valores de passado visível}
 \end{figure}
 
@@ -46,8 +46,8 @@ Quanto à resposta dos modelos em relação à variação do passado visível, �
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.8]{monography/img/flow_interval_for_training_comparison_rmse.png}
-    \label{figure:rf}
-    \caption{Resposta dos modelos à variação dos valores de intervalo de fluxo \textit{\acrshort{}}\footnotemark}
+    \label{figure:res_flow}
+    \caption{Resposta dos modelos à variação dos valores de intervalo de fluxo}
 \end{figure}
 
 
@@ -61,7 +61,7 @@ Também é válido notar que os valores de entrada dos modelos estão normalizad
 
 \begin{table}[H]
     \caption{Comparação das predições para os modelos univariados com e sem normalização para predições de 15 minutos}
-    \label{table:RmseComparison}
+    \label{table:comp_rmse_uni_15}
     \begin{center}
     \begin{tabular}{ccccccc}
     \hline
@@ -84,7 +84,7 @@ O mesmo raciocínio pode ser utilizado para explicar a tabela 2, onde podemos ob
 
 \begin{table}[H]
     \caption{Comparação das predições para os modelos multivariados com e sem normalização para predições de 15 minutos}
-    \label{table:RmseComparison}
+    \label{table:comp_rmse_multi_15}
     \begin{center}
     \begin{tabular}{ccccccc}
     \hline
@@ -162,8 +162,8 @@ Por fim, após refinar todos os modelos e chegar às suas melhores versões, for
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.8]{monography/img/predict_future_for_training_comparison_rmse.png}
-    \label{figure:rf}
-    \caption{Comparação da predição dos modelos para diferentes valores de X minutos no futuro \textit{\acrshort{}}\footnotemark}
+    \label{figure:res_future}
+    \caption{Comparação da predição dos modelos para diferentes valores de X minutos no futuro}
 \end{figure}
 
 
@@ -177,7 +177,7 @@ Outro  ponto  interessante  a  se  notar ao observar a tabela y  é  o  tempo  d
 
 \begin{table}[H]
     \caption{Tabela Y com tempo de treinamento de cada modelo}
-    \label{table:RmseComparison}
+    \label{table:comp_training}
     \begin{center}
     \begin{tabular}{ccccccc}
     \hline
