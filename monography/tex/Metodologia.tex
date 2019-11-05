@@ -1,5 +1,3 @@
-% TODO?: Adicionar subseção de modelagem do problema
-
 % TODO?: Usar a metodologia do Fábio como inspiração
 
 % TODO: Incluir métricas de precisão
@@ -8,10 +6,11 @@
 
 Este capítulo tem como objetivo explicar como foram realizadas as comparações dos modelos quanto as suas predições, assim como mostrado na Figura \ref{figure:metodologia}. Primeiramente será discutido os pré-processamentos dos dados, seguindo para os modelos, incluindo a razão por estes terem sido incluídos. Logo após será discutido como as otimizações foram feitas e como fora feita a avaliação dos modelos.
 
-% TODO: botar quatro modelos
-% TODO: colocar o nome dos modelos
-% TODO: mudar a cor da box de fluxo de veículos
-% TODO: mudar a cor da box da Comparação
+% TODO: modificar a imagem
+%     - botar quatro modelos
+%     - colocar o nome dos modelos
+%     - mudar a cor da box de fluxo de veículos
+%     - mudar a cor da box da Comparação
 
 \begin{figure}
     \centering
@@ -31,16 +30,9 @@ Nem todas as colunas são úteis para o aprendizado dos modelos, em especial, as
 
 \subsection{Transformação dos Dados}
 
-% TODO: Adicionar referencia do one hot enconding 
-% https://www.researchgate.net/publication/320465713_A_Comparative_Study_of_Categorical_Variable_Encoding_Techniques_for_Neural_Network_Classifiers
-
-% TODO: Explicar melhor como o one-hot-encoding melhora
-
-Caso fosse utilizado a coluna \texttt{Data} sem tratamento, ficaria a cargo dos modelos implementados extrair muitos dos significados por trás da mesma. Isto é, qual o dia da semana e o dia do mês referente àquela data, a qual a estação do ano aquele dia específico pertence. Então, para facilitar o aprendizado e evitar falsas suposições foi utilizado o método \textit{one-hot encoding} para transformar a coluna de \texttt{Data} em 7 colunas \textit{booleanas} que representam os dias da semana. Este tipo de tratamento se torna necessário devido ao fato de que o dia da semana é uma variável qualitativa e, caso fosse representada como quantitativa, (0 como domingo e 1 como segunda, por exemplo) o modelo poderia realizar inferências, como "segunda" é maior que "quarta", ou algo similar. Mais sobre \textit{one-hot encoding} pode ser visto em [CITACAO ONE HOT ENCONDING].
+Caso fosse utilizado a coluna \texttt{Data} sem tratamento, ficaria a cargo dos modelos implementados extrair muitos dos significados por trás da mesma. Isto é, qual o dia da semana e o dia do mês referente àquela data, a qual a estação do ano aquele dia específico pertence. Então, para facilitar o aprendizado e evitar falsas suposições foi utilizado o método \textit{one-hot encoding} para transformar a coluna de \texttt{Data} em 7 colunas \textit{booleanas} que representam os dias da semana. Este tipo de tratamento se torna necessário devido ao fato de que o dia da semana é uma variável qualitativa e, caso fosse representada como quantitativa, (0 como domingo e 1 como segunda, por exemplo) o modelo poderia realizar inferências, como "segunda" é maior que "quarta", ou algo similar.
 
 \subsection{Acumulação dos registros}
-
-O tráfego pode ser interpretado de várias formas diferentes. Pode ser visto como a quantidade de veículos que passaram por um ponto em um determinado intervalo de tempo, ou seja, o fluxo. Também pode ser visto como o fluxo dividido pela média de velocidade dos veículos em um certo espaço de tempo, ou seja, a densidade. Ou como uma média de velocidade em um intervalo de tempo, a velocidade média.
 
 % TODO: mudar isso, ta errado
 Como grande parte da literatura acerca da previsão de fluxo de veículos utiliza o fluxo para fazer o treinamento de suas redes neurais, também foi optado nesse trabalho por utilizá-lo. Além disso, como o domínio dos valores do nosso fluxo é menor que o domínio dos valores da densidade e da velocidade média, nossos modelos tendem a ter uma maior facilidade para realizar a previsão.
@@ -48,9 +40,43 @@ Como grande parte da literatura acerca da previsão de fluxo de veículos utiliz
 % TODO: Falar que aproveitamos e adicionamos no multivariado a densidade e a velocidade média
 Sendo assim, será transformado o conjunto de dados de uma série temporal de registro de veículos para uma série temporal de fluxos. Isto é, será calculado a quantidade de veículos que passaram por um local em um determinado intervalo de tempo. Para definir o intervalo que utilizaríamos, testamos os valores de intervalo para 1, 2.5, 5 e 7.5 minutos. Isto, é usaremos minutos que sejam múltiplos de 15, visto que todos os tempos os quais vamos prever são múltiplos de 15.
 
-No caso, os melhores resultados foram com a acumulação dos registros em um intervalo de 7.5 minutos. Isso se deve, em parte, ao fato de que quando se acumula os registros em um intervalo de tempo muito pequeno, o conjunto de dados apresenta muito ruído, dificultando a aprendizagem e afetando a qualidade da previsão. Em contrapartida, ao se aumentar o intervalo, o conjunto de dados pode se tornar muito pequeno, o que pode dificultar a aprendizagem. Tendo isso em mente, 7.5 minutos teve o melhor resultado, pois como nossa primeira previsão é para 15 minutos no futuro, não poderíamos utilizar um intervalo que não fosse divisor de 15, nem maior que 15. Ao final da transformação, temos um conjunto de dados similar ao mostrado na Tabela \ref{table:data_pre}.
+No caso, os melhores resultados foram com a acumulação dos registros em um intervalo de 7.5 minutos. Isso se deve, em parte, ao fato de que quando se acumula os registros em um intervalo de tempo muito pequeno, o conjunto de dados apresenta muito ruído, dificultando a aprendizagem e afetando a qualidade da previsão. Em contrapartida, ao se aumentar o intervalo, o conjunto de dados pode se tornar muito pequeno, o que pode dificultar a aprendizagem. Tendo isso em mente, 7.5 minutos teve o melhor resultado, pois como nossa primeira previsão é para 15 minutos no futuro, não poderíamos utilizar um intervalo que não fosse divisor de 15, nem maior que 15. Ao final da transformação, temos um conjunto de dados similar ao mostrado na Tabela \ref{table:data_pre}. Abaixo também pode ser observado parte do código responsável por realizar esta transformação:
 
-\begin{table}[htbp]
+\begin{lstlisting}[language=Python, caption = GetFlow Python Function]
+def get_flow (data, flow_interval, normalize, verbosity):
+  date = np.asarray(data['Date'])
+  weekDay = np.asarray(data['WeekDay'])
+  time = np.asarray(data['Time'])
+  speed = np.asarray(data['Speed'])
+  
+  dateControl = date[0]
+  timeBlock = flow_interval
+  countFlow = 0
+  accSpeed = 0
+  flowData = []
+
+  for i in range(len(date)):
+    if time[i] >= timeBlock: # init a new time block
+      flowData.append(get_flow_data(countFlow, accSpeed, weekDay[i])) 
+      timeBlock += flow_interval
+      accSpeed = 0
+      countFlow = 0
+      
+    if date[i] > dateControl: # reset on day change
+      dateControl = date[i]
+      timeBlock = flow_interval 
+      countFlow = 0
+      accSpeed = 0
+      
+    if time[i] < timeBlock: # add car on flow
+      countFlow += 1
+      accSpeed += speed[i]
+
+  return flowData
+
+\end{lstlisting}
+
+\begin{table}[H]
     \begin{tabular}{cccccccccc}
     \toprule
     \multicolumn{1}{l}{\textbf{Flow}} & \multicolumn{1}{l}{\textbf{Density}} & \multicolumn{1}{l}{\textbf{Average Speed}} & \multicolumn{1}{l}{\textbf{Sun}} &
@@ -96,6 +122,17 @@ No caso, os melhores resultados foram com a acumulação dos registros em um int
 No final do pré-processamento o resultado possuirá 3 colunas quantitativas e 7 qualitativas. As colunas de \textit{Density} e \textit{Average Speed} são contínuas e a coluna \textit{Flow} é discreto. As outras 7 colunas representam uma classificação indicando é ou não (0 representa falso e 1 verdadeiro) um certo dia da semana, sendo assim uma coluna qualitativa ordinal.
 
 Vale notar que como o período é o mesmo para qualquer dos sensores, ao se acumular os registros, o tamanho do conjunto de dados será o mesmo. Isto é, será equivalente ao intervalo de tempo do conjunto de dados, 92 dias, divido pelo tempo de agregação, 7.5 minutos, o que gera 17.664 registros de fluxo.
+
+\subsection{Fluxo Semanal}
+
+Na Figura \ref{figure:flow_discution} é mostrado o resultado da agregação dos registros de veículos em um intervalo de 7.5 minutos. É possível ver um certo padrão que indica o comportamento de 1 dia. Além disso, é possível perceber que um dos picos é menor que a média, este é o domingo.
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=1]{monography/img/flows/flow_450_week_01.png}
+    \label{figure:flow_discution}
+    \caption[Fluxo da Primeira Semana]{Fluxo da Primeira Semana}
+\end{figure}
 
 \subsection{Normalização dos Dados}
 % TODO: adicionar referência do porque normalizar dados
@@ -162,8 +199,6 @@ Além disso, em função do modo de como alguns dos modelos funcionam, como o \t
 \end{table}
 
 Importante notar que nessa transformação existe uma diminuição significativa do conjunto de dados. Por exemplo, o sensor \textbf{RSI128} que possuía 536.879 registros de passagem de veículos passou a ter 17.664 registros de fluxo.
-
-% \subsection{Sazonalidade dos Dados}
 
 
 \subsection{Produção dos Conjunto de Dados}
@@ -263,3 +298,18 @@ NRMSE = \frac{RMSE(result, expected)}{\sigma(expected)}
 
 As duas primeiras métricas podem ser encontradas na literatura para avaliação dos modelos de predição de fluxo, a última é uma métrica utilizada para permitir comparações entre modelos que usam conjunto de dados diferentes, visto que ao ser normalizado ele perde a correlação com o conjunto de dados. Essas medições serão feitas para cada tempo de previsão discutido.
 
+Além disso, será avaliado quanto a precisão (\(\alpha\)). No caso, será analisado com qual precisão o modelo consegue prever se o fluxo vai aumentar ou diminuir. Isto é:
+
+\begin{equation}
+f(x, y, z) =
+\begin{cases}
+  0, & \text{if}\ (x - z) \times (y - z) \textless 0 \\
+  1, & \text{otherwise}
+\end{cases}
+\end{equation}
+
+\begin{equation}
+\alpha = \frac{\sum_{i=1}^{n} f(expected_i, result_i, k_i)}{n}
+\end{equation}
+
+Com \(k_i\) sendo o fluxo mais recente que o modelo possuiu como entrada quando ver a predição \(result_i\).

@@ -1,16 +1,18 @@
-% TODO: Usar a análise de dados do Fábio como inspiração para ver se tem mais algo que podemos escrever aqui
+Neste capítulo é apresentado uma análise do tráfego e do conjunto de dados utilizado nesse trabalho, além de uma descrição do problema. Primeiramente, é explicado as características do tráfego e como ele pode ser modelo. Subsequentemente é explicitado como os dados foram adquiridos e suas características. Por fim, são unidos os conceitos para descrever o problema desse trabalho.
 
-Neste capítulo, é apresentada uma análise do conjunto de dados utilizado para treinar e testar os modelos. Primeiramente, é explicado de que forma o tráfego e suas características podem influenciar nos registros. Subsequentemente, é explicitado como os dados foram adquiridos e suas características.
+\section{Análise do Tráfego}
 
-\section{Características do Tráfego}
-
-% TODO: arranjar referência
-É importante salientar que o tráfego é afetado por diversos fatores: temporais, espaciais e aleatórios. Os fatores temporais são, por exemplo, o horário do expediente dos trabalhadores que possuem veículos. Os fatores espaciais são, por exemplo, como a malha rodoviário se distribui em uma localização, ou a quantidade de empresas em uma área. Já fatores aleatórios são, por exemplo, acidentes que possam vir a ocorrer, ou meteorologia do dia. Sendo assim, modelos de previsões podem ter desempenhos diferentes dependendo de onde e quando os dados forem coletados. Isso já descartando os fatores aleatórios, que são difíceis de prever.
+É importante salientar que o tráfego é afetado por diversos fatores, entre eles: temporais, espaciais e aleatórios. Os fatores temporais são, por exemplo, o horário do expediente dos trabalhadores que possuem veículos. Os fatores espaciais são, por exemplo, como a malha rodoviário se distribui em uma localização, ou a quantidade de empresas em uma área. Já fatores aleatórios são, por exemplo, acidentes que possam vir a ocorrer, ou meteorologia do dia. Sendo assim, modelos de previsões podem ter desempenhos diferentes dependendo de onde e quando os dados forem coletados. Isso já descartando os fatores aleatórios, que são difíceis de prever.
 
 % TODO: botar referência
 Dessa forma, é comum na literatura optar-se por usar apenas dados com fatores espaciais e temporais. Ao desconsiderar-se o fator aleatório, é feita uma suposição de que exista uma tendência no fluxo que pode ser prevista e que, embora as variáveis aleatórias possam afetar o fluxo, elas não afetam o bastante para mudar a tendência no longo prazo. Portanto, seguindo a literatura, esse artigo utilizará variáveis temporais e espaciais.
 
-\section{Aquisição dos Dados}
+Além disso, o tráfego pode ser interpretado de várias formas diferentes. Pode ser visto como a quantidade de veículos que passaram por um ponto em um determinado intervalo de tempo, ou seja, o fluxo. Também pode ser visto como o fluxo dividido pela média de velocidade dos veículos em um certo espaço de tempo, ou seja, a densidade. Ou como uma média de velocidade em um intervalo de tempo, a velocidade média.
+
+\section{Análise do Conjunto de Dados}
+% TODO: Usar a análise de dados do Fábio como inspiração para ver se tem mais algo que podemos escrever aqui
+
+\subsection{Aquisição dos Dados}
 
 Os dados\footnote{http://bit.ly/processed-data-2l5MaAG} provêm de dois cruzamentos na avenida Hélio Prates que pode ser vista na Figura \ref{figure:helio}. Esta cruza Taguatinga e Ceilândia, que são duas cidades satélites do \acrfull{DF}. Estes dados foram coletados por fiscalizadores eletrônicos localizados nos cruzamentos e foram fornecidos pelo \acrfull{DETRAN}\footnote{http://www.detran.df.gov.br/} do \acrshort{DF}. Neste conjunto de dados estão inclusos registros de todos os veículos que passaram pelo local nos meses de maio a julho de 2016 em forma de uma série temporal. Mais especificamente, do primeiro dia de maio ao último de julho de 2016, totalizando 13 semanas e 1 dia, 92 dias. 
 
@@ -54,7 +56,7 @@ Os dados\footnote{http://bit.ly/processed-data-2l5MaAG} provêm de dois cruzamen
     \caption{Exemplo dos dados recebidos coletados pelo \acrshort{DETRAN}}
 \end{table}
 
-\section{Características dos Dados}
+\subsection{Características dos Dados}
 
 % TODO: verificar com Vinícius se isso ta correto
 Quanto as características das colunas, o conjunto de dados possui tanto colunas quantitativas quanto qualitativas. Só existe uma coluna qualitativa, \texttt{Id Equipamento}, sendo ela ordinal, pois em seu nome ocorre uma numeração. Todas as outras colunas são quantitativas, sendo a de tamanho a única contínua e o resto discreto. Porém a coluna de \texttt{km/h Max} tem seu valor constante constante.  Os registros são de 8 sensores com um total de 10.801.781 registros de veículos, sendo a quantidade de registros por sensor não distribuídos igualmente:
@@ -76,7 +78,7 @@ Visto que o sensores contém dados de um mesmo período, os sensores com maior q
 
 Vale salientar que não foram encontrados atributos incompletos ou nulos. Porém uma das colunas possui dados inconsistentes com a realidade. Isso acontece pois, como pode ser visto na Tabela \ref{table:data} existem veículos com tamanho 0, o que é impossível. Por último, mas não menos importante, também deve-se notar que os fiscalizadores eletrônicos utilizados ficam próximos de semáforos, ou seja, existem momentos em que o fluxo diminui bastante, devido aos sinais vermelhos. 
 
-\begin{figure}[t]
+\begin{figure}[htbp]
     \centering
     \includegraphics[scale=0.55,angle=90]{monography/img/maps/avenida_helio_prates.png}
     \label{figure:helio}
@@ -84,17 +86,36 @@ Vale salientar que não foram encontrados atributos incompletos ou nulos. Porém
 \end{figure}
 
 % TODO: especificar melhor onde estão os sensores e qual o cruzamento modificando a imagem, que nem a imagem maps/example.png
-
-\begin{figure}[t]
+\begin{figure}[htpb]
     \centering
     \includegraphics[scale=0.6]{monography/img/maps/cruzamento_1.png}
     \label{figure:helio_cruzamento_1}
     \caption[Visão Espacial do Cruzamento referente aos sensores \textbf{RSI128}, \textbf{RSI129}, \textbf{RSI017} e \textbf{RSI018}]{Visão Espacial do Cruzamento referente aos sensores \textbf{RSI128}, \textbf{RSI129}, \textbf{RSI017} e \textbf{RSI018}}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[htbp]
     \centering
     \includegraphics[scale=0.6]{monography/img/maps/cruzamento_2.png}
     \label{figure:helio_cruzamento_2}
     \caption[Visão Espacial do Cruzamento referente aos sensores \textbf{RSI131}, \textbf{RSI132}, \textbf{RSI032} e \textbf{RSI033}]{Visão Espacial do Cruzamento referente aos sensores \textbf{RSI131}, \textbf{RSI132}, \textbf{RSI032} e \textbf{RSI033}}
 \end{figure}
+
+\subsection{Limitações dos Dados}
+
+O conjunto de dados é uma só cidade, recolhidos de sensores instalados em locais específicos e por apenas 3 meses. Logo, os resultados podem não ser os mesmos quando a metodologia for utilizada em outras localidades ou outros meses. O modo como os motoristas dirigem e como as vias são feitas também vão influenciar. Para a previsão perfeita seriam necessárias muitas variáveis, as quais não estão disponíveis.
+
+Além disso, existem casos e cenários que os fiscalizadores eletrônicos não são capazes de registrar. Entre eles estão:
+
+\begin{itemize}
+    \item Falhas no equipamento
+    \item Bloqueio em vias
+    \item Acidentes de trânsitos
+    \item Greves, movimentações e eventos
+    \item Incapacidade de registrar uma velocidade média do veículo ao longo da via (visto que não há registro de placas)
+    \item Carros transitando em velocidades ilegais na falta de presença de fiscalização eletrônica.
+\end{itemize}
+
+\section{Descrição do Problema}
+% TODO?: colocar uma imagem que reflita o problema.
+
+Visto que as limitações dos dados utilizados nesse trabalho e que é inviável utilizar quantidades exorbitantes de fluxo em um modelo para que este possa predizer o fluxo no futuro. É um desafio para o modelo extrair padrões de uma quantidade limitada de fluxo com o fim de prever. Sendo assim, nosso problema é encontrar o modelo mais adequado para a tarefa de predição no cenário de cruzamentos. 

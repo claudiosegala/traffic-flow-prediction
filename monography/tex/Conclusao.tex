@@ -19,14 +19,36 @@ Por fim, foram mostrados os resultados dos experimentos para a predição de flu
 Como explicado anteriormente, este trabalho possui limitações e ainda permite espaço para melhoras e ajustes. Dentre os trabalhos futuros possíveis, segue alguns dos mais relevantes:
 
 \begin{itemize}
-    \item Treinar os modelos com pelo 1 ano de dados para permitir uma abordagem mais abrangente quanto a sazonalidade dos dados e como eles impactam no comportamento do fluxo (e sua predição);
-    \item Verificar como os modelos reagem com uma representação mais complexa do dia e hora;
-    \item Aplicar os modelos desenvolvidos a um conjunto de dados referente a vias urbanas expressas, para fins de comparação;
-    \item Verificar se ao se utilizar uma arquitetura com múltiplos sensores haveria uma melhora nas predições;
-    \item Incluir nos experimentos modelos paramétricos, como o \textit{\acrshort{ARIMA}};
-    \item Incluir modelos não paramétricos mais complexos, como \textit{\acrshort{SLSTM}} discutidos no capítulo \ref{chapter:trabalhos_relacionados};
-    \item Utilizar um intervalo maior de dados para verificar se os modelos poderiam melhorar com um espaço de treino maior;
-    \item Aprofundar a escolha de parâmetros e hiper-parâmetros com mais opções;f
-    % TODO: cite articles that prove this
-    \item Incluir nos experimentos a versão \textit{boosted} da \textit{\acrshort{RF}} que tem se mostrado superior em problemas onde a versão \textit{bootstrapping} teve resultados promissores.
+    \item Treinar os modelos com pelo 1 ano de dados;
+    
+    Isso permitiria uma abordagem mais abrangente quanto a sazonalidade dos dados e como eles impactam no comportamento do fluxo. Além disso, os dados agora teriam incorporados as alterações que eventos ao longo do ano causam no fluxo.
+    
+    \item Polir a representação da coluna  \textit{Data} para os modelos;
+    
+    Simplificamos a coluna \textit{Data} para uma representação referente somente ao dia da semana, porém, com uma representação mais complexa utilizando também a hora do dia, os modelos talvez se mostrassem mais eficazes.
+    %TODO: Verificar esse item, pois as metricas (RMSE, MAE, etc) ja servem para essa avaliacao e, talvez, colocar este item desqualifique um dos obejtivos do trabalho
+    \item Aplicar os modelos desenvolvidos a um conjunto de dados referente a vias livres;
+    
+    Ao se ter o desempenho dos modelos em vias livres, seria possível ter uma noção de como os modelos treinados para cruzamento se saem em relação a modelos treinados em vias livres.
+    
+    \item Utilizar múltiplos sensores para predição;
+    
+    Nesse trabalho utilizou-se apenas um dos sensores disponíveis, porém as informações dos outros sensores que estão próximos poderiam auxiliar na previsão.
+    
+    \item Utilizar modelos paramétricos;
+    
+    Devido a limitações de hardware e uma performance inicial ruim, decidiu-se retirar o \textit{\acrfull{ARIMA}} e o \textit{\acrfull{LR}}. Porém, existem outros modelos paramétricos que podem ser mais próprios para conjunto de dados utilizado como \textit{\acrfull{SARIMA}} que, talvez, tenha uma performance melhor.
+    
+    \item Incluir modelos não paramétricos mais complexos;
+    
+    Devido a limitações de hardware e tempo, o trabalho focou em arquiteturas simples em vez de arquiteturas como \textit{\acrshort{SLSTM}} discutidos no capítulo \ref{chapter:trabalhos_relacionados}. Estes poderiam ter uma performance melhor que os modelos mais simples.
+    
+    \item Aprofundar a escolha de parâmetros e hiper-parâmetros com mais opções;
+    
+    Nem todos os parâmetros e hiper-parâmetros de cada modelo foram explorado nesse trabalho. Sendo assim, é possível que possa haver uma melhora de performance dos modelos atuais.
+    
+    \item Incluir modelos diferentes;
+    
+    Não utilizou-se nenhum modelo \textit{boosted} nos experimentos, podendo ser que esse, ou outros tipos consigam traçar melhor a distribuição dos dados.
+    
 \end{itemize}

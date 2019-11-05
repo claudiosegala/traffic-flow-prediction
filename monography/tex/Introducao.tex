@@ -1,5 +1,5 @@
 %TODO: Adicionar referencia para crescimento de congestionamento em todo o brasil
-A frota  de  veículos no Brasil tem aumentado ao longo  dos últimos anos. De acordo com a \acrfull{ANS} \cite{G1}, em 2018, o Brasil já apresentava 1 carro para cada 4 habitantes. Isso equivale, aproximadamente, a 50 milhões de automóveis em circulação. As vias públicas não tem conseguido acompanhar este crescimento e acomodar todo este volume. Brasília, por exemplo, que é uma cidade planejada, foi projetada para suportar uma frota de no máximo 2 milhões de veículos. Porém, como pode ser visto no Portal Brasileiro de Dados Abertos \cite{detran_2018}, já é obrigada a conciliar 3.5 milhões e começa a sofrer com os congestionamentos. Infelizmente, Brasília não é uma exceção, todos os grandes centros urbanos do país estão sendo afetados pelas mazelas do crescimento do setor automobilístico, e pensar em soluções para estes problemas é mais que necessário.
+A frota  de  veículos no Brasil tem aumentado ao longo  dos últimos anos. De acordo com a \acrfull{ANS}, em 2018, o Brasil já apresentava 1 carro para cada 4 habitantes. Isso equivale, aproximadamente, a 50 milhões de automóveis em circulação \cite{G1}. As vias públicas não tem conseguido acompanhar este crescimento e acomodar todo este volume. Brasília, por exemplo, que é uma cidade planejada, foi projetada para suportar uma frota de no máximo 2 milhões de veículos. Porém, como pode ser visto no Portal Brasileiro de Dados Abertos, já é obrigada a conciliar 3.5 milhões e começa a sofrer com os congestionamentos \cite{detran_2018}. Infelizmente, Brasília não é uma exceção, todos os grandes centros urbanos do país estão sendo afetados pelas mazelas do crescimento do setor automobilístico, e pensar em soluções para estes problemas é mais que necessário.
 
 
 Em resposta a essa tendência, as metrópoles tem utilizado da tecnologia para gerenciar melhor o trânsito em suas vias, ao passo que os motoristas tem feito uso cada vez mais intenso de aplicativos para escapar de congestionamentos e descobrir os caminhos mais rápidos até seus destinos. Se essas tecnologias e aplicações não se preocuparem em como o fluxo da via estará nos próximos minutos, podem apresentar erros de cálculos. Mas se não temos como prever o futuro, como podemos então nos planejar melhor? Utilizando-se de técnicas de aprendizagem de máquina é possível aprender como uma via tende a se comportar, podendo assim estimar como o seu fluxo de veículos estará em alguns minutos.
@@ -15,7 +15,7 @@ A literatura está repleta de artigos que tentam prever a quantidade de veículo
 
 \section{Hipótese}
 
-Tendo em mente todas as informações citadas anteriormente, este trabalho tem como hipótese que os modelos utilizados para predição de fluxo de veículos em vias livres serão capazes de prever, também a curto prazo, o fluxo de veículos em cruzamentos. Mais especificamente, serão capazes de prever 15, 30, 45 e 60 minutos no futuro. Sobretudo, eles serão capazes também de prever o fluxo mais precisamente do que as bases de comparação utilizadas neste trabalho.
+Tendo em mente todas as informações citadas anteriormente, este trabalho tem como hipótese que os modelos utilizados para predição de fluxo de veículos em vias livres serão capazes de prever, também a curto prazo, o fluxo de veículos em cruzamentos. Mais especificamente, serão capazes de prever 15, 30, 45 e 60 minutos no futuro. Sobretudo, eles serão capazes também de prever o fluxo mais precisamente do que as bases de comparação, os modelos \textit{Moving Average} e \textit{Naive}.
 
 \section{Objetivo}
 
@@ -46,18 +46,11 @@ Ao fim deste trabalho, espera-se que os seguintes resultados tenham sido atingid
     \item Os modelos utilizados serão capazes de prever melhor que os modelos de base inferindo a partir de apenas algumas horas.
 \end{itemize}
 
-\section{Limitações}
-Para se fazer a previsão serão desconsiderados certos cenários em que a captura e o relacionamentos dos dados obtidos são muito imprecisos e/ou pontuais. Esses eventos podem influenciar nos resultados obtidos e dependendo da escala do evento, podem causar uma disparidade significante entre a predição e a realidade. Entre eles estão:
+\section{Escopo}
 
-\begin{itemize}
-    \item Falhas no equipamento ou bloqueio em vias
-    \item Acidentes de trânsitos
-    \item Greves, movimentações e eventos
-    \item Incapacidade de registrar uma velocidade média do veículo ao longo da via (visto que não há registro de placas)
-    \item Carros transitando em velocidades ilegais na falta de presença de fiscalização eletrônica.
-\end{itemize}
+Este trabalho só irá focar em dois cruzamentos de Brasília, mais especificamente, dois cruzamentos localizados na Avenida Hélio Prates. Além disso, o conjunto de dados se limita a apenas alguns meses. Assim, os resultados podem ser diferentes ao serem os modelos utilizados em outros meses.
 
-Além disso, o modelo será treinado com dados de uma só cidade, recolhidos de sensores instalados em locais específicos e por apenas 3 meses. Logo, os resultados podem não ser os mesmos quando a metodologia for utilizada em outras localidades ou outros meses. O modo como os motoristas dirigem e como as vias são feitas também vão influenciar. Para a previsão perfeita seriam necessárias muitas variáveis, as quais não estão disponíveis.
+Para o trabalho serão desconsiderados certos cenários em que a captura e o relacionamentos dos dados obtidos são muito imprecisos e/ou pontuais. Esses eventos podem influenciar nos resultados obtidos e dependendo da escala do evento, podem causar uma disparidade significante entre a predição e a realidade. Por exemplo, um acidente ou uma obra pode modificar bastante o fluxo de uma via.
 
 \section{Metodologia}
 
