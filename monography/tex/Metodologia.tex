@@ -123,9 +123,11 @@ No final do pré-processamento o resultado possuirá 3 colunas quantitativas e 7
 
 Vale notar que como o período é o mesmo para qualquer dos sensores, ao se acumular os registros, o tamanho do conjunto de dados será o mesmo. Isto é, será equivalente ao intervalo de tempo do conjunto de dados, 92 dias, divido pelo tempo de agregação, 7.5 minutos, o que gera 17.664 registros de fluxo.
 
-\subsection{Fluxo Semanal}
+\subsection{Sazonalidade dos dados}
 
-Na Figura \ref{figure:flow_discution} é mostrado o resultado da agregação dos registros de veículos em um intervalo de 7.5 minutos. É possível ver um certo padrão que indica o comportamento de 1 dia. Além disso, é possível perceber que um dos picos é menor que a média, este é o domingo.
+
+Na Figura \ref{figure:flow_discution} é mostrado o resultado da agregação dos registros de veículos em um intervalo de 7.5 minutos. É possível observar que existem flutuações na quantidade de fluxo de veículo de acordo com o dia. Este fato fica mais evidente se observarmos o primeiro pico do gráfico, referente ao Domingo, pois este apresenta um menor fluxo de veículos, o que é esperado que aconteça em um dia não comercial. Isso mostra que os dados apresentam certa sazonalidade. Esta sazonalidade se manifesta em várias escalas, no gráfico mostrado é possível ver apenas a sazonalidade referente aos dias da semana, mas ela também se aplica, por exemplo, a semana do mês, ao mês do ano, etc. Por este motivo, o escopo deste trabalho foi definido apenas para os 3 meses de dados disponíveis. 
+
 
 \begin{figure}
     \centering
