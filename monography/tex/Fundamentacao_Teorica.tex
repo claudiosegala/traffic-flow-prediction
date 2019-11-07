@@ -79,7 +79,7 @@ Vale notar que algumas funções \textit{Kernel} possuem podem se ajustar quanto
 
 \textit{\acrshort{RNN}} surgiu da incapacidade de \textit{\acrfull{NN}} de levar em consideração resultados anteriores da rede para computar o resultado atual. Redes neurais artificiais comuns, ou do tipo \textit{feedforward} utilizam apenas do seu estado atual para gerar sua saída. Para exemplificar, tome como exemplo um problema de classificação, onde, a partir de uma imagem de um cachorro, ou gato, uma rede neural deva ser capaz de dizer corretamente qual animal a imagem representa. Para cada rodada de classificação, a imagem utilizada na rodada passada não importa, pois uma não tem relação direta com a outra. 
 
-Porém, existem determinados problemas que exigem certa correlação entre os dados, como por exemplo, interpretar um documento, entender o contexto de um filme, ou avaliar a oscilação de uma bolsa de valores ao longo do tempo. Como descrito por Mtichell em \cite{mitchell1997}, \textit{\acrshort{RNN}} são mais adequadas para estas situações, pois nesse tipo de problema, dados isolados não tem tanto significado quanto o conjunto, o que exige um conceito de memória. Para simular este efeito de memória, \textit{\acrshort{RNN}} dispõe de uma arquitetura onde a saída da célula anterior é utilizada como entrada na célula seguinte, juntamente com a entrada nova atual da rede. Na Figura \ref{figure:rnn} é exemplificada a arquitetura, onde o último resultado utiliza como entrada valores resultantes das últimas execuções.
+Porém, existem determinados problemas que exigem certa correlação entre os dados, como por exemplo, interpretar um documento, entender o contexto de um filme, ou avaliar a oscilação de uma bolsa de valores ao longo do tempo. Como descrito por Mtichell em \cite{Mitchell_1997}, \textit{\acrshort{RNN}} são mais adequadas para estas situações, pois nesse tipo de problema, dados isolados não tem tanto significado quanto o conjunto, o que exige um conceito de memória. Para simular este efeito de memória, \textit{\acrshort{RNN}} dispõe de uma arquitetura onde a saída do nó anterior é utilizada como entrada no nó seguinte, juntamente com a entrada nova atual da rede. Para passar estes valores de um nó para o outro, a \texit{\acrshort{RNN}} dispõe de um mecanismo chamado \textit{Hidden Layer} Na Figura \ref{figure:rnn} é exemplificada a arquitetura, onde o último resultado utiliza como entrada valores resultantes das últimas execuções.
 
 \begin{figure}[htbp]
     \centering
@@ -98,12 +98,12 @@ Porém, existem determinados problemas que exigem certa correlação entre os da
     \label{figure:eixo}
     \caption[Representação de uma arquitetura LSTM]{Representação de uma arquitetura LSTM\footnotemark}
 \end{figure}
-
 \footnotetext{\url{https://colah.github.io/posts/2015-08-Understanding-LSTMs/}}
 
-Porém, diferentemente de uma \acrshort{RNN}, o LSTM possui uma unidade chamada de célula de memória. Esta célula é capaz de perceber as características mais latentes dos dados e descartar as menos importantes. Assim, o \acrshort{LSTM} consegue manter as características mais recorrentes na rede por mais tempo que uma \acrshort{RNN} comum. 
 
-Na célula de memória citada anteriormente, existem estruturas que são responsáveis pela característica de memória a longo prazo do \acrshort{LSTM}. A Porta de Entrada, a Porta do esquecimento e a Porta de Saída. Abaixo está explicitado como cada um deles funciona:
+Porém, diferentemente de uma \acrshort{RNN} comum, o LSTM possui uma camada a mais (além da \textit{Hidden Layer}) chamada de \textit{Cell State}. Esta camada é capaz de perceber as características mais latentes dos dados e descartar as menos importantes. Assim, o \acrshort{LSTM} consegue manter as características mais recorrentes na rede por mais tempo que uma \acrshort{RNN} comum. 
+
+Na célula de memória do \textit{\acrshort{LSTM}}, existem estruturas que são responsáveis pela característica de memória a longo prazo e que são responsáveis por controlar a \textit{Cell State}. A Porta de Entrada, a Porta do esquecimento e a Porta de Saída. Abaixo está explicitado como cada um deles funciona:
 %TODO: melhorar explicação das portas, principalmente a porta de saída 
 %TODO: colocar fórmulas que explicam como o Ct é atualizado
 \begin{itemize}
@@ -121,7 +121,7 @@ Na célula de memória citada anteriormente, existem estruturas que são respons
 
 
 %TODO: explicar diferenca entre porta da reinicializacao e porta da atualizacao, adicionando as fórmulas de cada uma
-\textit{\acrshort{GRU}} é um tipo de \textit{\acrshort{RNN}} semelhante ao \textit{\acrshort{LSTM}} e, assim como ele, também faz uso de mecanismos chamados de Portas que possibilitam que a informação seja atualizada ou esquecida ao ser transferida de uma célula para outra. Ou seja, \textit{\acrshort{GRU}} também é capaz de guardar informações importantes na rede de maneira mais eficaz que uma \textit{\acrshort{RNN}} comum. Apesar de parecidos, \textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}} possuem algumas diferenças, como pode ser visto abaixo, o \textit{\acrshort{GRU}} possui apenas duas Portas para fazer o tratamento da informação e simular o efeito de memória:
+\textit{\acrshort{GRU}} é um tipo de \textit{\acrshort{RNN}} semelhante ao \textit{\acrshort{LSTM}} e, assim como ele, também faz uso de mecanismos chamados de Portas que possibilitam que a informação seja atualizada ou esquecida ao ser transferida de uma célula para outra. Ou seja, \textit{\acrshort{GRU}} também é capaz de guardar informações importantes na rede de maneira mais eficaz que uma \textit{\acrshort{RNN}} comum. Apesar de parecidos, \textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}} possuem algumas diferenças, como pode ser visto abaixo, o \textit{\acrshort{GRU}} possui apenas a \textit{Hidden Layer} e duas Portas para fazer o tratamento da informação para simular o efeito de memória:
 
 \begin{itemize}
     \item Porta da atualização: A porta de atualização tem um papel semelhante às Portas de Entrada e Porta de Esquecimento do \textit{\acrshort{LSTM}}. Nela, é decidido quais dos valores provindos das células passadas serão adicionados a rede.
