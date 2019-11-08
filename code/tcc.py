@@ -35,7 +35,6 @@ import datetime as dt # to discover week day
 import time as tm # to convert to seconds
 import sklearn as skl # regression templates library
 import sklearn.metrics as sklm # metrics
-import statsmodels.api as sma # statistical models api
 import statistics as st # statistics
 import statsmodels as sm # statistical models
 
@@ -51,23 +50,22 @@ from keras.models import Sequential
 from keras.layers import Dense, Activation
 from keras.wrappers.scikit_learn import KerasClassifier
 
-"""## Configurations"""
+"""## Configurations
 
-tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
-
-tf.reset_default_graph()
-
-tf.set_random_seed(0)
-
-np.random.seed(0)
-
-random.seed(0)
+Make the environment reproducible
+"""
 
 os.environ['PYTHONHASHSEED'] = '0'
+tf.reset_default_graph()
+tf.set_random_seed(0)
+np.random.seed(0)
+random.seed(0)
+
+"""Set path for the folder in which everything should be stored."""
 
 PATH = '/content/drive/My Drive/TCC/' # ''
 
-"""## General Util"""
+"""## Util"""
 
 class WalkingForwardTimeSeriesSplit():
     def __init__(self, n_splits):
@@ -88,232 +86,26 @@ class WalkingForwardTimeSeriesSplit():
             mid = int(0.8 * (stop - start)) + start
             yield indices[start: mid], indices[mid + margin: stop]
 
-def flatten (m):
-  """ Flatten
-  
-  Transform a matrix in an array.
-  
-  Arguments:
-    m: the matrix to be flatten
-  """
-  
-  return [i for sl in m for i in sl]
-
-"""## Dataset Retrieval Util"""
-
-def retrieve_data():
-  path = f"{PATH}dataset/all_data_sorted.csv"
-  
-  col_names = [
-    'Sensor',
-    'Date',
-    'Time',
-    'Lane',
-    'Speed',
-    'Max Speed',
-    'Size'
-  ]
-  
-  data = pd.read_csv(path, ';', header=None, names=col_names)
-  
-  print(f"It contains {len(data['Sensor'])} entries\n\n")
-  print(data.head(), end="\n\n")
-  print(data.describe(), end="\n\n")
-    
-  return data
-
-def clean_data(data):
-  print(f"This dataset contains {len(set(data['Sensor']))} sensors.")
-  
-  for val in set(data['Sensor']):
-    print(f"Sensor {val} has {len(data[data['Sensor'] == val])}")
-
-  print(f"We will be using only one.")
-
-  # Extract data from just one sensor
-  data = data[data['Sensor'] == 'RSI128']
-  
-  # Remove unnecessary columns
-  data = data.drop(columns=['Sensor','Lane','Max Speed','Size'])
-  
-  data['Date'] = pd.to_datetime(data['Date'], format='%Y/%m/%d')
-   
-  # Adjust type
-  f = lambda x : tm.strptime(x, '%H:%M:%S')
-  data['Time'] = data['Time'].apply(f)
-  
-  g = lambda x : dt.timedelta(hours=x.tm_hour,minutes=x.tm_min,seconds=x.tm_sec).total_seconds()
-  data['Time'] = data['Time'].apply(g)
-  
-  h = lambda x : int(x)
-  data['Time'] = data['Time'].apply(h)
-  
-  i = lambda x : float(x)
-  data['Speed'].apply(i)
-  
-  # Create week day from date
-  j = lambda x : x.weekday()
-  data['WeekDay'] = data['Date'].apply(j)
-  
-  start = data['Date'].min()
-  end = data['Date'].max()
-
-  for col, cont in data.iteritems():
-      print(f"Column {col} has {cont.isnull().sum()} null elements")
-      print(f"Column {col} has {cont.isna().sum()} nan elements")
-
-  print(f"\nThis data is from <{start}> to <{end}>. {(end - start).days + 1} days.\n")
-  print(f"It contains {len(data['Date'])} entries\n\n")
-  print(data.head(), end="\n\n")
-  print(data.describe(), end="\n\n")
-  
-  return data
-
-"""## Flow Generation Util"""
-
-def plot_flow(flow_series, flow_interval):
-  """ Plot of Flow
-  
-  Plot the flow from week to week
-  
-  Arguments:
-    flow_series: an array of flows
-    flow_interval: the interval in which the flow was made
-  """
-
-  n = len(flow_series) // WEEK_SIZE
-
-  if len(flow_series) % WEEK_SIZE == 0:
-    print('Yey')
-
-  for i in range(n):
-    s = WEEK_SIZE * i
-    e = min(s + WEEK_SIZE, len(flow_series))
-    path = f"{PATH}plots/flow/flow_{flow_interval}_week_{str(i+1).zfill(2)}"
-
-    plt.plot(flow_series[s:e])
-
-    plt.title(f"Flow ({flow_interval}s) - Week {i+1}")
-    plt.ylabel('Flow')
-    plt.xlabel('Time')
-    plt.rcdefaults()
-    
-    plt.savefig(path + ".png", bbox_inches='tight')
-    plt.savefig(path + ".pdf")
-    
-    plt.close('all')
-
-def plot_flow_decomposition(flow_series, freq):
-  path = f"{PATH}plots/flow/seasonal_decompose"
-  
-  decompose = sm.tsa.seasonal.seasonal_decompose
-  decomposition = decompose(flow_series, model='additive', freq=freq)
-  fig = decomposition.plot()
-
-  plt.rcdefaults()
-  
-  plt.savefig(path + ".png")
-  plt.savefig(path + ".pdf")
-    
-  plt.close('all')
-
-def get_flow_data(n, accSpeed, weekDay):
-  avgSpeed = (accSpeed / n) if n else 0
-  density = (n / avgSpeed) if avgSpeed else 0
-  w = [(1 if weekDay == i else 0) for i in range(7)] # weekday
-  
-  return (n, density, avgSpeed, w[0], w[1], w[2], w[3], w[4], w[5], w[6])
-
-def get_flow (data, flow_interval):
-  date = np.asarray(data['Date'])
-  weekDay = np.asarray(data['WeekDay'])
-  time = np.asarray(data['Time'])
-  speed = np.asarray(data['Speed'])
-  
-  dateControl = date[0]
-  timeBlock = flow_interval
-  countFlow = 0
-  accSpeed = 0
-  flowData = []
-
-  for i in range(len(date)):
-    if time[i] >= timeBlock: # init a new time block
-      flowData.append(get_flow_data(countFlow, accSpeed, weekDay[i])) 
-      timeBlock += flow_interval
-      accSpeed = 0
-      countFlow = 0
-      
-    if date[i] > dateControl: # reset on day change
-      dateControl = date[i]
-      timeBlock = flow_interval 
-      countFlow = 0
-      accSpeed = 0
-      
-    if time[i] < timeBlock: # add car on flow
-      countFlow += 1
-      accSpeed += speed[i]
-
-  k = (DAY_SIZE - (len(flowData) % DAY_SIZE)) % DAY_SIZE
-
-  for i in range(k):
-    flowData.append(get_flow_data(0, 0, weekDay[len(date) - 1])) 
-      
-  flowDataColumns = [
-    'Flow',
-    'Density',
-    'AveSpeed',
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-  ]
-  
-  flowData = pd.DataFrame(flowData, columns=flowDataColumns)
-  
-  # scaler = skl.preprocessing.MinMaxScaler(feature_range=(0,1))
-  # flowDataScaled = scaler.fit_transform(flowData)  
-  # flowData = pd.DataFrame(flowDataScaled, columns=flowData.columns, index=flowData.index)
-  
-  if VERBOSITY:
-    plot_flow(flowData['Flow'], flow_interval)
-    plot_flow_decomposition(flowData['Flow'], WEEK_SIZE)
-    print(flowData.head(), end="\n\n")
-    print(flowData.describe(), end="\n\n")
-
-  return flowData
-
-def analise_flow(data, flow_interval):
-  _ = get_flow(data, flow_interval)
-
 """## Dataset Generation Util"""
 
-def reshape_flow (raw_seq, useB, n_steps, n_future): 
-  """ Reshape Flow
-  
-  Reshape a sequence in rolling intervals from [samples, timesteps] into 
-  [samples, timesteps, features].
-  
-  Arguments:
-    raw_seq: the sequence to reshape.
-    useB: if the dataset is more complex or not.
-    n_steps: size of the rolling interval
-    n_future: the distance to the interval the value should be.  
-  """
-  
-  X, Y = split_sequence(np.array(raw_seq), useB, n_steps, n_future)
-  
-  
-  if not useB:
-    X = X.reshape((X.shape[0], X.shape[1], 1))
+def retrieve_data(flow_interval):
+    path = f"{PATH}dataset/dataset_flow_{flow_interval}.csv"
+    data = pd.read_csv(path, ';')
     
-  if VERBOSITY:
-    print(f"X Shape: {X.shape}")
-    print(f"Y Shape: {Y.shape}")
+    data['Flow'].apply(int)
+    data['AveSpeed'].apply(float)
+    data['Density'].apply(float)
+    data['Sunday'].apply(int)
+    data['Monday'].apply(int)
+    data['Tuesday'].apply(int)
+    data['Wednesday'].apply(int)
+    data['Thursday'].apply(int)
+    data['Friday'].apply(int)
+    data['Saturday'].apply(int)
+      
+    return data
 
-  return X, Y
+
 
 """## Storage Util"""
 
@@ -628,7 +420,7 @@ def plot_prediction (Y, Y_hat, title):
   """
 
   for i in range(len(Y)):
-    name = f"{title} ({str(r+1).zfill(2)} of {n})"
+    name = f"{title} ({str(i+1).zfill(2)} of {len(Y)})"
     path = f"{PATH}plots/prediction/{name}"
     
     plt.plot(Y[i])
@@ -759,6 +551,7 @@ def evaluate (expected, observed, times, name):
     name: the name of the model
   """
   n = len(expected)
+  flatten = lambda l : [i for sl in l for i in sl]
   
   # Make the arrays serializable
   expected = list(map(list, expected))
@@ -794,16 +587,44 @@ def evaluate (expected, observed, times, name):
     
   return eva
 
-def generate_dataset(data, useB, flow_interval, n_step, n_future):
-  B = get_flow(data, flow_interval)
-  A = B['Flow']
+def generate_dataset(data, useB, n_steps, n_future):
+  """ Generate Dataset
   
-  return reshape_flow(
-      B if useB else A, 
-      useB, 
-      n_step, 
-      n_future, 
-  )
+  Generate a dataset provided a sequence. Reshape the sequence in rolling intervals from [samples, timesteps] into 
+  [samples, timesteps, features] and split the sequence. The split the sequence in rolling intervals with a corresponding value 
+  like the example bellow.
+
+  Ex: split_sequence([1, 2, 3, 4, 5], 3) #([[1, 2, 3], [2, 3, 4]], [4, 5])
+  
+  Arguments:
+    raw_seq: the sequence to reshape.
+    useB: if the dataset is more complex or not.
+    n_steps: size of the rolling interval
+    n_future: the distance to the interval the value should be.  
+  """
+
+  sequence = np.array(data if useB else data['Flow'])
+
+  n = len(sequence)
+  X, Y = list(), list()
+
+  for i in range(n):
+    j = i + n_steps
+    k = j + n_future
+
+    if k >= n:
+      break
+
+    seq_x, seq_y = sequence[i:j], sequence[k]
+    X.append(seq_x)	
+    Y.append(seq_y[0] if useB else seq_y)
+
+  X, Y = np.array(X), np.array(Y)	
+  
+  if not useB:
+    X = X.reshape((X.shape[0], X.shape[1], 1))
+
+  return X, Y
 
 """### Moving Average (Baseline)
 
@@ -815,9 +636,9 @@ def moving_average (data):
 
   name = "Moving Average"
   
-  X, Y = generate_dataset(data, False, FLOW_INTERVAL, N_STEPS, N_FUTURE)
+  X, Y = generate_dataset(data, False, N_STEPS, N_FUTURE)
 
-  cv = WalkingForwardTimeSeriesSplit(n_splits=5)
+  cv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
   expected, observed, times = [], [], []
 
   for train_index, test_index in cv.split(X):
@@ -847,10 +668,10 @@ def naive (data):
 
   name = "Naive"
   
-  X, Y = generate_dataset(data, False, FLOW_INTERVAL, N_STEPS, N_FUTURE)
+  X, Y = generate_dataset(data, False, N_STEPS, N_FUTURE)
   X = X.reshape(X.shape[0], X.shape[1])
 
-  cv = WalkingForwardTimeSeriesSplit(n_splits=5)
+  cv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
   expected, observed, times = [], [], []
 
   for train_index, test_index in cv.split(X):
@@ -882,17 +703,22 @@ def random_forest_grid(data, useB):
 
   name = "RF Grid B" if useB else "RF Grid A"
   
-  X, Y = generate_dataset(data, useB, FLOW_INTERVAL, N_STEPS, N_FUTURE)
+  X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
   X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])
     
+  # param_grid = {
+  #   'bootstrap': [True, False],
+  #   'max_depth': [8, 16, 32, 64, None],
+  #   'n_estimators': [50, 100, 200, 400],
+  # }
   param_grid = {
-    'bootstrap': [True, False],
-    'max_depth': [8, 16, 32, 64, None],
-    'n_estimators': [50, 100, 200, 400],
+    # 'bootstrap': [True, False],
+    # 'max_depth': [8, 16, 32, 64, None],
+    'n_estimators': [100],
   }
   model = skl.ensemble.RandomForestRegressor(random_state=0)
   scoring = 'neg_mean_squared_error'
-  tscv = WalkingForwardTimeSeriesSplit(n_splits=5)
+  tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
   grid_search = skl.model_selection.GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=tscv, n_jobs=-1, verbose=2)
 
   grid_search.fit(X, Y)
@@ -901,7 +727,7 @@ def random_forest_grid(data, useB):
 
   expected, observed, times = [], [], []
 
-  cv = WalkingForwardTimeSeriesSplit(n_splits=5)
+  cv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
 
   for train_index, test_index in cv.split(X):
     X_train, X_test = X[train_index], X[test_index]
@@ -924,11 +750,11 @@ def random_forest(data, useB):
   
   model = skl.ensemble.RandomForestRegressor(n_estimators=100, max_features='auto', random_state=0)
 
-  X, Y = generate_dataset(data, useB, FLOW_INTERVAL, N_STEPS, N_FUTURE)
+  X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
   X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])
 
   expected, observed, times = [], [], []
-  tscv = WalkingForwardTimeSeriesSplit(n_splits=5)
+  tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
 
   for train_index, test_index in tscv.split(X):
     X_train, X_test = X[train_index], X[test_index]
@@ -956,17 +782,22 @@ def support_vector_machine_grid(data, useB):
 
   name = "SVM Grid B" if useB else "SVM Grid A"
   
-  X, Y = generate_dataset(data, useB, FLOW_INTERVAL, N_STEPS, N_FUTURE)
+  X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
   X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])
     
+  # param_grid = {
+  #   'C': [1.0, 10.0, 100.0],
+  #   'gamma': list(np.logspace(-2, 2, 2)) + ['scale'],
+  #   'epsilon': [0.01, 0.1, 1]
+  # }
   param_grid = {
-    'C': [1, 10, 100],
-    'gamma': list(np.logspace(-2, 2, 2)) + ['scale'],
-    'epsilon': [0.01, 0.1, 1]
+    'C': [1.0],
+    'gamma': ['scale'],
+    'epsilon': [0.02],
   }
   model = svm.SVR()
   scoring = 'neg_mean_squared_error'
-  tscv = WalkingForwardTimeSeriesSplit(n_splits=5)
+  tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
   grid_search = skl.model_selection.GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=tscv, n_jobs=-1, verbose=2)
 
   grid_search.fit(X, Y)
@@ -975,7 +806,7 @@ def support_vector_machine_grid(data, useB):
 
   expected, observed, times = [], [], []
 
-  cv = WalkingForwardTimeSeriesSplit(n_splits=5)
+  cv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
 
   for train_index, test_index in cv.split(X):
     X_train, X_test = X[train_index], X[test_index]
@@ -999,11 +830,11 @@ def support_vector_machine(data, useB):
   
   model = svm.SVR(gamma='scale', C=1.0, epsilon=0.2)
 
-  X, Y = generate_dataset(data, useB, FLOW_INTERVAL, N_STEPS, N_FUTURE)
+  X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
   X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])
 
   expected, observed, times = [], [], []
-  tscv = WalkingForwardTimeSeriesSplit(n_splits=5)
+  tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
 
   for train_index, test_index in tscv.split(X):
     X_train, X_test = X[train_index], X[test_index]
@@ -1044,19 +875,21 @@ def lstm_grid(data, useB):
 
   name = "LSTM Grid B" if useB else "LSTM Grid A"
         
-  X, Y = generate_dataset(data, useB, FLOW_INTERVAL, N_STEPS, N_FUTURE)
+  X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
 
   param_grid = {		
-    'n': [100]
+    'n': [100],
+    'activation': ['relu'],
+    'batch_size': [64],
   }
   # param_grid = {		
   #   'activation': ['relu', 'sigmoid', None],
   #   'n': [50, 100, 200, 400],
   #   'batch_size': [8, 16, 32, 64]
   # }
-  model = KerasClassifier(build_fn=create_lstm((X.shape[1], X.shape[2])), epochs=15, verbose=0)
+  model = KerasClassifier(build_fn=create_lstm((X.shape[1], X.shape[2])), validation_split=0.2, epochs=15, verbose=0)
   scoring = 'neg_mean_squared_error'
-  tscv = WalkingForwardTimeSeriesSplit(n_splits=5)
+  tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
   grid_search = skl.model_selection.GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=tscv, n_jobs=-1, verbose=2)		
       
   grid_search.fit(X, Y)
@@ -1065,7 +898,7 @@ def lstm_grid(data, useB):
 
   expected, observed, times = [], [], []
 
-  cv = WalkingForwardTimeSeriesSplit(n_splits=5)
+  cv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
 
   for train_index, test_index in cv.split(X):
     X_train, X_test = X[train_index], X[test_index]
@@ -1087,12 +920,12 @@ def lstm (data, useB):
   
   name = "LSTM B" if useB else "LSTM A"
 
+  X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
+
   model = create_lstm((X.shape[1], X.shape[2]))()
   
-  X, Y = generate_dataset(data, useB, FLOW_INTERVAL, N_STEPS, N_FUTURE)
-  
   expected, observed, times = [], [], []
-  tscv = WalkingForwardTimeSeriesSplit(n_splits=5)
+  tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
 
   for train_index, test_index in tscv.split(X):
     X_train, X_test = X[train_index], X[test_index]
@@ -1107,7 +940,7 @@ def lstm (data, useB):
     times.append(end_time - start_time)
 
     if VERBOSITY:
-      plot_name = f"{name} ({str(len(times)).zfill(2)} of {len(pointers)})"
+      plot_name = f"{name} ({str(len(times)).zfill(2)} of {N_SPLITS})"
       plot_history(history, plot_name)
 
   result_data['results'][name] = evaluate(expected, observed, times, name)
@@ -1137,16 +970,21 @@ def gru_grid(data, useB):
 
   name = "GRU Grid B" if useB else "GRU Grid A"
         
-  X, Y = generate_dataset(data, useB, FLOW_INTERVAL, N_STEPS, N_FUTURE)
+  X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
 
   param_grid = {		
-    'activation': ['relu', 'sigmoid', None],
-    'n': [50, 100, 200, 400],
-    'batch_size': [8, 16, 32, 64]
+    'n': [100],
+    'activation': ['relu'],
+    'batch_size': [64],
   }
-  model = KerasClassifier(build_fn=create_gru((X.shape[1], X.shape[2])), epochs=15, verbose=0)
+  # param_grid = {		
+  #   'activation': ['relu', 'sigmoid', None],
+  #   'n': [50, 100, 200, 400],
+  #   'batch_size': [8, 16, 32, 64]
+  # }
+  model = KerasClassifier(build_fn=create_gru((X.shape[1], X.shape[2])), validation_split=0.2, epochs=15, verbose=0)
   scoring = 'neg_mean_squared_error'
-  tscv = WalkingForwardTimeSeriesSplit(n_splits=5)
+  tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
   grid_search = skl.model_selection.GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=tscv, n_jobs=-1, verbose=2)		
       
   grid_search.fit(X, Y)
@@ -1155,7 +993,7 @@ def gru_grid(data, useB):
 
   expected, observed, times = [], [], []
 
-  cv = WalkingForwardTimeSeriesSplit(n_splits=5)
+  cv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
 
   for train_index, test_index in cv.split(X):
     X_train, X_test = X[train_index], X[test_index]
@@ -1177,12 +1015,12 @@ def gru (data, useB):
   
   name = "GRU B" if useB else "GRU A"
 
+  X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
+
   model = create_gru((X.shape[1], X.shape[2]))()
   
-  X, Y = generate_dataset(data, useB, FLOW_INTERVAL, N_STEPS, N_FUTURE)
-  
   expected, observed, times = [], [], []
-  tscv = WalkingForwardTimeSeriesSplit(n_splits=5)
+  tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
 
   for train_index, test_index in tscv.split(X):
     X_train, X_test = X[train_index], X[test_index]
@@ -1197,7 +1035,7 @@ def gru (data, useB):
     times.append(end_time - start_time)
 
     if VERBOSITY:
-      plot_name = f"{name} ({str(len(times)).zfill(2)} of {len(pointers)})"
+      plot_name = f"{name} ({str(len(times)).zfill(2)} of {N_SPLITS})"
       plot_history(history, plot_name)
 
   result_data['results'][name] = evaluate(expected, observed, times, name)
@@ -1218,6 +1056,8 @@ def run_models():
       'meta': {}
   }
 
+  data = retrieve_data(FLOW_INTERVAL)
+
   moving_average(data)
   naive(data)
   random_forest(data, False)
@@ -1228,6 +1068,8 @@ def run_models():
   lstm(data, True)
   gru(data, False)
   gru(data, True)
+
+  store_results()
 
 def plot_precision_bucket (results):
   """ Plot Precision Bucket 
@@ -1438,7 +1280,6 @@ def compare_results_by_flow_interval(values):
     DAY_SIZE = (24 * 3600) // FLOW_INTERVAL  
     WEEK_SIZE = 7 * DAY_SIZE
 
-
     start_time = tm.time()
     run_models()
     end_time = tm.time()
@@ -1514,63 +1355,31 @@ result_data = {
     'meta': {}
 }
 
-comparison_data = []
-
-all_data = retrieve_data()
-
-data = clean_data(all_data)
-
-analise_flow(data, FLOW_INTERVAL)
-
-random_forest_grid(data, False)
-
-random_forest_grid(data, True)
-
-support_vector_machine_grid(data, False)
-
-support_vector_machine_grid(data, True)
-
-lstm_grid(data, False)
-
-lstm_grid(data, True)
-
-gru_grid(data, False)
-
-gru_grid(data, True)
-
-moving_average(data)
-
-naive(data)
+data = retrieve_data(FLOW_INTERVAL)
 
 random_forest(data, False)
 
-random_forest(data, True)
+random_forest_grid(data, False)
+
+# random_forest_grid(data, True)
 
 support_vector_machine(data, False)
 
-support_vector_machine(data, True)
+support_vector_machine_grid(data, False)
+
+# support_vector_machine_grid(data, True)
 
 lstm(data, False)
 
-lstm(data, True)
+lstm_grid(data, False)
+
+# lstm_grid(data, True)
 
 gru(data, False)
 
-gru(data, True)
+gru_grid(data, False)
 
-store_results()
-
-#plot_precision_bucket()
-
-# plot_performance_improved(result_data['results'], 'TIME', 'Seconds', 'Training Time Comparison')
-
-# plot_performance_improved(result_data['results'], 'RMSE', 'RMSE', 'Root Mean Square Error Comparison')
-
-# plot_performance_improved(result_data['results'], 'NRMSE', 'NRMSE', 'Normalized Root Mean Square Error Comparison')
-
-# plot_performance_improved(result_data['results'], 'MAE', 'MAE', 'Max Absolute Error Comparison')
-
-# plot_performance_improved(result_data['results'], 'HR', 'Percentage', 'Hit Ratio Comparison')
+# gru_grid(data, True)
 
 """## Compare"""
 
@@ -1618,15 +1427,15 @@ plot_results_comparison('Seeable Past for Training Comparison', 'Seeable Past in
 n_splits = [1, 2, 4, 8]
 compare_results_by_n_split(n_splits)
 
-plot_results_comparison('Windows Size for Training Comparison', 'Window Size', n_splits, 'NRMSE')
+plot_results_comparison('Number of Splits for Training Comparison', 'Number of Splits', n_splits, 'NRMSE')
 
-plot_results_comparison('Windows Size for Training Comparison', 'Window Size', n_splits, 'RMSE')
+plot_results_comparison('Number of Splits for Training Comparison', 'Number of Splits', n_splits, 'RMSE')
 
-plot_results_comparison('Windows Size for Training Comparison', 'Window Size', n_splits, 'MAE')
+plot_results_comparison('Number of Splits for Training Comparison', 'Number of Splits', n_splits, 'MAE')
 
-plot_results_comparison('Windows Size for Training Comparison', 'Window Size', n_splits, 'HR')
+plot_results_comparison('Number of Splits for Training Comparison', 'Number of Splits', n_splits, 'HR')
 
-plot_results_comparison('Windows Size for Training Comparison', 'Window Size', n_splits, 'TIME')
+plot_results_comparison('Number of Splits for Training Comparison', 'Number of Splits', n_splits, 'TIME')
 
 """## Observations:
 
