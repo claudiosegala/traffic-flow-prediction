@@ -60,7 +60,8 @@ class WalkingForwardTimeSeriesSplit():
 """## Dataset Generation Util"""
 
 def retrieve_data(flow_interval):
-    path = f"{PATH}dataset/dataset_flow_{flow_interval}.csv"
+    path = "{0}dataset/dataset_flow_{1}.csv".format(PATH, flow_interval)
+    print(PATH)
     data = pd.read_csv(path, ';')
     
     data['Flow'].apply(int)
@@ -344,11 +345,11 @@ def evaluate_raw (expected, observed, times):
     #raw['PRE'][i] = evaluate_precision_bucket(Y, Y_hat)
     
     if VERBOSITY:
-      print(f"({i+1}/{n}) Test Size: {len(Y)}, Time: {time}s")
-      print(f"\tRMSE: {raw['RMSE'][i]}")
-      # print(f"\tNRMSE: {raw['NRMSE'][i]}")
-      print(f"\tMAE: {raw['MAE'][i]}")
-      print(f"\tHit Ratio: {raw['HR'][i] * 100}%")
+      print("({0}/{1}) Test Size: {2}, Time: {3}s".format(i+1, n, len(Y), time))
+      print("\tRMSE: {0}".format(raw['RMSE'][i]))
+      # print("\tNRMSE: {0}".format(raw['NRMSE'][i]))
+      print("\tMAE: {0}".format(raw['MAE'][i]))
+      print("\tHit Ratio: {0}%".format(raw['HR'][i] * 100))
 
   return raw
 
@@ -393,13 +394,13 @@ def evaluate (expected, observed, times, name):
     'raw': raw
   }
   
-  print(f"\n{name} Final Result:")
-  print(f"\tTotal Time: {eva['TIME']}s")
-  print(f"\tRMSE: {eva['RMSE']}")
-  # print(f"\tNRMSE: {eva['NRMSE']}")
-  print(f"\tMAE: {eva['MAE']}")
-  print(f"\tHit Ratio: {eva['HR'] * 100}%")
-  #print(f"\tPrecision: {eva['PRE']}")
+  print("\n{0} Final Result:".format(name))
+  print("\tTotal Time: {0}s".format(eva['TIME']))
+  print("\tRMSE: {0}".format(eva['RMSE']))
+  # print("\tNRMSE: {0}".format(eva['NRMSE']))
+  print("\tMAE: {0}".format(eva['MAE']))
+  print("\tHit Ratio: {0}%".format(eva['HR'] * 100))
+  #print("\tPrecision: {0}".format(eva['PRE']))
     
   return eva
 
@@ -559,7 +560,7 @@ def random_forest_grid(data, useB):
   res['params'] = param_grid
   res['score'] = cv_results
 
-  store(res, "results/grid", f"{name}")
+  store(res, "results/grid", name)
 
 def random_forest(data, useB):
   global result_data
@@ -643,7 +644,7 @@ def support_vector_machine_grid(data, useB):
   res['params'] = param_grid
   res['score'] = cv_results
 
-  store(res, "results/grid", f"{name}")
+  store(res, "results/grid", name)
 
 def support_vector_machine(data, useB):
   global result_data
@@ -677,7 +678,7 @@ def support_vector_machine(data, useB):
 from keras.layers import LSTM
 
 def create_lstm(input_shape):
-  def create(n=200, activation='sigmoid'):
+  def create(n=100, activation='sigmoid'):
     model = Sequential()		
 
     model.add(LSTM(n, activation=activation, input_shape=input_shape))		
@@ -738,7 +739,7 @@ def lstm_grid(data, useB):
   res['params'] = param_grid
   res['score'] = cv_results
 
-  store(res, "results/grid", f"{name}")
+  store(res, "results/grid", name)
 
 def lstm (data, useB): 
   global result_data
@@ -776,7 +777,7 @@ def lstm (data, useB):
 from keras.layers import GRU
 
 def create_gru(input_shape):
-  def create(n=200, activation='sigmoid'):
+  def create(n=100, activation='sigmoid'):
     model = Sequential()		
 
     model.add(GRU(n, activation=activation, input_shape=input_shape))		
@@ -837,7 +838,7 @@ def gru_grid(data, useB):
   res['params'] = param_grid
   res['score'] = cv_results
 
-  store(res, "results/grid", f"{name}")
+  store(res, "results/grid", name)
 
 def gru (data, useB): 
   global result_data
@@ -916,7 +917,7 @@ def compare_results_by_n_split(values):
     
     comparison_data.append(copy.deepcopy(result_data))
 
-    print(f"({len(comparison_data)} of {len(values)}) Finished Running with N_SPLITS {value} in {end_time - start_time} seconds")
+    print("({0} of {1}) Finished Running with N_SPLITS {2} in {3} seconds".format(len(comparison_data), len(values), value, end_time - start_time))
 
   store_comparisons('n_split_comparison')
   
@@ -940,7 +941,7 @@ def compare_results_by_seeable_past(values):
     
     comparison_data.append(copy.deepcopy(result_data))
 
-    print(f"({len(comparison_data)} of {len(values)}) Finished Running with SEEABLE_PAST {value} in {end_time - start_time} seconds")
+    print("({0} of {1}) Finished Running with SEEABLE_PAST {2} in {3} seconds".format(len(comparison_data), len(values), value, end_time - start_time))
 
   store_comparisons('seeable_past_comparison')
 
@@ -971,7 +972,7 @@ def compare_results_by_flow_interval(values):
     
     comparison_data.append(copy.deepcopy(result_data))
 
-    print(f"({len(comparison_data)} of {len(values)}) Finished Running with FLOW_INTERVAL {value} in {end_time - start_time} seconds")
+    print("({0} of {1}) Finished Running with FLOW_INTERVAL {2} in {3} seconds".format(len(comparison_data), len(values), value, end_time - start_time))
 
   store_comparisons('flow_interval_comparison')
   
@@ -999,7 +1000,7 @@ def compare_results_by_predict_in_future(values):
     
     comparison_data.append(copy.deepcopy(result_data))
 
-    print(f"({len(comparison_data)} of {len(values)}) Finished Running with PREDICT_IN_FUTURE {value} in {end_time - start_time} seconds")
+    print("({0} of {1}) Finished Running with PREDICT_IN_FUTURE {2} in {3} seconds".format(len(comparison_data), len(values), value, end_time - start_time))
 
   store_comparisons('predict_future_comparison')
   
@@ -1013,7 +1014,7 @@ Run all the models and store the results at the end
 
 # Model Parameters
 SEEABLE_PAST = 180 # in minutes
-PREDICT_IN_FUTURE = 15 # in minutes
+PREDICT_IN_FUTURE = 60 # in minutes
 FLOW_INTERVAL = 150 # the interval size for each flow
 N_SPLITS = 4
 
@@ -1030,6 +1031,34 @@ result_data = {
 }
 
 data = retrieve_data(FLOW_INTERVAL)
+
+# moving_average(data)
+
+# naive(data)
+
+# random_forest(data, False)
+
+# random_forest_grid(data, False)
+
+# random_forest_grid(data, True)
+
+# support_vector_machine(data, False)
+
+# support_vector_machine_grid(data, False)
+
+# support_vector_machine_grid(data, True)
+
+lstm(data, False)
+
+# lstm_grid(data, False)
+
+# lstm_grid(data, True)
+
+gru(data, False)
+
+# gru_grid(data, False)
+
+# gru_grid(data, True)
 
 """## Compare"""
 
