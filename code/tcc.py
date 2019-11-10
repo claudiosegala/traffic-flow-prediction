@@ -34,7 +34,7 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
 """Set path for the folder in which everything should be stored."""
 
-PATH = ''
+PATH =  ''
 
 """## Util"""
 
@@ -85,7 +85,7 @@ def print_json (obj):
   print(json.dumps(obj, sort_keys=True, indent=4))
 
 def store(obj, path, name):
-  with open(f"{PATH}{path}/{name}.json", 'w') as json_file:
+  with open("{0}{1}/{2}.json".format(PATH, path, name), 'w') as json_file:
     json.dump(obj, json_file, sort_keys=True, indent=4)
 
 def store_results ():
@@ -98,26 +98,26 @@ def store_results ():
     "N_SPLITS": N_SPLITS,
   }
 
-  store(result_data, "results", f"{name}")
+  store(result_data, "results", name)
 
   slim_result_data = copy.deepcopy(result_data)
   for model in slim_result_data['results']:
       del slim_result_data['results'][model]['raw']
 
-  store(slim_result_data, "results", f"{name}_slim.json")
+  store(slim_result_data, "results", "{0}_slim".format(name))
 
 def store_comparisons (title):
   name = str(int(time.time()))
   
   j = copy.deepcopy(comparison_data)
 
-  store(j, "results/comparison", f"{title}_{name}")
+  store(j, "results/comparison", "{0}_{1}".format(title, name))
     
   for i in range(len(j)):
     for model in j[i]['results']:
       del j[i]['results'][model]['raw']
 
-  store(j, "results/comparison", f"{title}_{name}_slim")
+  store(j, "results/comparison", "{0}_{1}_slim".format(title, name))
 
 """## Models Util
 
