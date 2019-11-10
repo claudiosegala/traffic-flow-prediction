@@ -320,3 +320,14 @@ f(x, y, z) =
 \end{equation}
 
 Com \(k_i\) sendo o fluxo mais recente que o modelo possuiu como entrada quando ver a predição \(result_i\).
+
+\section{Out Of Sample Testing}
+%TODO: Adicionar imagem do Blocking
+Para validar a performance de um modelo, é necessário fazer a utilização de métodos que comprovem a capacidade do mesmo de generalizar. Isto é, é preciso mostrar que o modelo é eficaz de maneira geral, ou para mais de um conjunto de dados. Uma das técnicas mais utilizadas é a \textit{Cross Validation}, que consiste em separar o conjunto de dados em conjuntos de dados menores para que se tenha mais blocos de dados para teste, treinamento e validação. Ao realizar esta divisão, utilizando-se \textit{Cross Validation}, a ordem dos dados não é necessariamente respeitada. Porém, o conjunto de dados deste trabalho é uma série temporal e a ordem dos registros importa, o que impossibilita a utilização deste método para este conjutno de dados. Entretanto, existem técnicas que se aplicam a predição de dados temporais. Tahsman em seu trabalho \cite{Tashman_2000} discorre sobre esses métodos, chamados de \textit{Out of Sample Testing}, mostrando como são implementados estes tipos de validação e porquê elas são adequadas para predição de séries temporais. Resumidamente, \textit{Out of Sample Testing} consiste em separar o conjunto de dados em conjunto de dados menores e independentes entre si, ou seja, dados que foram usados como treinamento em um conjunto, não serão utilizados como teste nos outros. Além de serem independentes, \textit{Out of Sample Testing} também respeita a ordem temporal dos dados, o que não afeta a correlação das informações com o tempo. Ainda em \cite{Tashman_2000}, é mostrado dois tipos de \textit{Out of Sample Testing}:
+
+\begin{itemize}
+    \item \textit{Fixed Origin}: Que consiste na definição de um, ou mais conjunto de dados derivados do conjunto de dados original, onde o ponto de divisão dos dados entre treinamento e teste é fixo.
+    \item \textit{Rolling-origin}: Que consiste na definição de um, ou mais conjunto de dados derivados do conjunto de dados original, porém, neste caso, o ponto de divisão entre treinamento e teste é atualizado a cada iteração.
+\end{itemize}
+
+Neste trabalho, utilizou-se um método de \textit{Out Of Sample Testing} do tipo Rolling-Origin chamado de \Textit{Blocking}. 

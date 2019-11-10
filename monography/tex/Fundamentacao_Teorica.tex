@@ -1,30 +1,29 @@
-% TODO: Para cada modelo colocar como que é a entrada na forma de uma expressão matemática
-
 Este capítulo tem como objetivo apresentar uma base teórica mínima de todos os conceitos necessários para o entendimento das demais seções deste trabalho. Primeiramente, serão explicados os conceitos básicos de uma rede neural artificial e suas diferenças em relação a uma rede neural recorrente. Subsequentemente, serão explicados os mecanismos principais de cada modelo utilizado neste trabalho.
-\section{Árvores de Decisão}
 
-% TODO: talk about overfitting
+\section{Árvores de Regressão}
 
-Árvores de decisão sobre-ajustam muito fácil no conjunto de dados por ser muito flexível e poderoso, memorizando parte do conjunto de dados. Podendo, por exemplo, criar uma árvore que cada folha corresponde a somente um elemento.
+De acordo com Trevor Hastie et. al. no Livro \textit{The Elements of Statistical Learning}, árvore é uma técnica que pode ser usada para aprendizagem supervisionada. No qual pode ser usado tanto para classificação, árvores de decisão, quanto para regressão, árvores de regressão. Elas são consideradas extremamente poderosas e simples de entender. Basicamente árvores dividem o espaço de características utilizando de regras.
 
-% https://towardsdatascience.com/an-implementation-and-explanation-of-the-random-forest-in-python-77bf308a9b76
- Algoritmos podem ser flexíveis e correr risco de sobre-ajuste ou ser inflexíveis e não conseguir se ajustar nos dados. Modelos flexiveis demais podem  meomorizar os dados e modelos inflexiveis presupõe informações sobre os dados.
- Árvore de decisão é flexível se não for limitar o tamanho da árvore e inflexível se vc limitar demais o tamanho da árvore. Isso é chamado de bias-variance tradeof.
+Árvores utilizam de uma algoritmo guloso. Isto é, as melhores escolhas locais fazem parte do melhor resultado global. O algoritmo trata de escolher uma característica e tenta dividir o conjunto de dados em dois utilizando de uma regra na característica e depois de dividir, para conjunto resultante é realizado a mesmo operação. A regra na característica pode ser algo como \texttt{Idade \(\leq\) 40}. O algoritmo para quando não conseguir mais dividir o conjunto de dados.
+
+Existem algumas formas de decidir qual a melhor par, característica e regra, para um conjunto de dados. Escolhido uma característica, é possível determinar a melhor regra que divide o conjunto de dados. Sendo assim, se torna possível comparar os pares resultantes com um custo não exorbitante. A comparação entre os pares pode ser feita de diversas formas, para classificação pode ser usado o \textit{Gini Index} e para regressão pode ser usado Soma do Erros Quadráticos. Uma vez construída a árvore, para utiliza-la basta percorrer a árvore respondendo as regras, assim como mostrado na Figura \ref{figure:tree}.
+
+É importante notar a grande flexibilidade desse modelo de se ajustar ao conjunto de dados. Logo, árvores podem facilmente sobre-ajustar. Isto é, por exemplo, ter em cada folha da árvore um elemento do conjunto de dados. Para resolver isso é possível controlar certos aspectos da construção da árvore. É possível controlar a altura máxima da árvore ou limitar o mínimo de tamanho necessário para se dividir o conjunto. O autor sugere usar o segundo jeito seguido de uma redução da árvore resultante, porém o justo da construção vai depender dos dados.
  
  \begin{figure}[htbp]
     \centering
-    \includegraphics[scale=1.5]{monography/img/decision_tree.png}
-    \label{figure:decision_tree}
-    \caption[Representação do funcionamento de uma Árvore de Decisão]{Representação do funcionamento de uma Árvore de Decisão\footnotemark}
+    \includegraphics[scale=0.6]{monography/img/models/regression_tree.png}
+    \label{figure:tree}
+    \caption[Árvore de Regressão Dividindo o Espaço de Resposta]{Árvore de Regressão Dividindo o Espaço de Resposta\footnotemark}
 \end{figure}
 
-\footnotetext{Corte de uma imagem de uma \textit{\acrshort{RF}} \url{https://dsc-spidal.github.io/harp/img/4-5-1.png}}
+\footnotetext{\url{https://www.r-bloggers.com/how-random-forests-improve-simple-regression-trees/}}
 
 \section{\acrfull{RF}}
 
-Criado por Leo Breiman em \textit{Random Forest} \cite{Breiman:2001:RF:570181.570182}, \textit{\acrshort{RF}} é um método de aprendizagem de máquina utilizado tanto para classificação quanto para regressão. Segundo o autor, o método é uma combinação de árvores de decisões onde cada árvore de decisão depende de uma amostra aleatória, sendo esta amostra independente do conjunto de dados. Além disso, todas as árvores devem possuir a mesma distribuição. 
+Criado por Leo Breiman em \textit{Random Forest} \cite{Breiman:2001:RF:570181.570182}, \textit{\acrshort{RF}} é um método de aprendizagem de máquina utilizado tanto para classificação quanto para regressão. Segundo o autor, o método é uma combinação de árvores, de decisões ou regressão, onde cada árvore depende de uma amostra aleatória, sendo esta amostra independente do conjunto de dados. Além disso, todas as árvores devem possuir a mesma distribuição. 
 
-A construção das árvores de decisão é feita utilizando o método \textit{Bagging} (\textit{\textbf{B}ootstrap \textbf{Agg}regation}), também criado por Leo Breiman em \textit{Bagging Predictors} \cite{Breiman:1996:BP:231986.231989}. Este método gera várias versões de um mesmo modelo e agrega os resultados dos mesmos. As versões do modelo utilizam amostras do conjunto de dados selecionadas aleatoriamente, mas com a mesma distribuição.
+A construção das árvores é feita utilizando o método \textit{Bagging} (\textit{\textbf{B}ootstrap \textbf{Agg}regation}), também criado por Leo Breiman em \textit{Bagging Predictors} \cite{Breiman:1996:BP:231986.231989}. Este método gera várias versões de um mesmo modelo e agrega os resultados dos mesmos. As versões do modelo utilizam amostras do conjunto de dados selecionadas aleatoriamente, mas com a mesma distribuição.
 
 Porém, diferente de \textit{Bagging}, \textit{\acrshort{RF}} utiliza mais uma técnica para diminuir o sobre-ajuste (\textit{overfitting}). Há uma modificação no algoritmo de criação das árvores de decisão limitando a quantidade de características (\textit{features}) do conjunto de dados que vai ser utilizada. O autor sugere limitarem a quantidade de características (\textit{q}) para $ \sqrt{q} $, no caso de classificação, ou $ \frac{q}{3} $, no caso de regressão \cite{hastie2005elements}. Além disso, o autor sugere no artigo original que para selecionar a quantidade ideal de características deve se utilizar de estimativas \textit{out-of-bag}, explicadas no artigo.
 
@@ -32,14 +31,12 @@ Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizage
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[scale=0.8]{monography/img/random_forest.png}
+    \includegraphics[scale=1.0]{monography/img/random_forest.png}
     \label{figure:random_forest}
     \caption[Representação do funcionamento de uma \textit{\acrshort{RF}}]{Representação do funcionamento de uma \textit{\acrshort{RF}}\footnotemark}
 \end{figure}
 
 \footnotetext{\url{https://dsc-spidal.github.io/harp/img/4-5-1.png}}
-
-% RESOURCE: to learn better how random forest work (https://stackabuse.com/random-forest-algorithm-with-python-and-scikit-learn/)
 
 \section{\acrfull{SVM}}
 % TODO: adicionar exemplo de uma regressão de 2 dimensões
@@ -76,7 +73,7 @@ Vale notar que algumas funções \textit{Kernel} possuem podem se ajustar quanto
 
 \textit{\acrshort{RNN}} surgiu da incapacidade de \textit{\acrfull{NN}} de levar em consideração resultados anteriores da rede para computar o resultado atual. Redes neurais artificiais comuns, ou do tipo \textit{feedforward} utilizam apenas do seu estado atual para gerar sua saída. Para exemplificar, tome como exemplo um problema de classificação, onde, a partir de uma imagem de um cachorro, ou gato, uma rede neural deva ser capaz de dizer corretamente qual animal a imagem representa. Para cada rodada de classificação, a imagem utilizada na rodada passada não importa, pois uma não tem relação direta com a outra. 
 
-Porém, existem determinados problemas que exigem certa correlação entre os dados, como por exemplo, interpretar um documento, entender o contexto de um filme, ou avaliar a oscilação de uma bolsa de valores ao longo do tempo. Como descrito por Mtichell em \cite{Mitchell_1997}, \textit{\acrshort{RNN}} são mais adequadas para estas situações, pois nesse tipo de problema, dados isolados não tem tanto significado quanto o conjunto, o que exige um conceito de memória. Para simular este efeito de memória, \textit{\acrshort{RNN}} dispõe de uma arquitetura onde a saída do nó anterior é utilizada como entrada no nó seguinte, juntamente com a entrada nova atual da rede. Para passar estes valores de um nó para o outro, a \texit{\acrshort{RNN}} dispõe de um mecanismo chamado \textit{Hidden Layer} Na Figura \ref{figure:rnn} é exemplificada a arquitetura, onde o último resultado utiliza como entrada valores resultantes das últimas execuções.
+Porém, existem determinados problemas que exigem certa correlação entre os dados, como por exemplo, interpretar um documento, entender o contexto de um filme, ou avaliar a oscilação de uma bolsa de valores ao longo do tempo. Como descrito por Mitchell em \cite{Mitchell_1997}, \textit{\acrshort{RNN}} são mais adequadas para estas situações, pois nesse tipo de problema, dados isolados não tem tanto significado quanto o conjunto, o que exige um conceito de memória. Para simular este efeito de memória, \textit{\acrshort{RNN}} dispõe de uma arquitetura onde a saída do nó anterior é utilizada como entrada no nó seguinte, juntamente com a entrada nova atual da rede. Para passar estes valores de um nó para o outro, a \texit{\acrshort{RNN}} dispõe de um mecanismo chamado \textit{Hidden Layer} na Figura \ref{figure:rnn} é exemplificada a arquitetura, onde o último resultado utiliza como entrada valores resultantes das últimas execuções.
 
 \begin{figure}[htbp]
     \centering
