@@ -1,17 +1,11 @@
 # -*- coding: utf-8 -*-
 
-"""## Retrieve and Instanciate Dependencies
-
-For this work, we will need these libraries
-"""
-
 import sklearn
 import time
 import random
 import copy
 
 import pandas as pd # data manipulation library
-import matplotlib.pyplot as plt # plot library
 import numpy as np # math library
 
 import sklearn.metrics as sklm # metrics
@@ -89,10 +83,6 @@ import json
 def print_json (obj):
   print(json.dumps(obj, sort_keys=True, indent=4))
 
-def load(filename):
-  with open(f"{PATH}results/comparison/{filename}.json", 'r') as json_file:
-    return json.load(json_file)
-
 def store(obj, path, name):
   with open(f"{PATH}{path}/{name}.json", 'w') as json_file:
     json.dump(obj, json_file, sort_keys=True, indent=4)
@@ -120,14 +110,13 @@ def store_comparisons (title):
   
   j = copy.deepcopy(comparison_data)
 
-  store(result_data, "results/comparison", f"{name+title}")
+  store(j, "results/comparison", f"{title}_{name}")
     
   for i in range(len(j)):
-    print([*j[i]['results']])
     for model in j[i]['results']:
       del j[i]['results'][model]['raw']
 
-  store(result_data, "results/comparison", f"{name+title}_slim")
+  store(j, "results/comparison", f"{title}_{name}_slim")
 
 """## Models Util
 
@@ -159,9 +148,6 @@ def random_guess_univariate (data):
     times.append(time.time() - start)
 
   result_data['results'][name] = evaluate(expected, observed, times, name)
-
-  if VERBOSITY:
-    plot_prediction(expected, observed, name)
 
 """#### ARIMA
 
@@ -197,47 +183,6 @@ def arima (X):
 
 from sklearn.linear_model import LogisticRegression
 
-def logistic_regression_grid(data, useB):		
-  global result_data		
-      
-  X, Y = generate_dataset(data, useB, FLOW_INTERVAL, N_STEPS, N_FUTURE)		
-  X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])		
-        
-  cv=[(slice(None), slice(None))] # to ignore the cross-validation		
-  param_grid = {		
-    "C": np.logspace(-3,3,7) + [None], 		
-    "penalty": ["l1","l2", None]		
-  }		
-      
-  model = LogisticRegression()		
-      
-  gs = sklearn.model_selection.GridSearchCV(estimator=model, param_grid=param_grid, scoring='neg_mean_squared_error', cv=cv, n_jobs=4, verbose=2)		
-      
-  i, j, k = 0, int(len(X) * (1 - TEST_SPLIT)), len(X)		
-    
-  gs.fit(X[i:j], Y[i:j])		
-      
-  best = gs.best_estimator_		
-  predictions = best.predict(X[j:k])                         		
-          
-  mae = sklm.mean_absolute_error(Y[j:k], predictions)		
-  rmse = np.sqrt(sklm.mean_squared_error(Y[j:k], predictions))		
-  nrmse = rmse / np.std(Y[j:k])		
-  hr = evaluate_precision_hit_ratio(Y[j:k], predictions)		
-      
-  res = {
-    'params': gs.best_params_,
-    'results': {
-        'MAE': mae,
-        'RMSE': rmse,
-        'NRMSE': nrmse,
-        'HR': hr,
-    },
-  }
-
-  print_json(res)
-  store(res, 'results/', 'lr_B_best_params' if isMulti else 'lr_A_best_params')
-
 def logistic_regression(data, useB):
   global result_data
   
@@ -262,9 +207,6 @@ def logistic_regression(data, useB):
     times.append(time.time() - start)
     
   result_data['results'][name] = evaluate(expected, observed, times, name)
-  
-  if VERBOSITY:
-    plot_prediction(expected, observed, name)
 
 """#### RNN
 
@@ -272,60 +214,6 @@ The optimzation was based on [How to Grid Search Hyperparameters for Deep Learni
 """
 
 from keras.layers import SimpleRNN
-
-def create_rnn(input_shape):
-  def create(n=50, activation='relu'):
-    model = Sequential()		
-
-    model.add(SimpleRNN(n, activation=activation, input_shape=input_shape))		
-    model.add(Dense(1))		
-
-    model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])
-    return model		
-
-  return create
-
-def rnn_grid(data, useB):		
-  global result_data		
-
-  X, Y = generate_dataset(data, useB, FLOW_INTERVAL, N_STEPS, N_FUTURE)
-
-  cv=[(slice(None), slice(None))]		
-  param_grid = {		
-    'activation': ['relu', 'sigmoid', None],
-    'n': [50, 100, 200, 400],
-    'batch_size': [8, 16, 32, 64],
-  }	
-
-  model = KerasClassifier(build_fn=create_rnn((X.shape[1], X.shape[2])), epochs=15, verbose=0)
-
-  gs = sklearn.model_selection.GridSearchCV(estimator=model, param_grid=param_grid, scoring='neg_mean_squared_error', cv=cv, n_jobs=4, verbose=2)		
-
-  i, j, k = 0, int(len(X) * (1 - TEST_SPLIT)), len(X)		
-
-  gs.fit(X[i:j], Y[i:j])		
-
-  best = gs.best_estimator_		
-  predictions = best.predict(X[j:k])                         		
-
-  mae = sklm.mean_absolute_error(Y[j:k], predictions)		
-  rmse = np.sqrt(sklm.mean_squared_error(Y[j:k], predictions))		
-  nrmse = rmse / np.std(Y[j:k])		
-  hr = evaluate_precision_hit_ratio(Y[j:k], predictions)		
-
-  res = {
-    'params': gs.best_params_,
-    'feature_importance': gs.best_estimator_.feature_importances_,
-    'results': {
-        'MAE': mae,
-        'RMSE': rmse,
-        'NRMSE': nrmse,
-        'HR': hr,
-    },
-  }
-
-  print_json(res)
-  store(res, 'results/', 'rnn_B_best_params' if useB else 'rnn_A_best_params')
 
 def rnn (data, useB): 
   global result_data
@@ -336,80 +224,30 @@ def rnn (data, useB):
   
   expected, observed, times = [], [], []
   
-  model = create_rnn((X.shape[1], X.shape[2]))()
+  model = Sequential()		
+
+  model.add(SimpleRNN(50, activation='relu', input_shape=(X.shape[1], X.shape[2])))		
+  model.add(Dense(1))		
+
+  model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])
   
   pointers = split_dataset(len(X), SET_SPLIT, TEST_SPLIT)
   
   for i, j, k in pointers:
     start = time.time()
     
-    hist = model.fit(X[i:j], Y[i:j], validation_split=0.2, batch_size=64, epochs=15, verbose=0)
+    model.fit(X[i:j], Y[i:j], validation_split=0.2, batch_size=64, epochs=15, verbose=0)
     
     expected.append(Y[j:k])
     observed.append(model.predict(X[j:k]))
     times.append(time.time() - start)
     
-    if VERBOSITY:
-      plot_history(hist, f"{name} ({str(len(times)).zfill(2)} of {len(pointers)})")
-    
   result_data['results'][name] = evaluate(expected, observed, times, name)
-  
-  if VERBOSITY:
-    plot_prediction(expected, observed, name)
 
 """### Misc
 
 Function to help implement the training and evaluation of the models.
 """
-
-def plot_history (history, name):
-  """ Plot of History
-  
-  Plot the history of loss in the training session of a model
-  
-  Arguments:
-    history: the history returned by Keras fit of a model
-    name: the name of the model
-  """
-  
-  path = f"{PATH}plots/history/{name}"
-  
-  plt.plot(history.history['loss'])
-  plt.plot(history.history['val_loss'])
-  plt.title(name + ' Model Loss')
-  plt.ylabel('Loss')
-  plt.xlabel('Epoch')
-  plt.legend(['train', 'test'], loc='upper left')
-  plt.rcdefaults()
-  
-  plt.savefig(path + ".png", bbox_inches='tight')
-  plt.savefig(path + ".pdf")
-  
-  plt.close('all')
-
-def plot_prediction (Y, Y_hat, title):
-  """ Plot Prediction
-  
-  Plot the prediction (Flow x Time) of what was expected and what
-  was predicted.
-  """
-
-  for i in range(len(Y)):
-    name = f"{title} ({str(i+1).zfill(2)} of {len(Y)})"
-    path = f"{PATH}plots/prediction/{name}"
-    
-    plt.plot(Y[i])
-    plt.plot(Y_hat[i])
-    plt.title(title + 'Prediction')
-    plt.ylabel('Flow')
-    plt.xlabel('Time')
-    plt.legend(['actual', 'prediction'], loc='upper left')
-    plt.rcdefaults()
-
-    plt.savefig(path + ".png", bbox_inches='tight')
-    plt.savefig(path + ".pdf")
-
-    plt.close('all')
 
 def evaluate_precision_hit_ratio (Y, Y_hat):
   """ Trend Prediction Ratio Calculation
@@ -478,6 +316,9 @@ def evaluate_raw (expected, observed, times):
   n = len(expected)
 
   for i in range(n):
+    observed[i] = [0 if np.isnan(o) else o for o in observed[i]]
+
+  for i in range(n):
     observed[i] = [max(o, 0) for o in observed[i]]
   
   raw = {
@@ -485,7 +326,7 @@ def evaluate_raw (expected, observed, times):
     'observed': observed,
     'TIME': times,
     'RMSE': [0] * n,
-    'NRMSE': [0] * n,
+    # 'NRMSE': [0] * n,
     'MAE': [0] * n,
     'HR': [0] * n,
     #'PRE': [0] * n,
@@ -498,14 +339,14 @@ def evaluate_raw (expected, observed, times):
 
     raw['MAE'][i] = sklm.mean_absolute_error(Y, Y_hat)
     raw['RMSE'][i] = np.sqrt(sklm.mean_squared_error(Y, Y_hat))
-    raw['NRMSE'][i] = raw['RMSE'][i] / np.std(Y)
+    # raw['NRMSE'][i] = raw['RMSE'][i] / np.std(Y)
     raw['HR'][i] = evaluate_precision_hit_ratio(Y, Y_hat)
     #raw['PRE'][i] = evaluate_precision_bucket(Y, Y_hat)
     
     if VERBOSITY:
       print(f"({i+1}/{n}) Test Size: {len(Y)}, Time: {time}s")
       print(f"\tRMSE: {raw['RMSE'][i]}")
-      print(f"\tNRMSE: {raw['NRMSE'][i]}")
+      # print(f"\tNRMSE: {raw['NRMSE'][i]}")
       print(f"\tMAE: {raw['MAE'][i]}")
       print(f"\tHit Ratio: {raw['HR'][i] * 100}%")
 
@@ -544,7 +385,7 @@ def evaluate (expected, observed, times, name):
   eva = {
     'TIME': int(sum(times)),
     'RMSE': float(np.mean(raw['RMSE'])),
-    'NRMSE': float(np.mean(raw['NRMSE'])),
+    # 'NRMSE': float(np.mean(raw['NRMSE'])),
     'MAE': float(np.mean(raw['MAE'])),
     'HR': float(np.mean(raw['HR'])),
     #'PRE': [float(np.mean(p)) for p in _pre],
@@ -555,7 +396,7 @@ def evaluate (expected, observed, times, name):
   print(f"\n{name} Final Result:")
   print(f"\tTotal Time: {eva['TIME']}s")
   print(f"\tRMSE: {eva['RMSE']}")
-  print(f"\tNRMSE: {eva['NRMSE']}")
+  # print(f"\tNRMSE: {eva['NRMSE']}")
   print(f"\tMAE: {eva['MAE']}")
   print(f"\tHit Ratio: {eva['HR'] * 100}%")
   #print(f"\tPrecision: {eva['PRE']}")
@@ -626,12 +467,9 @@ def moving_average (data):
     
     expected.append(Y_test)
     observed.append(Y_hat)
-    times.append(end_time - start)
+    times.append(end_time - start_time)
     
   result_data['results'][name] = evaluate(expected, observed, times, name)
-  
-  if VERBOSITY:
-    plot_prediction(expected, observed, name)
 
 """### Naive (Baseline)
 
@@ -659,12 +497,9 @@ def naive (data):
     
     expected.append(Y_test)
     observed.append(Y_hat)
-    times.append(end_time - start)
+    times.append(end_time - start_time)
     
   result_data['results'][name] = evaluate(expected, observed, times, name)
-  
-  if VERBOSITY:
-    plot_prediction(expected, observed, name)
 
 """### Random Forest
 
@@ -682,16 +517,18 @@ def random_forest_grid(data, useB):
   X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])
     
   param_grid = {
-    'bootstrap': [True, False],
+    # 'bootstrap': [True, False],
     'max_depth': [8, 16, 32, 64, None],
-    'n_estimators': [50, 100, 200, 400],
+    'n_estimators': [50, 100, 200, 400, 800],
   }
   model = sklearn.ensemble.RandomForestRegressor(max_features='auto', random_state=0)
   scoring = 'neg_mean_squared_error'
   tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
   grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=tscv, n_jobs=4, verbose=2)
 
+  start_time = time.time()
   grid_search.fit(X, Y)
+  end_time = time.time()
 
   best_model = grid_search.best_estimator_
 
@@ -703,16 +540,24 @@ def random_forest_grid(data, useB):
     X_train, X_test = X[train_index], X[test_index]
     Y_train, Y_test = Y[train_index], Y[test_index]
 
-    start_time = time.time()
+    _start_time = time.time()
     best_model.fit(X_train, Y_train)
-    end_time = time.time()
+    _end_time = time.time()
     
     expected.append(Y_test)
     observed.append(best_model.predict(X_test))
-    times.append(end_time - start_time)
+    times.append(_end_time - _start_time)
+
+  cv_results = copy.deepcopy(grid_search.cv_results_)
+  for key in cv_results:
+    if type(cv_results[key]) != list: 
+      cv_results[key] = cv_results[key].tolist()
     
   res = evaluate(expected, observed, times, name)
-  res['params'] = grid_search.best_params_
+  res['time'] = end_time - start_time
+  res['best_params'] = grid_search.best_params_
+  res['params'] = param_grid
+  res['score'] = cv_results
 
   store(res, "results/grid", f"{name}")
 
@@ -742,9 +587,6 @@ def random_forest(data, useB):
     times.append(end_time - start_time)
     
   result_data['results'][name] = evaluate(expected, observed, times, name)
-  
-  if VERBOSITY:
-    plot_prediction(expected, observed, name)
 
 """### Support Vector Machine"""
 
@@ -759,16 +601,18 @@ def support_vector_machine_grid(data, useB):
   X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])
     
   param_grid = {
-    'C': [1.0, 10.0, 100.0],
-    'gamma': list(np.logspace(-2, 2, 2)) + ['scale'],
-    'epsilon': [0.01, 0.1, 1]
+    'C': [1.0, 10.0, 100.0, 1000.0],
+    'gamma': list(np.logspace(-2, 2, 4)) + ['scale'],
+    # 'epsilon': [0.01, 0.1, 1]
   }
-  model = svm.SVR()
+  model = svm.SVR(epsilon=1.0)
   scoring = 'neg_mean_squared_error'
   tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
   grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=tscv, n_jobs=4, verbose=2)
 
+  start_time = time.time()
   grid_search.fit(X, Y)
+  end_time = time.time()
 
   best_model = grid_search.best_estimator_
 
@@ -780,16 +624,24 @@ def support_vector_machine_grid(data, useB):
     X_train, X_test = X[train_index], X[test_index]
     Y_train, Y_test = Y[train_index], Y[test_index]
 
-    start_time = time.time()
+    _start_time = time.time()
     best_model.fit(X_train, Y_train)
-    end_time = time.time()
+    _end_time = time.time()
     
     expected.append(Y_test)
     observed.append(best_model.predict(X_test))
-    times.append(end_time - start_time)
+    times.append(_end_time - _start_time)
+
+  cv_results = copy.deepcopy(grid_search.cv_results_)
+  for key in cv_results:
+    if type(cv_results[key]) != list: 
+      cv_results[key] = cv_results[key].tolist()
     
   res = evaluate(expected, observed, times, name)
-  res['params'] = grid_search.best_params_
+  res['time'] = end_time - start_time
+  res['best_params'] = grid_search.best_params_
+  res['params'] = param_grid
+  res['score'] = cv_results
 
   store(res, "results/grid", f"{name}")
 
@@ -819,16 +671,13 @@ def support_vector_machine(data, useB):
     times.append(end_time - start_time)
     
   result_data['results'][name] = evaluate(expected, observed, times, name)
-  
-  if VERBOSITY:
-    plot_prediction(expected, observed, name)
 
 """### LSTM"""
 
 from keras.layers import LSTM
 
 def create_lstm(input_shape):
-  def create(n=100, activation='relu'):
+  def create(n=200, activation='sigmoid'):
     model = Sequential()		
 
     model.add(LSTM(n, activation=activation, input_shape=input_shape))		
@@ -848,8 +697,7 @@ def lstm_grid(data, useB):
   X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
 
   param_grid = {		
-    'activation': ['relu', 'sigmoid', None],
-    'n': [50, 100, 200, 400],
+    'n': [50, 100, 200, 400, 800],
     'batch_size': [8, 16, 32, 64]
   }
   model = KerasClassifier(build_fn=create_lstm((X.shape[1], X.shape[2])), validation_split=0.2, epochs=15, verbose=0)
@@ -857,7 +705,9 @@ def lstm_grid(data, useB):
   tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
   grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=tscv, n_jobs=4, verbose=2)		
       
+  start_time = time.time()
   grid_search.fit(X, Y)
+  end_time = time.time()
 
   best_model = grid_search.best_estimator_
 
@@ -869,16 +719,24 @@ def lstm_grid(data, useB):
     X_train, X_test = X[train_index], X[test_index]
     Y_train, Y_test = Y[train_index], Y[test_index]
 
-    start_time = time.time()
+    _start_time = time.time()
     best_model.fit(X_train, Y_train)
-    end_time = time.time()
+    _end_time = time.time()
     
     expected.append(Y_test)
     observed.append(best_model.predict(X_test))
-    times.append(end_time - start_time)
+    times.append(_end_time - _start_time)
+
+  cv_results = copy.deepcopy(grid_search.cv_results_)
+  for key in cv_results:
+    if type(cv_results[key]) != list: 
+      cv_results[key] = cv_results[key].tolist()
     
   res = evaluate(expected, observed, times, name)
-  res['params'] = grid_search.best_params_
+  res['time'] = end_time - start_time
+  res['best_params'] = grid_search.best_params_
+  res['params'] = param_grid
+  res['score'] = cv_results
 
   store(res, "results/grid", f"{name}")
 
@@ -891,7 +749,7 @@ def lstm (data, useB):
 
   model = create_lstm((X.shape[1], X.shape[2]))()
   
-  expected, observed, times = [], [], []
+  expected, observed, times, hist = [], [], [], []
   tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
 
   for train_index, test_index in tscv.split(X):
@@ -899,28 +757,26 @@ def lstm (data, useB):
     Y_train, Y_test = Y[train_index], Y[test_index]
   
     start_time = time.time()
-    history = model.fit(X_train, Y_train, validation_split=0.2, batch_size=64, epochs=15, verbose=0)
+    h = model.fit(X_train, Y_train, validation_split=0.2, batch_size=64, epochs=15, verbose=0)
     end_time = time.time()
 
     expected.append(Y_test)
     observed.append(model.predict(X_test))
     times.append(end_time - start_time)
-
-    if VERBOSITY:
-      plot_name = f"{name} ({str(len(times)).zfill(2)} of {N_SPLITS})"
-      plot_history(history, plot_name)
+    hist.append(h)
 
   result_data['results'][name] = evaluate(expected, observed, times, name)
-  
-  if VERBOSITY:
-    plot_prediction(expected, observed, name)
+  result_data['results'][name]['history'] = {
+      'loss': [h.history['loss'] for h in hist],
+      'val_loss': [h.history['val_loss'] for h in hist],
+  }
 
 """### GRU"""
 
 from keras.layers import GRU
 
 def create_gru(input_shape):
-  def create(n=100, activation='relu'):
+  def create(n=200, activation='sigmoid'):
     model = Sequential()		
 
     model.add(GRU(n, activation=activation, input_shape=input_shape))		
@@ -940,16 +796,17 @@ def gru_grid(data, useB):
   X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
 
   param_grid = {		
-    'activation': ['relu', 'sigmoid', None],
-    'n': [50, 100, 200, 400],
+    'n': [50, 100, 200, 400, 800],
     'batch_size': [8, 16, 32, 64]
   }
   model = KerasClassifier(build_fn=create_gru((X.shape[1], X.shape[2])), validation_split=0.2, epochs=15, verbose=0)
   scoring = 'neg_mean_squared_error'
   tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
   grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=tscv, n_jobs=4, verbose=2)		
-      
+
+  start_time = time.time()
   grid_search.fit(X, Y)
+  end_time = time.time()
 
   best_model = grid_search.best_estimator_
 
@@ -961,16 +818,24 @@ def gru_grid(data, useB):
     X_train, X_test = X[train_index], X[test_index]
     Y_train, Y_test = Y[train_index], Y[test_index]
 
-    start_time = time.time()
+    _start_time = time.time()
     best_model.fit(X_train, Y_train)
-    end_time = time.time()
+    _end_time = time.time()
     
     expected.append(Y_test)
     observed.append(best_model.predict(X_test))
-    times.append(end_time - start_time)
+    times.append(_end_time - _start_time)
+
+  cv_results = copy.deepcopy(grid_search.cv_results_)
+  for key in cv_results:
+    if type(cv_results[key]) != list: 
+      cv_results[key] = cv_results[key].tolist()
     
   res = evaluate(expected, observed, times, name)
-  res['params'] = grid_search.best_params_
+  res['time'] = end_time - start_time
+  res['best_params'] = grid_search.best_params_
+  res['params'] = param_grid
+  res['score'] = cv_results
 
   store(res, "results/grid", f"{name}")
 
@@ -983,7 +848,7 @@ def gru (data, useB):
 
   model = create_gru((X.shape[1], X.shape[2]))()
   
-  expected, observed, times = [], [], []
+  expected, observed, times, hist = [], [], [], []
   tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
 
   for train_index, test_index in tscv.split(X):
@@ -991,33 +856,33 @@ def gru (data, useB):
     Y_train, Y_test = Y[train_index], Y[test_index]
   
     start_time = time.time()
-    history = model.fit(X_train, Y_train, validation_split=0.2, batch_size=64, epochs=15, verbose=0)
+    h = model.fit(X_train, Y_train, validation_split=0.2, batch_size=64, epochs=15, verbose=0)
     end_time = time.time()
 
     expected.append(Y_test)
     observed.append(model.predict(X_test))
     times.append(end_time - start_time)
-
-    if VERBOSITY:
-      plot_name = f"{name} ({str(len(times)).zfill(2)} of {N_SPLITS})"
-      plot_history(history, plot_name)
-
-  result_data['results'][name] = evaluate(expected, observed, times, name)
+    hist.append(h)
   
-  if VERBOSITY:
-    plot_prediction(expected, observed, name)
+  result_data['results'][name] = evaluate(expected, observed, times, name)
+  result_data['results'][name]['history'] = {
+      'loss': [h.history['loss'] for h in hist],
+      'val_loss': [h.history['val_loss'] for h in hist],
+  }
 
-"""## Comparison Util
-
-### Misc
-"""
+"""## Comparison Util"""
 
 def run_models():
   global result_data
   
   result_data = {
       'results': {},
-      'meta': {}
+      'meta': {
+        'SEEABLE_PAST': SEEABLE_PAST,
+        'PREDICT_IN_FUTURE': PREDICT_IN_FUTURE,
+        'FLOW_INTERVAL': FLOW_INTERVAL,
+        'N_SPLITS': N_SPLITS,
+      }
   }
 
   data = retrieve_data(FLOW_INTERVAL)
@@ -1035,148 +900,6 @@ def run_models():
 
   store_results()
 
-def plot_precision_bucket (results):
-  """ Plot Precision Bucket 
-  
-  Plot a stack box graph of the precision mesuared by the buckets.
-  
-  """
-  
-  path = f"{PATH}plots/precision"
-  
-  N = len(results)
-    
-  ind = np.arange(N)    # the x locations for the groups
-  width = 0.35       # the width of the bars: can also be len(x) sequence
-  
-  pre = []
-  bott = []
-  
-  models = list(results.keys())
-
-  n_buckets = len(results[models[0]]['PRE'])
-    
-  for i in range(n_buckets):
-    pre.append([v["PRE"][i] for v in results.values()])
-    
-    if i == 0:
-      bott.append([0] * N)
-    else:
-      bott.append([bott[i-1][j] + pre[i-1][j]  for j in range(N)])
-  
-  p = []
-  leg_lin = []
-  leg_lab = []
-  
-  for i in range(n_buckets):
-    _p = plt.bar(ind, tuple(pre[i]), width, bottom=tuple(bott[i]))
-    
-    leg_lin.append(_p[0])
-    leg_lab.append(f"Bucket of {2**i}")
-    p.append(_p)
-
-  plt.ylabel('Scores')
-  plt.title('Precision by model and bucket')
-  plt.xticks(ind, models, rotation=90)
-  plt.yticks(np.arange(0, 1.05, 0.05))
-  plt.legend(tuple(leg_lin), tuple(leg_lab))
-  
-  plt.savefig(path + ".png", bbox_inches='tight')
-  plt.savefig(path + ".pdf")
-
-  plt.close('all')
-
-def plot_performance(results, metric, y_label, title):
-  """ Plot Performance
-  
-  Plot a bar graph of the performance of some metric
-  
-  Arguments:
-    metric: the name of the property of the metric
-    y_label: the name of the label of the metric
-    title: the title of the plot
-  """
-  
-  path = f"{PATH}plots/performance/{title} Performance Bar"
-  
-  models = tuple(results.keys())
-  y_pos = np.arange(len(models))
-  performance = [v[metric] for v in results.values()]
-
-  plt.rcdefaults()
-  plt.bar(y_pos, performance, align='center', alpha=0.5)
-  plt.xticks(y_pos, models, rotation=90)
-  plt.ylabel(y_label)
-  plt.title(title)
-
-  plt.savefig(path + ".png", bbox_inches='tight')
-  plt.savefig(path + ".pdf")
-    
-  plt.close('all')
-
-def plot_performance_improved(results, metric, y_label, title):
-  """ Plot Performance Improved
-  
-  Plot a box graph of the performance of some metric
-  
-  Arguments:
-    results: the struct that contain the results of the models
-    metric: the name of the property of the metric
-    y_label: the name of the label of the metric
-    title: the title of the plot
-  """
-  
-  path = f"{PATH}plots/performance/{title} Performance Boxes"
-  
-  fig, ax_plot = plt.subplots()
-  
-  ax_plot.set_title(title)
-  ax_plot.set_xlabel(y_label)
-  ax_plot.set_ylabel('Model')
-  
-  bplot = ax_plot.boxplot([v['raw'][metric] for v in results.values()], vert=False)
-  ax_plot.set_yticklabels(list(results.keys()))
-  
-  plt.savefig(path + ".png", bbox_inches='tight')
-  plt.savefig(path + ".pdf")
-    
-  plt.close('all')
-
-def plot_snapshot(results):
-  # plot_precision_bucket(results)
-  # plot_performance(results, 'TIME', 'Seconds', 'Training Time Comparison')
-  plot_performance_improved(results, 'TIME', 'Seconds', 'Training Time Comparison')
-  # plot_performance(results, 'RMSE', 'RMSE', 'Root Mean Square Error Comparison')
-  plot_performance_improved(results, 'RMSE', 'RMSE', 'Root Mean Square Error Comparison')
-  # plot_performance(results, 'NRMSE', 'NRMSE', 'Normalized Root Mean Square Error Comparison')
-  plot_performance_improved(results, 'NRMSE', 'NRMSE', 'Normalized Root Mean Square Error Comparison')
-  # plot_performance(results, 'MAE', 'MAE', 'Max Absolute Error Comparison')
-  plot_performance_improved(results, 'MAE', 'MAE', 'Max Absolute Error Comparison')
-  # plot_performance(results, 'HR', 'Percentage', 'Hit Ratio Comparison')
-  plot_performance_improved(results, 'HR', 'Percentage', 'Hit Ratio Comparison')
-
-def plot_results_comparison(name, xlabel, xticks, metric):
-  path = f"{PATH}plots/comparison/{name.lower().replace(' ', '_')}_{metric.lower()}"
-  models = [*comparison_data[0]['results']]
-  
-  for model in models:
-    datapoints = [result['results'][model][metric] for result in comparison_data]
-    plt.plot(datapoints) 
-
-  plt.title(name)
-  plt.ylabel(metric)
-  plt.xlabel(xlabel)
-  plt.xticks(np.arange(len(xticks)), xticks)
-  plt.legend(models, loc='upper left')
-  plt.rcdefaults()
-
-  plt.savefig(path + ".png", bbox_inches='tight')
-  plt.savefig(path + ".pdf")
-    
-  plt.close('all')
-
-"""### Comparisons"""
-
 def compare_results_by_n_split(values):
   global N_SPLITS
   global comparison_data
@@ -1192,11 +915,10 @@ def compare_results_by_n_split(values):
     end_time = time.time()
     
     comparison_data.append(copy.deepcopy(result_data))
-    plot_snapshot(comparison_data[-1])
 
     print(f"({len(comparison_data)} of {len(values)}) Finished Running with N_SPLITS {value} in {end_time - start_time} seconds")
 
-  store_comparisons('_n_split_comparison')
+  store_comparisons('n_split_comparison')
   
   N_SPLITS = aux
 
@@ -1217,12 +939,11 @@ def compare_results_by_seeable_past(values):
     end_time = time.time()
     
     comparison_data.append(copy.deepcopy(result_data))
-    plot_snapshot(comparison_data[-1])
 
     print(f"({len(comparison_data)} of {len(values)}) Finished Running with SEEABLE_PAST {value} in {end_time - start_time} seconds")
 
-  store_comparisons('_seeable_past_comparison')
-  
+  store_comparisons('seeable_past_comparison')
+
   SEEABLE_PAST = aux
   N_STEPS = SEEABLE_PAST * 60 // FLOW_INTERVAL
 
@@ -1249,11 +970,10 @@ def compare_results_by_flow_interval(values):
     end_time = time.time()
     
     comparison_data.append(copy.deepcopy(result_data))
-    plot_snapshot(comparison_data[-1])
 
     print(f"({len(comparison_data)} of {len(values)}) Finished Running with FLOW_INTERVAL {value} in {end_time - start_time} seconds")
 
-  store_comparisons('_flow_interval_comparison')
+  store_comparisons('flow_interval_comparison')
   
   FLOW_INTERVAL = aux
   N_STEPS = SEEABLE_PAST * 60 // FLOW_INTERVAL
@@ -1278,11 +998,10 @@ def compare_results_by_predict_in_future(values):
     end_time = time.time()
     
     comparison_data.append(copy.deepcopy(result_data))
-    plot_snapshot(comparison_data[-1])
 
     print(f"({len(comparison_data)} of {len(values)}) Finished Running with PREDICT_IN_FUTURE {value} in {end_time - start_time} seconds")
 
-  store_comparisons('_predict_future_comparison')
+  store_comparisons('predict_future_comparison')
   
   PREDICT_IN_FUTURE = aux
   N_FUTURE = PREDICT_IN_FUTURE * 60 // FLOW_INTERVAL
@@ -1293,25 +1012,16 @@ Run all the models and store the results at the end
 """
 
 # Model Parameters
-
 SEEABLE_PAST = 180 # in minutes
-
 PREDICT_IN_FUTURE = 15 # in minutes
-
-FLOW_INTERVAL = 450 # the interval size for each flow
-
+FLOW_INTERVAL = 150 # the interval size for each flow
 N_SPLITS = 4
 
 # Derivated Model Parameters
-
 N_STEPS = SEEABLE_PAST * 60 // FLOW_INTERVAL # the number of flows to see in the past
-
-N_FUTURE = PREDICT_IN_FUTURE * 60 // FLOW_INTERVAL # how much in the future we want to predict (0 = predict the flow on the next 5 minutes)
-
+N_FUTURE = PREDICT_IN_FUTURE * 60 // FLOW_INTERVAL # how much in the future we want to predict (0 = predict the flow on the next FLOW_INTERVAL minutes)
 DAY_SIZE = (24 * 60 * 60) // FLOW_INTERVAL  
-
 WEEK_SIZE = (7 * 24 * 60 * 60) // FLOW_INTERVAL
-
 VERBOSITY = True
 
 result_data = {
@@ -1321,30 +1031,6 @@ result_data = {
 
 data = retrieve_data(FLOW_INTERVAL)
 
-# random_forest(data, False)
-
-random_forest_grid(data, False)
-
-random_forest_grid(data, True)
-
-# support_vector_machine(data, False)
-
-support_vector_machine_grid(data, False)
-
-support_vector_machine_grid(data, True)
-
-# lstm(data, False)
-
-lstm_grid(data, False)
-
-lstm_grid(data, True)
-
-# gru(data, False)
-
-gru_grid(data, False)
-
-gru_grid(data, True)
-
 """## Compare"""
 
 VERBOSITY = False
@@ -1352,54 +1038,14 @@ VERBOSITY = False
 predict_futures = [15, 30, 45, 60]
 compare_results_by_predict_in_future(predict_futures)
 
-plot_results_comparison('Predict Future for Training Comparison', 'Time in the Future in Minutes', predict_futures, 'NRMSE')
-
-plot_results_comparison('Predict Future for Training Comparison', 'Time in the Future in Minutes', predict_futures, 'RMSE')
-
-plot_results_comparison('Predict Future for Training Comparison', 'Time in the Future in Minutes', predict_futures, 'MAE')
-
-plot_results_comparison('Predict Future for Training Comparison', 'Time in the Future in Minutes', predict_futures, 'HR')
-
-plot_results_comparison('Predict Future for Training Comparison', 'Time in the Future in Minutes', predict_futures, 'TIME')
-
 flow_intervals = [150, 300, 450]
 compare_results_by_flow_interval(flow_intervals)
-
-plot_results_comparison('Flow Interval for Training Comparison', 'Flow Size in Seconds', flow_intervals, 'NRMSE')
-
-plot_results_comparison('Flow Interval for Training Comparison', 'Flow Size in Seconds', flow_intervals, 'RMSE')
-
-plot_results_comparison('Flow Interval for Training Comparison', 'Flow Size in Seconds', flow_intervals, 'MAE')
-
-plot_results_comparison('Flow Interval for Training Comparison', 'Flow Size in Seconds', flow_intervals, 'HR')
-
-plot_results_comparison('Flow Interval for Training Comparison', 'Flow Size in Seconds', flow_intervals, 'TIME')
 
 seeable_pasts = [60, 120, 240, 480]
 compare_results_by_seeable_past(seeable_pasts)
 
-plot_results_comparison('Seeable Past for Training Comparison', 'Seeable Past in Seconds', seeable_pasts, 'NRMSE')
-
-plot_results_comparison('Seeable Past for Training Comparison', 'Seeable Past in Seconds', seeable_pasts, 'RMSE')
-
-plot_results_comparison('Seeable Past for Training Comparison', 'Seeable Past in Seconds', seeable_pasts, 'MAE')
-
-plot_results_comparison('Seeable Past for Training Comparison', 'Seeable Past in Seconds', seeable_pasts, 'HR')
-
-plot_results_comparison('Seeable Past for Training Comparison', 'Seeable Past in Seconds', seeable_pasts, 'TIME')
-
 n_splits = [1, 2, 4, 8]
 compare_results_by_n_split(n_splits)
-
-plot_results_comparison('Number of Splits for Training Comparison', 'Number of Splits', n_splits, 'NRMSE')
-
-plot_results_comparison('Number of Splits for Training Comparison', 'Number of Splits', n_splits, 'RMSE')
-
-plot_results_comparison('Number of Splits for Training Comparison', 'Number of Splits', n_splits, 'MAE')
-
-plot_results_comparison('Number of Splits for Training Comparison', 'Number of Splits', n_splits, 'HR')
-
-plot_results_comparison('Number of Splits for Training Comparison', 'Number of Splits', n_splits, 'TIME')
 
 """## Observations:
 
