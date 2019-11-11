@@ -1016,12 +1016,12 @@ Run all the models and store the results at the end
 SEEABLE_PAST = 480 # in minutes
 PREDICT_IN_FUTURE = 60 # in minutes
 FLOW_INTERVAL = 150 # the interval size for each flow
-N_SPLITS = 4
+N_SPLITS = 8
 
 # Derivated Model Parameters
 N_STEPS = SEEABLE_PAST * 60 // FLOW_INTERVAL # the number of flows to see in the past
 N_FUTURE = PREDICT_IN_FUTURE * 60 // FLOW_INTERVAL # how much in the future we want to predict (0 = predict the flow on the next FLOW_INTERVAL minutes)
-DAY_SIZE = (24 * 60 * 60) // FLOW_INTERVAL
+DAY_SIZE = (24 * 60 * 60) // FLOW_INTERVAL  
 WEEK_SIZE = (7 * 24 * 60 * 60) // FLOW_INTERVAL
 VERBOSITY = True
 
@@ -1038,43 +1038,43 @@ data = retrieve_data(FLOW_INTERVAL)
 
 # random_forest(data, False)
 
-# random_forest_grid(data, False)
+random_forest_grid(data, False)
 
-# random_forest_grid(data, True)
+random_forest_grid(data, True)
 
 # support_vector_machine(data, False)
 
-# support_vector_machine_grid(data, False)
+support_vector_machine_grid(data, False)
 
-# support_vector_machine_grid(data, True)
+support_vector_machine_grid(data, True)
 
 # lstm(data, False)
 
-# lstm_grid(data, False)
+lstm_grid(data, False)
 
-# lstm_grid(data, True)
+lstm_grid(data, True)
 
 # gru(data, False)
 
-# gru_grid(data, False)
+gru_grid(data, False)
 
-# gru_grid(data, True)
+gru_grid(data, True)
 
 """## Compare"""
 
-VERBOSITY = False
+# VERBOSITY = False
 
-predict_futures = [15, 30, 45, 60]
-compare_results_by_predict_in_future(predict_futures)
+# predict_futures = [15, 30, 45, 60]
+# compare_results_by_predict_in_future(predict_futures)
 
-flow_intervals = [150, 300, 450]
-compare_results_by_flow_interval(flow_intervals)
+# flow_intervals = [150, 300, 450]
+# compare_results_by_flow_interval(flow_intervals)
 
-seeable_pasts = [60, 120, 240, 480]
-compare_results_by_seeable_past(seeable_pasts)
+# seeable_pasts = [60, 120, 240, 480]
+# compare_results_by_seeable_past(seeable_pasts)
 
-n_splits = [1, 2, 4, 8]
-compare_results_by_n_split(n_splits)
+# n_splits = [1, 2, 4, 8]
+# compare_results_by_n_split(n_splits)
 
 """## Observations:
 
