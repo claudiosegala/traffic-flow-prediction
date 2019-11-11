@@ -1013,7 +1013,7 @@ Run all the models and store the results at the end
 """
 
 # Model Parameters
-SEEABLE_PAST = 180 # in minutes
+SEEABLE_PAST = 480 # in minutes
 PREDICT_IN_FUTURE = 60 # in minutes
 FLOW_INTERVAL = 150 # the interval size for each flow
 N_SPLITS = 4
@@ -1021,7 +1021,7 @@ N_SPLITS = 4
 # Derivated Model Parameters
 N_STEPS = SEEABLE_PAST * 60 // FLOW_INTERVAL # the number of flows to see in the past
 N_FUTURE = PREDICT_IN_FUTURE * 60 // FLOW_INTERVAL # how much in the future we want to predict (0 = predict the flow on the next FLOW_INTERVAL minutes)
-DAY_SIZE = (24 * 60 * 60) // FLOW_INTERVAL  
+DAY_SIZE = (24 * 60 * 60) // FLOW_INTERVAL
 WEEK_SIZE = (7 * 24 * 60 * 60) // FLOW_INTERVAL
 VERBOSITY = True
 
@@ -1048,13 +1048,13 @@ data = retrieve_data(FLOW_INTERVAL)
 
 # support_vector_machine_grid(data, True)
 
-lstm(data, False)
+# lstm(data, False)
 
 # lstm_grid(data, False)
 
 # lstm_grid(data, True)
 
-gru(data, False)
+# gru(data, False)
 
 # gru_grid(data, False)
 
