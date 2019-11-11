@@ -1,47 +1,43 @@
-% TODO: Para cada modelo colocar como que é a entrada na forma de uma expressão matemática
+Este capítulo tem como objetivo apresentar uma base teórica mínima de todos os conceitos necessários para o entendimento das demais seções deste trabalho. Primeiramente, serão explicados os conceitos básicos de uma árvore de regressão, que é utilizada pelo modelo \textit{\acrshort{RF}}. Subsequentemente, serão explicados os conceitos por trás da \textit{\acrshort{SVM}}. Por último, serão introduzidos os conceitos de uma \textit{\acrfull{RNN}} e explicados os mecanismos por trás do funcionamento de dois modelos derivados dela, o \textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}}.
 
-Este capítulo tem como objetivo apresentar uma base teórica mínima de todos os conceitos necessários para o entendimento das demais seções deste trabalho. Primeiramente, serão explicados os conceitos básicos de uma rede neural artificial e suas diferenças em relação a uma rede neural recorrente. Subsequentemente, serão explicados os mecanismos principais de cada modelo utilizado neste trabalho.
-\section{Árvores de Decisão}
+\section{Árvores de Regressão}
 
-% TODO: talk about overfitting
+De acordo com Trevor Hastie et. al. no Livro \textit{The Elements of Statistical Learning}, árvore é uma técnica que pode ser utilizado para aprendizagem supervisionada. No qual pode ser usado tanto para classificação (árvores de decisão), quanto para regressão (árvores de regressão). Elas são consideradas extremamente poderosas e simples de entender. Basicamente, árvores dividem o espaço de características utilizando de regras.
 
-Árvores de decisão sobre-ajustam muito fácil no conjunto de dados por ser muito flexível e poderoso, memorizando parte do conjunto de dados. Podendo, por exemplo, criar uma árvore que cada folha corresponde a somente um elemento.
 
-% https://towardsdatascience.com/an-implementation-and-explanation-of-the-random-forest-in-python-77bf308a9b76
- Algoritmos podem ser flexíveis e correr risco de sobre-ajuste ou ser inflexíveis e não conseguir se ajustar nos dados. Modelos flexiveis demais podem  meomorizar os dados e modelos inflexiveis presupõe informações sobre os dados.
- Árvore de decisão é flexível se não for limitar o tamanho da árvore e inflexível se vc limitar demais o tamanho da árvore. Isso é chamado de bias-variance tradeof.
+Árvores utilizam de um algoritmo guloso. Isto é, os melhores resultados locais fazem parte do melhor resultado global. Inicialmente, o algoritmo escolhe uma das características e define uma regra a partir da mesma. Assim, dividindo os dados em dois conjuntos. Por exemplo, considere que uma característica seja idade, uma regra possível seria \texttt{Idade \(\leq\) 40}. Seguindo esta regra o algoritmo divide os dados. Para os conjuntos resultantes, é definido uma nova regra e isso acontece sucessivamente até que não seja mais possível dividir os dados.
+
+Existem algumas formas de decidir qual o melhor par, característica e regra, para um conjunto de dados. Uma das formas possíveis seria: para cada uma das características, ou conjunto de características, determina-se a melhor regra que divide o conjunto de dados no nó atual e compara essas regras para determinar qual o melhor par. Desta forma, é possível comparar os pares resultantes com um custo aceitável. A comparação entre os pares pode ser feita de diversas formas, para classificação pode ser usado o \textit{Gini Index} e para regressão pode ser usado a Soma do Erros Quadráticos. Uma vez construída a árvore, para utilizá-la basta percorrê-la seguindo as regras já definidas, assim como mostrado na Figura \ref{figure:tree}.
+
+É importante notar a grande flexibilidade desse modelo de se ajustar ao conjunto de dados, isto é, árvores podem sofrer com o problema do sobre-ajuste (\textit{overfitting}). Por exemplo, é possível que o modelo tenha em cada folha da árvore um elemento do conjunto de dados. Para resolver este problema, é necessário controlar certos aspectos da construção da árvore, como a sua altura máxima, ou o limite mínimo de tamanho necessário para se dividir o conjunto. O autor sugere utilizar o segundo método, seguido de uma redução da árvore resultante, porém, dependendo dos dados, podem vir a existir modelos de construção melhores.
  
  \begin{figure}[htbp]
     \centering
-    \includegraphics[scale=1.5]{monography/img/decision_tree.png}
-    \label{figure:decision_tree}
-    \caption[Representação do funcionamento de uma Árvore de Decisão]{Representação do funcionamento de uma Árvore de Decisão\footnotemark}
+    \includegraphics[scale=0.6]{monography/img/models/regression_tree.png}
+    \label{figure:tree}
+    \caption[Árvore de Regressão Dividindo o Espaço de Resposta]{Árvore de Regressão Dividindo o Espaço de Resposta\footnotemark}
 \end{figure}
 
-\footnotetext{Corte de uma imagem de uma \textit{\acrshort{RF}} \url{https://dsc-spidal.github.io/harp/img/4-5-1.png}}
+\footnotetext{\url{https://www.r-bloggers.com/how-random-forests-improve-simple-regression-trees/}}
 
 \section{\acrfull{RF}}
 
-% TODO: checar se a tradução está correta (frase pega do abstract do artigo)
-Criado por Leo Breiman em \textit{Random Forest} \cite{Breiman:2001:RF:570181.570182}, \textit{\acrshort{RF}} é um método de aprendizagem de máquina utilizado tanto para classificação quanto para regressão. Segundo o autor, o método é uma combinação de árvores de decisões onde cada árvore de decisão depende de uma amostra aleatória, sendo esta amostra independente do conjunto de dados. Além disso, todas as árvores devem possuir a mesma distribuição. 
+Criado por Leo Breiman em \textit{Random Forest} \cite{Breiman:2001:RF:570181.570182}, \textit{\acrshort{RF}} é um método de aprendizagem de máquina utilizado tanto para classificação quanto para regressão. Segundo o autor, o método é uma combinação de árvores, de decisões ou regressão, onde cada árvore depende de uma amostra aleatória, sendo esta amostra independente do conjunto de dados. Além disso, todas as árvores devem possuir a mesma distribuição. 
 
-A construção das árvores de decisão é feita utilizando o método \textit{Bagging} (\textit{\textbf{B}ootstrap \textbf{Agg}regation}), criado por Leo Breiman em \textit{Bagging Predictors} \cite{Breiman:1996:BP:231986.231989}. Este método gera várias versões de um mesmo modelo e agrega os resultados dos mesmos. As versões do modelo utilizam amostras do conjunto de dados selecionadas aleatoriamente, mas com a mesma distribuição.
+A construção das árvores é feita utilizando o método \textit{Bagging} (\textit{\textbf{B}ootstrap \textbf{Agg}regation}), também criado por Leo Breiman em \textit{Bagging Predictors} \cite{Breiman:1996:BP:231986.231989}. Este método gera várias versões de um mesmo modelo e agrega os resultados dos mesmos. As versões do modelo utilizam amostras do conjunto de dados selecionadas aleatoriamente, mas com a mesma distribuição.
 
-% TODO: referencia apra algo que falar sobre a quantidade fixa de caracteristicas
-Porém, diferente de \textit{Bagging}, \textit{\acrshort{RF}} utiliza mais uma técnica para diminuir o sobre-ajuste (\textit{overfitting}). Há uma modificação no algoritmo de criação das árvores de decisão limitando a quantidade de características (\textit{features}) do conjunto de dados que vai ser utilizada. Para selecionar a quantidade ideal de características o autor sugere utilizar de estimativas \textit{out-of-bag}, explicadas no artigo, mas é comum implementações limitarem a quantidade de características (\textit{q}) para $ \sqrt{q} $ ou $ \frac{q}{3} $.
+Porém, diferente de \textit{Bagging}, \textit{\acrshort{RF}} utiliza mais uma técnica para diminuir o sobre-ajuste (\textit{overfitting}). Há uma modificação no algoritmo de criação das árvores de decisão limitando a quantidade de características (\textit{features}) do conjunto de dados que vai ser utilizada. O autor sugere limitarem a quantidade de características (\textit{q}) para $ \sqrt{q} $, no caso de classificação, ou $ \frac{q}{3} $, no caso de regressão \cite{hastie2005elements}. Além disso, o autor também sugere, no artigo original, que, para selecionar a quantidade ideal de características deve-se utilizar de estimativas \textit{out-of-bag}, explicadas também no artigo.
 
 Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizagem de máquina, ela pode ser classificada como um Comitê de Máquinas (\textit{Ensemble Learning}). A forma como as respostas de cada uma das máquinas são combinadas depende do problema. Para classificação pode ser usado uma votação (voto da maioria) e para um problema de regressão pode ser usado uma média dos valores, assim como mostrado na Figura \ref{figure:random_forest}.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[scale=0.8]{monography/img/random_forest.png}
+    \includegraphics[scale=1.0]{monography/img/models/random_forest.png}
     \label{figure:random_forest}
     \caption[Representação do funcionamento de uma \textit{\acrshort{RF}}]{Representação do funcionamento de uma \textit{\acrshort{RF}}\footnotemark}
 \end{figure}
 
 \footnotetext{\url{https://dsc-spidal.github.io/harp/img/4-5-1.png}}
-
-% RESOURCE: to learn better how random forest work (https://stackabuse.com/random-forest-algorithm-with-python-and-scikit-learn/)
 
 \section{\acrfull{SVM}}
 % TODO: adicionar exemplo de uma regressão de 2 dimensões
@@ -59,7 +55,7 @@ Vale notar que algumas funções \textit{Kernel} possuem podem se ajustar quanto
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[scale=1.0]{monography/img/svr_example.png}
+    \includegraphics[scale=1.0]{monography/img/models/svr_example.png}
     \label{figure:support_vector_machine}
     \caption[Representação do funcionamento de uma \textit{\acrshort{SVM}}]{Representação do funcionamento de uma \textit{\acrshort{SVM}}\footnotemark}
 \end{figure}
@@ -76,25 +72,25 @@ Vale notar que algumas funções \textit{Kernel} possuem podem se ajustar quanto
 
 % TODO: veja esse coisa apra explicar melhor LSTM e RNN (https://www.youtube.com/watch?v=6niqTuYFZLQ)
 
-\textit{\acrshort{RNN}} surgiu da incapacidade de \textit{\acrfull{NN}} de levar em consideração resultados anteriores da rede para computar o resultado atual. Redes neurais artificiais comuns, ou do tipo \textit{feedforward} utilizam apenas do seu estado atual para gerar sua saída. Para exemplificar, tome como exemplo um problema de classificação, onde, a partir de uma imagem de um cachorro, ou gato, uma rede neural deva ser capaz de dizer corretamente qual animal a imagem representa. Para cada rodada de classificação, a imagem utilizada na rodada passada não importa, pois uma não tem relação direta com a outra. 
+\textit{\acrshort{RNN}} surgiu da incapacidade de redes neurais comuns (\textit{\acrshort{NN}}) de levar em consideração resultados produzidos anteriormente pela rede. Sendo que esses resultados anteriores poderiam vir a influenciar o resultado atual. Redes neurais artificiais comuns, ou do tipo \textit{feedforward} utilizam apenas do seu estado atual para gerar sua saída. Para exemplo, um problema de classificação, onde, a partir de uma imagem de um cachorro, ou gato, uma rede neural deva ser capaz de dizer corretamente qual animal a imagem representa. Para cada rodada de classificação, a imagem utilizada na rodada passada não importa, pois uma não tem relação direta com a outra. 
 
-Porém, existem determinados problemas que exigem certa correlação entre os dados, como por exemplo, interpretar um documento, entender o contexto de um filme, ou avaliar a oscilação de uma bolsa de valores ao longo do tempo. Como descrito por Mtichell em \cite{Mitchell_1997}, \textit{\acrshort{RNN}} são mais adequadas para estas situações, pois nesse tipo de problema, dados isolados não tem tanto significado quanto o conjunto, o que exige um conceito de memória. Para simular este efeito de memória, \textit{\acrshort{RNN}} dispõe de uma arquitetura onde a saída do nó anterior é utilizada como entrada no nó seguinte, juntamente com a entrada nova atual da rede. Para passar estes valores de um nó para o outro, a \texit{\acrshort{RNN}} dispõe de um mecanismo chamado \textit{Hidden Layer} Na Figura \ref{figure:rnn} é exemplificada a arquitetura, onde o último resultado utiliza como entrada valores resultantes das últimas execuções.
+Porém, existem determinados problemas que exigem certa correlação entre os dados, como por exemplo, interpretar um documento, entender o contexto de um filme, ou avaliar a oscilação de uma bolsa de valores ao longo do tempo. Como descrito por Mitchell em \textit{Machine Learning} \cite{Mitchell_1997}, \textit{\acrshort{RNN}} são mais adequadas para estas situações, pois nesse tipo de problema, dados isolados não tem tanto significado quanto o conjunto, o que exige um conceito de memória. Para simular este efeito de memória, \textit{\acrshort{RNN}} dispõe de uma arquitetura onde a saída do nó anterior é utilizada como entrada no nó seguinte, juntamente com a entrada nova atual da rede. Para passar estes valores de um nó para o outro, a \textit{\acrshort{RNN}} dispõe de um mecanismo chamado \textit{Hidden Layer} na Figura \ref{figure:rnn} é exemplificada a arquitetura, onde o último resultado utiliza como entrada valores resultantes das últimas execuções.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[scale=0.4]{rnnExample.png}
+    \includegraphics[scale=0.4]{monography/img/models/rnnExample.png}
     \label{figure:rnn}
     \caption[Representação simples do conceito de um RNN]{Representação simples do conceito de uma RNN \footnotemark}
 \end{figure}
 
 \subsection{\acrfull{LSTM}}
 
-\acrshort{LSTM} é um método proposto pela primeira vez por Sepp Hochreiter e Jurgen Schmidhuber em \cite{Sepp_1997}. Ele é utilizado para predição de informações que derivam de dados sequenciais e séries temporais, sendo possível encontrar diversos trabalhos na literatura que mostram sua eficiência quando comparado a outros métodos. Como descrito em \cite{Zainab_2018} e em \cite{Xiaolei_2015}, \acrshort{LSTM} é um tipo de \acrshort{RNN} que utiliza de estados anteriores e do estado atual da rede para gerar sua saída. Ao utilizar dos estados anteriores, a \acrshort{RNN} acaba por simular uma memória, melhorando sua capacidade de aprender. 
+\acrshort{LSTM} é um método proposto pela primeira vez por Sepp Hochreiter e Jurgen Schmidhuber em \cite{doi:10.1162/neco.1997.9.8.1735}. Ele é utilizado para predição de informações que derivam de dados sequenciais e séries temporais, sendo possível encontrar diversos trabalhos na literatura que mostram sua eficiência quando comparado a outros métodos. Como descrito em \cite{Zainab_2018} e em \cite{Xiaolei_2015}, \acrshort{LSTM} é um tipo de \acrshort{RNN} que utiliza de estados anteriores e do estado atual da rede para gerar sua saída. Ao utilizar dos estados anteriores, a \acrshort{RNN} acaba por simular uma memória, melhorando sua capacidade de aprender. 
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[scale=0.4]{lstm3.png}
-    \label{figure:eixo}
+    \includegraphics[scale=0.4]{monography/img/models/lstm3.png}
+    \label{figure:lstm}
     \caption[Representação de uma arquitetura LSTM]{Representação de uma arquitetura LSTM\footnotemark}
 \end{figure}
 \footnotetext{\url{https://colah.github.io/posts/2015-08-Understanding-LSTMs/}}
@@ -131,7 +127,7 @@ Por ter uma arquitetura mais simples que uma \textit{\acrshort{LSTM}}, o \textit
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[scale=1.0]{monography/img/GRU.png}
+    \includegraphics[scale=1.0]{monography/img/models/GRU.png}
     \label{figure:gru}
     \caption[Representação da arquitetura de uma GRU]{Representação da arquitetura de uma GRU\footnotemark}
 \end{figure}
