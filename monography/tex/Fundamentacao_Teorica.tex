@@ -72,9 +72,9 @@ Vale notar que algumas funções \textit{Kernel} possuem podem se ajustar quanto
 
 % TODO: veja esse coisa apra explicar melhor LSTM e RNN (https://www.youtube.com/watch?v=6niqTuYFZLQ)
 
-\textit{\acrshort{RNN}} surgiu da incapacidade de redes neurais comuns (\textit{\acrshort{NN}}) de levar em consideração resultados produzidos anteriormente pela rede. Sendo que esses resultados anteriores poderiam vir a influenciar o resultado atual. Redes neurais artificiais comuns, ou do tipo \textit{feedforward} utilizam apenas do seu estado atual para gerar sua saída. Para exemplo, um problema de classificação, onde, a partir de uma imagem de um cachorro, ou gato, uma rede neural deva ser capaz de dizer corretamente qual animal a imagem representa. Para cada rodada de classificação, a imagem utilizada na rodada passada não importa, pois uma não tem relação direta com a outra. 
+\textit{\acrshort{RNN}} surgiu da incapacidade de redes neurais comuns (\textit{\acrshort{NN}}) de levar em consideração resultados produzidos anteriormente pela rede. Resultados esses que poderiam vir a influenciar o resultado atual. Ou seja, redes neurais artificiais comuns, ou do tipo \textit{feedforward} utilizam apenas do seu estado atual para gerar sua saída. Para exemplificar, considere um problema de classificação, onde, a partir de uma imagem de um cachorro, ou gato, uma rede neural deva ser capaz de dizer corretamente qual animal a imagem representa. Para cada rodada de classificação, a imagem utilizada na rodada passada não importa, pois uma não tem relação direta com a outra. 
 
-Porém, existem determinados problemas que exigem certa correlação entre os dados, como por exemplo, interpretar um documento, entender o contexto de um filme, ou avaliar a oscilação de uma bolsa de valores ao longo do tempo. Como descrito por Mitchell em \textit{Machine Learning} \cite{Mitchell_1997}, \textit{\acrshort{RNN}} são mais adequadas para estas situações, pois nesse tipo de problema, dados isolados não tem tanto significado quanto o conjunto, o que exige um conceito de memória. Para simular este efeito de memória, \textit{\acrshort{RNN}} dispõe de uma arquitetura onde a saída do nó anterior é utilizada como entrada no nó seguinte, juntamente com a entrada nova atual da rede. Para passar estes valores de um nó para o outro, a \textit{\acrshort{RNN}} dispõe de um mecanismo chamado \textit{Hidden Layer} na Figura \ref{figure:rnn} é exemplificada a arquitetura, onde o último resultado utiliza como entrada valores resultantes das últimas execuções.
+Porém, existem determinados problemas que exigem certa correlação entre os dados, como por exemplo, interpretar um documento, entender o contexto de um filme, ou avaliar a oscilação de uma bolsa de valores ao longo do tempo. Como descrito por Mitchell em \textit{Machine Learning} \cite{Mitchell_1997}, \textit{\acrshort{RNN}} são mais adequadas para estas situações, pois nesse tipo de problema, dados isolados não tem tanto significado quanto o conjunto, o que exige um conceito de memória. Para simular este efeito de memória, \textit{\acrshort{RNN}} dispõe de uma arquitetura onde a saída do nó anterior é utilizada como entrada no nó seguinte, juntamente com a entrada nova atual da rede. Para passar estes valores de um nó para o outro, a \textit{\acrshort{RNN}} dispõe de um mecanismo chamado \textit{Hidden Layer}. Na Figura \ref{figure:rnn} é exemplificada a sua arquitetura, onde o último resultado utiliza como entrada valores resultantes das execuções anteriores.
 
 \begin{figure}[htbp]
     \centering
@@ -85,7 +85,9 @@ Porém, existem determinados problemas que exigem certa correlação entre os da
 
 \subsection{\acrfull{LSTM}}
 
-\acrshort{LSTM} é um método proposto pela primeira vez por Sepp Hochreiter e Jurgen Schmidhuber em \cite{doi:10.1162/neco.1997.9.8.1735}. Ele é utilizado para predição de informações que derivam de dados sequenciais e séries temporais, sendo possível encontrar diversos trabalhos na literatura que mostram sua eficiência quando comparado a outros métodos. Como descrito em \cite{Zainab_2018} e em \cite{Xiaolei_2015}, \acrshort{LSTM} é um tipo de \acrshort{RNN} que utiliza de estados anteriores e do estado atual da rede para gerar sua saída. Ao utilizar dos estados anteriores, a \acrshort{RNN} acaba por simular uma memória, melhorando sua capacidade de aprender. 
+% TODO: cite a book
+
+\acrshort{LSTM} é um método proposto pela primeira vez por Sepp Hochreiter e Jurgen Schmidhuber em \textit{Long short-term memory} \cite{doi:10.1162/neco.1997.9.8.1735}. Ele é utilizado para predição de informações que derivam de dados sequenciais e séries temporais, sendo possível encontrar diversos trabalhos na literatura que mostram sua eficiência quando comparado a outros métodos. \acrshort{LSTM} é um tipo de \acrshort{RNN} que utiliza de estados anteriores e do estado atual da rede para gerar sua saída \cite{Xiaolei_2015, Zainab_2018}. Ao utilizar dos estados anteriores, a \acrshort{RNN} acaba por simular uma memória, melhorando sua capacidade de aprender. 
 
 \begin{figure}[htbp]
     \centering
@@ -110,12 +112,16 @@ Na célula de memória do \textit{\acrshort{LSTM}}, existem estruturas que são 
 
 % TODO: Falar que podemos responder a quantidade de camadas da LSTM com o problema que RNN tem com back-propagation que o gradiente começa a diminuir exponencialmente. Mas tem que dar uma conferida melhor.
 
-\subsubsection{Funções de ativação}
 
 \subsection{\acrfull{GRU}}
 
+% TODO: da onde ta vindo essa explicação
+
 
 %TODO: explicar diferenca entre porta da reinicializacao e porta da atualizacao, adicionando as fórmulas de cada uma
+
+% TODO: falhas do GRU
+
 \textit{\acrshort{GRU}} é um tipo de \textit{\acrshort{RNN}} semelhante ao \textit{\acrshort{LSTM}} e, assim como ele, também faz uso de mecanismos chamados de Portas que possibilitam que a informação seja atualizada ou esquecida ao ser transferida de uma célula para outra. Ou seja, \textit{\acrshort{GRU}} também é capaz de guardar informações importantes na rede de maneira mais eficaz que uma \textit{\acrshort{RNN}} comum. Apesar de parecidos, \textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}} possuem algumas diferenças, como pode ser visto abaixo, o \textit{\acrshort{GRU}} possui apenas a \textit{Hidden Layer} e duas Portas para fazer o tratamento da informação para simular o efeito de memória:
 
 \begin{itemize}
