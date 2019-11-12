@@ -12,38 +12,37 @@
 
 Este capítulo tem como objetivo apresentar uma discussão acerca dos resultados dos experimentos. Primeiramente, serão discutidos como os modelos reagem à variação dos principais parâmetros, tamanho de janela, passado visível e tamanho do intervalo do fluxo. Subsequentemente, serão apresentados os resultados de como os modelos reagem para a escolha dos melhores valores de hiper-parâmetros. Por fim, serão analisados os resultados das previsões de fluxo de cada modelo nos curtos prazos de 15, 30, 45 e 60 minutos.
 
-Número de de divisões do conjunto de dados (\textit{Blocking}):  1,2,4,8 
-
 \section{Resultados das escolhas de Parâmetros}
 
 Após o tratamento dos dados, foram realizados diversos testes para definir os melhores parâmetros de cada modelo. Na lista abaixo podem ser vistos os parâmetro que foram levados em consideração nos estudos de caso deste trabalho.
 
 
 \begin{enumerate}
-	\item Tamanho da Janela: tamanho da janela utilizada para separar o conjunto de dados em treinamento e teste. O primeiro valor considerado foi 0.30. A partir deste valor inicial, o valor foi aumentado em 0.05 até atingir 0.85
-	\item Passado Visível: Parâmetro que define qual a janela de tempo no passado que será visível no treinamento do modelo. O valor inicial considerado foi de 60 minutos. Os valores de 120, 180, 210. 240, 270, 300, 360 e 420 minutos também foram testados.
-	\item Tamanho do intervalo do fluxo: Parâmetro que define o intervalo de tempo no qual será acumulado a quantidade de veículos para o cálculo do fluxo. O valor inicial de teste foi 60 minutos. Foram realizados testes para as variações de 150, 300 e 450 minutos também.
+	\item Número de divisões do conjunto de dados (\textit{Blocking}): Número de divisões utilizadas no blocking para criar mais subconjuntos de dados. Os valores testados foram: 1,2,4,8. Para cada subconjunto, a porcentagem utilizada para treinamento e teste foi a mesma: 80\% para treinamento e 20\% para testes.
+	\item Passado Visível: Parâmetro que define qual a janela de tempo no passado que será visível no treinamento do modelo. O valor inicial considerado foi de 60 minutos. Os valores de 120, 240 e 480 minutos também foram testados.
+	\item Tamanho do intervalo do fluxo: Parâmetro que define o intervalo de tempo no qual será acumulado a quantidade de veículos para o cálculo do fluxo. O valor inicial de teste foi 2,5 minutos. Foram realizados testes para as variações de 5 e 7,5 minutos também (ou 150, 300 e 450 segundos).
 \end{enumerate}
 
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[scale=0.8]{monography/img/windows_size_for_training_comparison_rmse.png}
+    \includegraphics[scale=0.8]{monography/img/number_of_splits_for_training_comparison_rmse.png}
     \label{figure:rf}
-    \caption[Resposta dos modelos à variação dos valores de tamanho de janela]{Resposta dos modelos à variação dos valores de tamanho de janela}
+    \caption[Resposta dos modelos à variação do número de divisões do conjunto de dados]{Resposta dos modelos à variação do número de divisões do conjunto de dados}
 \end{figure} 
 
 
-Como pode ser observado no gráfico acima, os modelos de aprendizagem de máquina, no geral, tiveram um melhor desempenho com uma janela de 0.5. Dentre eles, o melhor desempenho foi o do \acrshort{RF}
+Como pode ser observado no gráfico acima, os modelos de aprendizagem de máquina, no geral, tiveram um melhor desempenho com um número de divisões igual a 8. Dentre eles, o melhor desempenho foi o do \acrshort{RF} A. Este resultado já era esperado, pois com um número maior de treinos e testes, os modelos tendem a aprender melhor a distribuição dos dados, gerando melhores predições.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.8]{monography/img/seeable_past_for_training_comparison_rmse.png}
     \label{figure:res_past}
     \caption[Resposta dos modelos à variação dos valores de passado visível]{Resposta dos modelos à variação dos valores de passado visível}
 \end{figure}
 
-Quanto à resposta dos modelos em relação à variação do passado visível, é perceptível que a mudança do valor deste parâmetro não teve tanto impacto na predição dos modelos de aprendizagem de máquina e aprendizagem de máquina profunda. Porém, observando a média móvel, podemos perceber que a raíz do erro quadrado médio sobe quase que linearmente à medida que o passado visível aumenta.
+
+Quanto aos testes de variação do valor do passado visível, é perceptível que, no caso dos modelos tradicionais e de aprendizagem profunda, houve uma melhora na predição para todos eles à medida que o passada visível aumentava. Porém, vale notar que essa melhora não é tão significativa se for levado em conta que o eixo X do gráfico (Passado visível) tem seus valores aumentados de forma exponencial. Ou seja, para grandes variações no valor do passado visível, o erro das predições diminui em um ritmo muito menor. Dito isso, é válido salientar que aumentar o passado visível também aumenta o custo computacional do treinamento e, devido a este fato, não foram testados valores ainda maiores de passado visível.
 
 \begin{figure}[htbp]
     \centering
@@ -53,7 +52,7 @@ Quanto à resposta dos modelos em relação à variação do passado visível, �
 \end{figure}
 
 
-Por último, pode-se notar que o tamanho do intervalo do fluxo adotado impacta de maneira significativa a qualidade das predições dos modelos. Em todos os casos o erro quadrado médio das predições diminuiu com intervalos de fluxo maiores sendo utilizados durante o treinamento. Isso se dá pelo fato de que ao se aumentar o intervalo de fluxo, diminui-se a quantidade de ruídos presentes.
+Por último, pode-se notar que o tamanho do intervalo do fluxo adotado impacta de maneira significativa a qualidade das predições dos modelos. Em todos os casos, o erro quadrado médio das predições aumentou com intervalos de fluxo maiores sendo utilizados durante o treinamento. Isso se dá pelo fato de que ao se aumentar o intervalo de fluxo, diminui-se a quantidade de dados de entrada utilizados no treinamento dos modelos.
 
 
 \section{Resultados das normalização dos Dados}
