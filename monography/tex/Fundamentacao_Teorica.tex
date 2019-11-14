@@ -1,4 +1,13 @@
-Este capítulo tem como objetivo apresentar uma base teórica mínima de todos os conceitos necessários para o entendimento das demais seções deste trabalho. Primeiramente, serão explicados os conceitos básicos de uma árvore de regressão, que é utilizada pelo modelo \textit{\acrshort{RF}}. Subsequentemente, serão explicados os conceitos por trás da \textit{\acrshort{SVM}}. Por último, serão introduzidos os conceitos de uma \textit{\acrfull{RNN}} e explicados os mecanismos por trás do funcionamento de dois modelos derivados dela, o \textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}}.
+Este capítulo tem como objetivo apresentar uma base teórica de todos os conceitos necessários para o entendimento das demais capítulos deste trabalho. Primeiramente, serão explicados os conceitos básicos de uma árvore de regressão, que é utilizada pelo modelo \textit{\acrshort{RF}}. Subsequentemente, serão explicados os conceitos por trás da \textit{\acrshort{SVM}}. Por último, serão introduzidos os conceitos de uma \textit{\acrfull{RNN}} e explicados os mecanismos por trás do funcionamento de dois modelos derivados dela, o \textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}}.
+
+\section{Aprendizagem Máquina}
+
+%TODO: colocar aqui mais uns parágrafos
+
+% O que é aprendizagem de máquina
+% Tipos (Supervisionada e Não supervisionada)
+% Supervisiada e seus tipos
+% Visão geral dos modelos escolhidos
 
 \section{Árvores de Regressão}
 
@@ -26,7 +35,7 @@ Criado por Leo Breiman em \textit{Random Forest} \cite{Breiman:2001:RF:570181.57
 
 A construção das árvores é feita utilizando o método \textit{Bagging} (\textit{\textbf{B}ootstrap \textbf{Agg}regation}), também criado por Leo Breiman em \textit{Bagging Predictors} \cite{Breiman:1996:BP:231986.231989}. Este método gera várias versões de um mesmo modelo e agrega os resultados dos mesmos. As versões do modelo utilizam amostras do conjunto de dados selecionadas aleatoriamente, mas com a mesma distribuição.
 
-Porém, diferente de \textit{Bagging}, \textit{\acrshort{RF}} utiliza mais uma técnica para diminuir o sobre-ajuste (\textit{overfitting}). Há uma modificação no algoritmo de criação das árvores de decisão limitando a quantidade de características (\textit{features}) do conjunto de dados que vai ser utilizada. O autor sugere limitarem a quantidade de características (\textit{q}) para $ \sqrt{q} $, no caso de classificação, ou $ \frac{q}{3} $, no caso de regressão \cite{hastie2005elements}. Além disso, o autor também sugere, no artigo original, que, para selecionar a quantidade ideal de características deve-se utilizar de estimativas \textit{out-of-bag}, explicadas também no artigo.
+Porém, diferente de \textit{Bagging}, \textit{\acrshort{RF}} utiliza mais uma técnica para diminuir o sobre-ajuste (\textit{overfitting}). Há uma modificação no algoritmo de criação das árvores de decisão limitando a quantidade de características (\textit{features}) do conjunto de dados que vai ser utilizada. O autor sugere limitar a quantidade de características (\textit{q}) para $ \sqrt{q} $, no caso de classificação, ou $ \frac{q}{3} $, no caso de regressão \cite{hastie2005elements}. Além disso, o autor também sugere, no artigo original, que, para selecionar a quantidade ideal de características deve-se utilizar de estimativas \textit{out-of-bag}, explicadas também no artigo.
 
 Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizagem de máquina, ela pode ser classificada como um Comitê de Máquinas (\textit{Ensemble Learning}). A forma como as respostas de cada uma das máquinas são combinadas depende do problema. Para classificação pode ser usado uma votação (voto da maioria) e para um problema de regressão pode ser usado uma média dos valores, assim como mostrado na Figura \ref{figure:random_forest}.
 
@@ -43,7 +52,7 @@ Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizage
 % TODO: adicionar exemplo de uma regressão de 2 dimensões
 % TODO: pegar mais referências
 
-\textit{\acrshort{SVM}} foi criado originalmente por Vapnik nos anos 60 e foi evoluindo até se tornar o que é hoje, segundo Smola et. al. \cite{Smola03atutorial}. A ideia básica por trás do método pode ser usada tanto para classificação quanto para regressão. A aprendizagem do modelo é iterativa.
+\textit{\acrshort{SVM}} foi criado originalmente por Vladimir Vapnik nos anos 60 e foi evoluindo até se tornar o que é hoje, segundo Smola et. al. \cite{Smola03atutorial}. A ideia básica por trás do método pode ser usada tanto para classificação quanto para regressão. A aprendizagem do modelo é iterativa.
 
 Variável C indica quanto os erros penalizam. Se for baixo, erros não serão muito penalizados e se for alto os erros serão muito penalizados
 
@@ -51,7 +60,7 @@ No caso da regressão, tenta-se criar uma função \(f(x)\) de forma que se \(y(
 
 Além disso, \textit{\acrshort{SVM}} possuem funções \textit{Kernel}, que permitem a mudança de dimensão da entrada para alguma outra de forma rápida. Essa mudança pode aumentar ou diminuir a dimensão da entrada. Assim o modelo não tem que converter o conjunto de dados todo para tentar interpolar em outra dimensão de dados. Existem diversas funções de \textit{Kernel}, como por exemplo, Linear, Não-Linear, \textit{Radial Basis Function} e Polinomial.
 
-Vale notar que algumas funções \textit{Kernel} possuem podem se ajustar quanto ao conjunto de dados. Funções como \textit{Radial Basis Function} e Polinomial possuem uma variável \textit{Gamma} (\(\gamma\)) para controlar esse ajuste. Essa variável determina a influência dos \textit{support vectors} no treinamento. Quanto maior o valor, menor a influência do \textit{support vectors}, quanto menor o valor, maior a influencia. Valores baixos pode levar a uma função que não se ajusta muito ao conjunto de dados, prono a sub-ajuste. Já valores altos podem levar a uma função que se ajusta muito ao conjunto de dados, prono a sobre-ajuste.
+Vale notar que algumas funções \textit{Kernel} possuem podem se ajustar quanto ao conjunto de dados. Funções como \textit{Radial Basis Function} e Polinomial possuem uma variável \textit{Gamma} (\(\gamma\)) para controlar esse ajuste. Essa variável determina a influência dos \textit{support vectors} no treinamento. Quanto maior o valor, menor a influência do \textit{support vectors}, quanto menor o valor, maior a influência. Valores baixos podem levar a uma função que não se ajusta muito ao conjunto de dados, prono a sub-ajuste. Já valores altos podem levar a uma função que se ajusta muito ao conjunto de dados, prono a sobre-ajuste.
 
 \begin{figure}[htbp]
     \centering

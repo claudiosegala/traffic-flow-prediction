@@ -6,7 +6,6 @@
 
 Este capítulo tem como objetivo explicar como foram realizadas as comparações dos modelos quanto as suas predições, assim como mostrado na Figura \ref{figure:metodologia}. Primeiramente será discutido os pré-processamentos dos dados, seguindo para os modelos, incluindo a razão por estes terem sido incluídos. Logo após será discutido como as otimizações foram feitas e como fora feita a avaliação dos modelos.
 
-
 \begin{figure}
     \centering
     \includegraphics[scale=0.4]{monography/img/tccFlux.png}
@@ -14,15 +13,19 @@ Este capítulo tem como objetivo explicar como foram realizadas as comparações
     \caption[Fluxograma da metodologia]{Fluxograma da metodologia}
 \end{figure}
 
-\section{Pré-Processamento dos Dados}
-% TODO: Adicionar gráfico (fluxo por tempo) em tratamento de dados.
+\section{Ambiente de Experimento}
+% TODO: get more information about this
 
+O ambiente de experimento foi uma máquina equipada com Ubuntu. O servidor possui dois CPUs \textit{Intel(R) Xeon(R) Platinum 8160 CPU @ 2.10GHz} e 251 GiB de memória principal.
+
+\section{Pré-Processamento dos Dados}
 
 Nesta etapa serão feitas remoções de inconsistências e transformações nos dados da Tabela \ref{table:data} para melhorar o aprendizado dos modelos. Assim como também será mostrado como os conjuntos de dados para treinamento e teste foram definidos.
+
 \subsection{Limpeza dos Dados}
 
-
 Para realizar a limpeza dos dados, as colunas que não são relevantes para o treinamento dos modelos serão removidas. São elas:
+
 \begin{itemize}
     \item \texttt{Faixa}
     \item  \texttt{Hora}
@@ -39,8 +42,7 @@ A transformação dos dados se torna necessária nas colunas cujo o valor repres
 \subsection{Acumulação dos registros}
 
 % TODO: mAdicionar referencia de artigos que usem fluxo para fazer prediçao.
-Como visto na literatura, existem algumas maneiras de se fazer a predição de veículos em uma via. Seja pelo fluxo, pela densidade, ou pela velocidade média dos carros, por exemplo. Neste trabalho, optou-se por utilizar o fluxo como método de predição. Um trabalho similar pode ser visto por FULANO em TALTALTAL
-
+Como visto na literatura, existem algumas maneiras de se fazer a predição de veículos em uma via. Seja pelo fluxo, pela densidade, ou pela velocidade média dos carros, por exemplo. Neste trabalho, optou-se por utilizar o fluxo como método de predição.
 
 % TODO: Falar que aproveitamos e adicionamos no multivariado a densidade e a velocidade média
 Sendo assim, será transformado o conjunto de dados de uma série temporal de registro de veículos para uma série temporal de fluxos. Isto é, será calculado a quantidade de veículos que passaram por um local em um determinado intervalo de tempo. Para definir o intervalo que utilizado, testou-se os valores de intervalo para 1, 2.5, 5 e 7.5 minutos. Note que foram utilizados intervalos que sejam múltiplos de 15, visto que todos os tempos de predição no futuro serão múltiplos de 15.

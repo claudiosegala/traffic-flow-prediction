@@ -10,7 +10,7 @@ O objetivo deste capítulo é apresentar trabalhos relacionados à predição de
 
 \section{Aprendizagem Profunda}
 
-No trabalho de Zainab Abbas et. al. em \textit{Short-term traffic prediction using long short-term memory neural networks} \cite{Zainab_2018} é apresentado um trabalho de predição de tráfego (calculando a densidade da via em vez do fluxo, como é feito usualmente) que tem como objetivo antecipar congestionamentos em rodovias de Estocolmo, Suécia, utilizando aprendizagem profunda. No caso, o autor propõe uma variação do \textit{\acrshort{LSTM}}, mais precisamente \textit{\acrfull{SLSTM}}. Para tal, são utilizados dados coletados por sensores do sistema de controle da autoestrada da cidade. Tais sensores monitoram as principais vias da metrópole e coletam informações como fluxo e velocidade de cada faixa a cada 1 minuto. O trabalho propõe três modelos de predição de densidade da via:
+No trabalho de Zainab Abbas et. al. em \textit{Short-term traffic prediction using long short-term memory neural networks} \cite{Zainab_2018} é apresentado um trabalho de predição de tráfego (calculando a densidade da via em vez do fluxo) que tem como objetivo antecipar congestionamentos em rodovias de Estocolmo, Suécia, utilizando aprendizagem profunda. No caso, o autor propõe uma variação do \textit{\acrshort{LSTM}}, mais precisamente \textit{\acrfull{SLSTM}}. Para tal, são utilizados dados coletados por sensores do sistema de controle da autoestrada da cidade. Tais sensores monitoram as principais vias da metrópole e coletam informações como fluxo e velocidade de cada faixa a cada 1 minuto. O trabalho propõe três modelos de predição de densidade da via:
  
  % TODO: colocar a imagem que o artigo utiliza para ficar mais fácil entender
 \begin{itemize}
@@ -22,7 +22,7 @@ No trabalho de Zainab Abbas et. al. em \textit{Short-term traffic prediction usi
 \begin{equation}\label{eq:solve}
 k = q / v
 \end{equation}
-Fórmula do cálculo da densidade utilizada pelo trabalho ~\ref{eq:solve}
+Fórmula do cálculo da densidade utilizada pelo trabalho na Equação \ref{eq:solve}
 
 Dos três modelos apresentados, o mais eficiente foi o m-n, pois faz a previsão de tráfego em vários pontos diferentes da via e tem um custo computacional menor que o n-n, além disso, utiliza menos sensores, o que diminui os dados de entrada da rede neural. Esse Modelo foi comparado com outros usando as métricas \textit{\acrshort{RMSE}} e \textit{\acrshort{MAE}}. O resultado dessas métricas é comparado com a acurácia de outros modelos como \textit{\acrfull{RNN}} e \textit{\acrfull{FFN}}. O erro calculado foi menor na metodologia proposta pelo autor em todos os casos, comprovando a eficácia do modelo apresentado (SLSTM).
 
@@ -33,7 +33,7 @@ Um modelo mais próximo do utilizado em nossos testes é descrito em \textit{Lon
 \begin{itemize}
     \item Uma base gerada sintéticamente pela \textit{SK Planet Company}.
     \item Uma base coletada do governo metropolitano de Seul.
-    \item Uma base de dados coletado do \textit{Aplicatio T-Map}, considerado a aplicação de navegação mais utilizada da Coreia.
+    \item Uma base de dados coletada do \textit{Aplicatio T-Map}, considerado a aplicação de navegação mais utilizada da Coreia.
 \end{itemize} 
 
 Além das 3 bases de dados, também foi adicionado ao modelo uma variável para medir o impacto das condições climáticas sobre o tráfego.
@@ -46,16 +46,23 @@ Para o treinamento foram utilizados 50 séries temporais, cada um gerada por um 
 
 \section{Algoritmos Tradicionais}
 
+Posteriormente neste trabalho, mais especificamente no Capítulo 4, seção 4.1, serão mostrado alguns fatores que influenciam no comportamento do tráfego urbano, sendo um deles o fator aleatório. A maioria dos trabalhos na área de predição de fluxo descarta os fatores aleatórios e considera apenas cenários ideais, descartando também os períodos de manutenção, onde ocorre a total, ou parcial interrupção das vias. Porém, Yi Hou et al. em \textit{Traffic Flow Forecasting for Urban Work Zones} \cite{hou2014traffic} realizou um trabalho de predição de fluxo justamente nessas condições e, segundo o próprio autor, a falta de trabalhos da área para este tipo de cenário foi sua motivação. 
+
+O trabalho de Yi Hou et al. apresenta um modelo de predição de fluxo em duas rodovias do \textit{Missouri}, nos Estados Unidos, mais precisamente em \textit{St.Louis}. Ambas as rodovias apresentaram um total de 161 zonas de trabalho rodoviários (ou \textit{Work Zones} como descrito pelo autor) ao longo do ano em que os dados foram coletados (Junho de 2012 até Setembro de 2013). \textit{Work Zones} são áreas de manutenção, ou construção, onde as rodovias apresentam placas de desvio, barreiras e bloqueio de algumas faixas. Outro ponto que deve ser notado é que as duas rodovias são diferentes entre si, uma delas é uma via expressa e a outra é uma via arterial sinalizada com semáforos.
+
+Para realizar as predições, Yi Hou et al utilizou de 3 modelos de aprendizagem de máquina e uma base de comparação. Os modelos utilizados foram \acrfull{RF}, uma \acrfull{NN} e uma árvore de regressão simples. Assim como a maioria dos trabalhos da área de predição de fluxo, para calcular o erro e comparar os modelos, foram utilizadas as métricas \textit{RMSE}, \textit{MAE} e \textit{MAPE}. Suas predições consistem em quatro predições de curto prazo (15, 30, 45 e 60 minutos no futuro) e uma predição de longo prazo (24 horas no futuro). Em todos os casos, o modelo \acrshort{RF} se mostrou melhor que seus concorrentes e melhor que a base de comparação. O trabalho do autor foi inovador ao se arriscar a prever o fluxo de veículos em áreas que não continham as condições ideais, porém, é válido questionar o quão relevante é prever o fluxo de veículos no cenário apresentado pelo trabalho, visto que são situações temporárias.
+
+
+Outro trabalho que também foge da abordagem tradicional é o apresentado por Xianglong Luo et. al. em \textit{Traffic Flow Prediction during the Holidays Based on DFT and SVR} \cite{luo2019traffic}. O autor se propõe a construir um modelo de predição de fluxo de veículos para feriados, analisando as flutuações e sazonalidades desses dias. O conjunto de dados utilizado no trabalho foi coletado por fiscalizadores eletrônicos encontrados em estações de pedágio espalhadas pela rodovia de \textit{Jiangsu}, uma província chinesa. Para realizar as predições, o autor propõe um modelo que combina \textit{\acrfull{DFT}} com \textit{Support Vector Regressors}, uma variação do \acrshort{SVM}. Utilizando o \acrshort{DFT}, é extraído dos dados a tendência dos mesmos e sua distribuição. Para calcular as flutuações do fluxo (que acontecem principalmente nos feriados), é utilizado o \textit{SVR}.
+
+Depois de calculadas a tendência e as flutuações dos dados, o autor combina os resultados para gerar a predição de fluxo nos dias de feriado, mais especificamente, os feriados \textit{ Tomb-sweeping Day} e \textit{National Day}. Para validar os seus resultados, Xianglong Luo et. al utiliza outros três modelos para comparação: \acrshort{ARIMA}, \textit{SVR} sozinha e \textit{EMD-SVR}. Como métrica de comparação, é utilizado \acrshort{MAPE}, \acrshort{MAE} e \acrshort{RMSE}.  Para ambos os feriados, as predições do modelo proposto pelo autor, o \textit{DFT-SVR}, foram superiores a todas as outras. O trabalho do autor foi bem inovador ao escolher por analisar as flutuações e \textit{Outliers} dos dados, visto que a maioria dos trabalhos na literatura escolhe por analisar a tendência principal do fluxo das vias.
+
 Yanyan Xu et. a. em \textit{Short-term Traffic Volume Prediction using Classification and Regression Trees} \cite{xu2013short} ...
 
-Yi Hou et al. em \textit{Traffic Flow Forecasting for Urban Work Zones} \cite{hou2014traffic} ...
 
+Em \textit{A Short-term Traffic Flow Forecasting Method Based on the Hybrid PSO-SVR} por Wenbin Hu et. al. \cite{Hu2016} propõe uma variação do \textit{\acrfull{SVR}}. A escolha do \textit{\acrshort{SVR}} se deve ao método tendo extenso uso na literatura para problemas não lineares e predições de séries temporais. Além disso, \textit{\acrshort{SVR}} possui a capacidade de achar a melhor solução global de acordo com os estudos do autor. Nessa variação é utilizado \textit{\acrfull{PSO}} para a escolha de parâmetros do \textit{\acrshort{SVR}}. Esse trabalho se diferencia ao fazer a junção dos dois métodos, pois os modelos na literatura não costumam ser adaptativos, isto é, capaz de se adaptarem ao conjunto que estão vendo para assim prover uma solução precisa em tempo real.
 
-Hu2016
-A Short-term Traffic Flow Forecasting Method Based on the Hybrid PSO-SVR
-Hu, Wenbin
+% TODO: check r2
+Para avaliar a performance do modelo, é utilizado \textit{\acrshort{RMSE}}, métrica de precisão do resultado obtido, e \textit{\acrfull{R2}}, métrica para quão os dados estão ajustados a regressão. Quanto menor melhor e quanto maior melhor, respectivamente. 
 
-
-luo2019traffic
-Traffic Flow Prediction during the Holidays Based on DFT and SVR
-Luo, Xianglong
+O artigo afirma que o modelo proposto é superior ao estado da arte, porém não fornece uma referência que embase esta afirmação.
