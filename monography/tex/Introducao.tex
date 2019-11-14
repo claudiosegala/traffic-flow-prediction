@@ -1,14 +1,20 @@
-A frota  de  veículos no Brasil tem aumentado ao longo  dos últimos anos. De acordo com a \acrfull{ANS}, em 2018, o Brasil já apresentava 1 carro para cada 4 habitantes. Isso equivale, aproximadamente, a 50 milhões de automóveis em circulação \cite{G1}. As vias públicas não tem conseguido acompanhar este crescimento e acomodar todo este volume. Brasília, por exemplo, que é uma cidade planejada, foi projetada para suportar uma frota de no máximo 2 milhões de veículos. Porém, como pode ser visto no Portal Brasileiro de Dados Abertos, já é obrigada a conciliar 3.5 milhões e começa a sofrer com os congestionamentos \cite{detran_2018}. Infelizmente, Brasília não é uma exceção, todos os grandes centros urbanos do país estão sendo afetados pelas mazelas do crescimento do setor automobilístico, e pensar em soluções para estes problemas é mais que necessário.
+A frota  de  veículos no Brasil tem aumentado ao longo  dos últimos anos. De acordo com a \acrfull{ANS}, em 2018, o Brasil já apresentava 1 carro para cada 4 habitantes. Isso equivale, aproximadamente, a 50 milhões de automóveis em circulação \cite{G1}. As vias públicas não tem conseguido acompanhar este crescimento e acomodar todo este volume. Brasília, por exemplo, que é uma cidade planejada, foi projetada para suportar uma frota de no máximo 2 milhões de veículos. Porém, como pode ser visto no Portal Brasileiro de Dados Abertos, já é obrigada a conciliar 3.5 milhões de automóveis e começa a sofrer com os congestionamentos \cite{detran_2018}. Brasília não é uma exceção, todos os grandes centros urbanos do país estão sendo afetados pelas mazelas do crescimento do setor automobilístico, e pensar em soluções para estes problemas é mais que necessário.
 
-Em resposta a essa tendência, as metrópoles tem utilizado da tecnologia para gerenciar melhor o trânsito em suas vias, ao passo que os motoristas tem feito uso cada vez mais intenso de aplicativos para escapar de congestionamentos e descobrir os caminhos mais rápidos até seus destinos. Se essas tecnologias e aplicações não se preocuparem em como o fluxo da via estará nos próximos minutos, podem apresentar erros de cálculos. Mas se não temos como prever o futuro, como podemos então nos planejar melhor? Utilizando-se de técnicas de aprendizagem de máquina é possível aprender como uma via tende a se comportar, podendo assim estimar como o seu fluxo de veículos estará em alguns minutos.
+Em resposta a essa tendência, as metrópoles tem utilizado da tecnologia para gerenciar melhor o trânsito em suas vias, ao passo que os motoristas têm feito uso cada vez mais intenso de aplicativos para escapar de congestionamentos e descobrir os caminhos mais rápidos até seus destinos. Se essas tecnologias e aplicações não se preocuparem em como o fluxo da via estará nos próximos minutos, podem apresentar erros de cálculos. Realizar a predição de fluxo não é uma tarefa trivial. Um das soluções utilizadas atualmente é técnicas de
+
+% TODO: parágrafo explicando aprendizagem de máquina
+
+% TODO: citar trabalhos na área
+
+Mas se não temos como prever o futuro, como podemos então nos planejar melhor? Utilizando-se de técnicas de aprendizagem de máquina é possível aprender como uma via tende a se comportar, podendo assim estimar como o seu fluxo de veículos estará em alguns minutos.
 
 \section{Motivação}
 
 Os grandes centros urbanos não conseguem acompanhar a constante expansão do volume de carros. Por conta disso, congestionamentos tendem a se tornar mais frequentes e mais severos, aumentando a emissão de gases poluentes na atmosfera, contribuindo para a poluição sonora e aumentando o tempo gasto pelos motoristas no trânsito, impactando de maneira negativa na qualidade de vida da cidade e seus habitantes.
 
-Neste contexto, surgiram várias pesquisas na área de mobilidade urbana e transporte que visam contornar estes problemas. Dentre essas pesquisas, um dos meios encontrados de amenizar o congestionamento é tentar prever quando ele irá acontecer. Uma vez que os motoristas saibam que um engarrafamento irá ocorrer, eles podem se planejar melhor e navegar por rotas alternativas, distribuindo de maneira mais eficiente os carros na malha viária. Já organizações governamentais poderiam utilizar os dados para ter uma noção em tempo real de como estará o fluxo pela cidade, possibilitando o redirecionamento das vias e reprogramação de semáforos. Além disso, a previsão do tráfego possibilitaria a implementação ou a evolução de sistemas mais complexos, como um sistema de controle semafórico dinâmico ou sistema de auxílio de decisão para controle da malha viária.
+Neste contexto, surgiram várias pesquisas na área de mobilidade urbana e transporte que visam contornar estes problemas. Dentre essas pesquisas, um dos meios encontrados de amenizar o congestionamento é tentar prever quando ele irá acontecer. Uma vez que os motoristas saibam que um engarrafamento irá ocorrer, eles podem se planejar melhor e navegar por rotas alternativas, distribuindo de maneira mais eficiente os carros na malha viária. Já organizações governamentais poderiam utilizar os dados para obter uma noção em tempo real de como estará o fluxo pela cidade, possibilitando o redirecionamento das vias e reprogramação de semáforos. Além disso, a previsão do tráfego possibilitaria a implementação ou a evolução de sistemas mais complexos, como um sistema de controle semafórico dinâmico ou sistema de auxílio de decisão para controle da malha viária.
 
-A literatura está repleta de artigos que tentam prever a quantidade de veículos que irão passar em uma via em um determinado intervalo de tempo (predição de fluxo) utilizando aprendizagem de máquina \cite{doi:10.1080/01441647.2014.992496, fu2016using, hamed_prediction_1995, lv_6894591, Seoul, wang_2018, Xiaolei_2015, Zainab_2018}. Porém, a maioria desses artigos coletam dados e fazem suas análises em rodovias expressas, embora alguns trabalhem com outros tipos, porém de forma mais genérica \cite{Seoul}. Nessas vias não há intersecções, ou barreiras semafóricas. Nosso estudo tem como desafio realizar a predição de fluxo em cenários que se assemelhem mais a centros urbanos, onde as vias possuem semáforos e cruzamentos que podem impactar de maneira significativa no comportamento do fluxo de veículos.
+A literatura está repleta de artigos que tentam prever a quantidade de veículos que irão passar em uma via em um determinado intervalo de tempo (predição de fluxo) utilizando aprendizagem de máquina \cite{doi:10.1080/01441647.2014.992496, fu2016using, hamed_prediction_1995, lv_6894591, Seoul, wang_2018, Xiaolei_2015, Zainab_2018}. Porém, a maioria desses artigos coletam dados e fazem suas análises em rodovias expressas, enquanto alguns trabalham com outros tipos de rodovia, mas de forma mais genérica \cite{Seoul}. Nessas vias não há intersecções, ou barreiras semafóricas. Nosso estudo tem como desafio realizar a predição de fluxo em cenários que se assemelhem mais a centros urbanos, onde as vias possuem semáforos e cruzamentos que podem impactar de maneira significativa no comportamento do fluxo de veículos.
 
 \section{Hipótese}
 
@@ -18,7 +24,7 @@ Tendo em mente todas as informações citadas anteriormente, este trabalho tem c
 
 Este trabalho busca realizar a predição de fluxo de veículos em vias urbanas a curto prazo, mais especificamente, para 15, 30, 45 e 60 minutos no futuro. Para tal fim, serão utilizados os modelos \textit{\acrfull{LSTM}}, \textit{\acrfull{GRU}}, \textit{\acrfull{RF}} e \textit{\acrfull{SVM}}. Como base de comparação, serão utilizados os modelos \textit{Moving Average} e \textit{Naive}. Portanto, este trabalho tem como objetivo propor uma análise do comportamento destes mesmos métodos, utilizados na literatura para predições em vias livres, sob novas condições (vias urbanas com cruzamentos) e comparar a eficácia da predição de cada um deles.
 
-Para alcançar nossos objetivos precisaremos:
+Para alcançar o objetivo geral, temos os seguintes objetivos específicos foram definidos:
 
 \begin{itemize}
     \item Implementar a análise e transformação dos dados para facilitar a aprendizagem;
@@ -29,12 +35,13 @@ Para alcançar nossos objetivos precisaremos:
     \item Analisar o comportamento dos modelos quanto a distância no futuro da predição;
 \end{itemize}
 
-\section{Resultados Esperados} % everything we validate on methodology
+\section{Resultados Alcançados} % everything we validate on methodology
+% TODO: mudar os verbos apra virar afirmação
 
 Ao fim deste trabalho, espera-se que os seguintes resultados tenham sido atingidos com sucesso:
 
 \begin{itemize}
-    \item  Os modelos utilizados tenham melhor desempenho que os modelos de base de comparação;
+    \item  Os modelos implementados tiveram melhor desempenho que os modelos de base de comparação;
     \item Os modelos utilizados piorem a medida que as predições fiquem mais distantes no futuro;
     \item Os modelos utilizados tenham melhor desempenho quanto mais tempo do passado puderem receberem como entrada;
     \item Os modelos de aprendizagem profunda tenham um tempo de treinamento maior que os modelos tradicionais;
@@ -45,13 +52,13 @@ Ao fim deste trabalho, espera-se que os seguintes resultados tenham sido atingid
 
 \section{Escopo}
 
-Este trabalho só irá focar em dois cruzamentos de Brasília, mais especificamente, dois cruzamentos localizados na Avenida Hélio Prates. Além disso, o conjunto de dados se limita a apenas alguns meses. Assim, os resultados podem ser diferentes ao serem os modelos utilizados em outros meses.
+Este trabalho tem como foco apenas dois cruzamentos de Brasília, mais especificamente, dois cruzamentos localizados na Avenida Hélio Prates. Além disso, o conjunto de dados se limita a apenas alguns meses. Assim, os resultados podem ser distintos se os modelos forem utilizados em meses diferentes dos propostos no trabalho
 
-Para o trabalho serão desconsiderados certos cenários em que a captura e o relacionamentos dos dados obtidos são muito imprecisos e/ou pontuais. Esses eventos podem influenciar nos resultados obtidos e dependendo da escala do evento, podem causar uma disparidade significante entre a predição e a realidade. Por exemplo, um acidente ou uma obra pode modificar bastante o fluxo de uma via.
+Para o trabalho serão desconsiderados certos cenários em que a captura e o relacionamentos dos dados obtidos são muito imprecisos e/ou pontuais. Tais cenários podem influenciar nos resultados obtidos, causando uma disparidade significante entre a predição e a realidade. Para exemplificar, um possível cenário que será desconsiderado é a possibilidade de acontecer um acidente, ou uma obra nas rodovias, algo que pode modificar bastante o fluxo de veículos.
 
 \section{Metodologia}
 
-Iremos realizar a comparação dos modelos  \textit{\acrshort{LSTM}}, \textit{\acrshort{GRU}}, \textit{\acrshort{RF}} e \textit{\acrshort{SVM}}. Para tal, utilizaremos dados da infraestrutura local, mais especificamente dados da fiscalização eletrônica local coletada diretamente pelo \acrfull{DETRAN} do \acrfull{DF}. Nossa comparação consistirá de 4 etapas:
+Será realizada a comparação dos modelos  \textit{\acrshort{LSTM}}, \textit{\acrshort{GRU}}, \textit{\acrshort{RF}} e \textit{\acrshort{SVM}}. Para tal, utilizaremos dados da infraestrutura local, mais especificamente dados da fiscalização eletrônica coletada diretamente pelo \acrfull{DETRAN} do \acrfull{DF}. Nossa comparação consistirá de 4 etapas:
 
 \begin{enumerate}
     \item Implementação dos Modelos: construção das arquiteturas;
