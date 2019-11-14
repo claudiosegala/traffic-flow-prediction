@@ -535,7 +535,7 @@ def random_forest_grid(data, useB):
   model = sklearn.ensemble.RandomForestRegressor(max_features='auto', random_state=0)
   scoring = 'neg_mean_squared_error'
   tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS, take=N_SPLITS-1)
-  n_jobs = 15 if useB else 3
+  n_jobs = 12 if useB else 2
   grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=tscv, n_jobs=n_jobs, verbose=2)
 
   start_time = time.time()
@@ -615,7 +615,7 @@ def random_forest_tune(X, Y, useB):
     model = sklearn.ensemble.RandomForestRegressor(max_features='auto', random_state=0)
     scoring = 'neg_mean_squared_error'
     cv = [(slice(None), slice(None))]
-    n_jobs = 15 if useB else 3
+    n_jobs = 12 if useB else 2
 
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
@@ -679,7 +679,7 @@ def support_vector_machine_grid(data, useB):
   model = svm.SVR(epsilon=1.0)
   scoring = 'neg_mean_squared_error'
   tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS, take=N_SPLITS-1)
-  n_jobs = 15 if useB else 3
+  n_jobs = 12 if useB else 2
   grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=tscv, n_jobs=n_jobs, verbose=2)
 
   start_time = time.time()
@@ -770,7 +770,7 @@ def lstm_grid(data, useB):
   model = KerasClassifier(build_fn=create_lstm((X.shape[1], X.shape[2])), validation_split=0.2, epochs=15, verbose=0)
   scoring = 'neg_mean_squared_error'
   tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS, take=N_SPLITS-1)
-  n_jobs = 15 if useB else 3
+  n_jobs = 12 if useB else 2
   grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=tscv, n_jobs=n_jobs, verbose=2)
       
   start_time = time.time()
@@ -865,7 +865,7 @@ def gru_grid(data, useB):
   model = KerasClassifier(build_fn=create_gru((X.shape[1], X.shape[2])), validation_split=0.2, epochs=15, verbose=0)
   scoring = 'neg_mean_squared_error'
   tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS, take=N_SPLITS-1)
-  n_jobs = 15 if useB else 3
+  n_jobs = 12 if useB else 2
   grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=tscv, n_jobs=n_jobs, verbose=2)		
 
   start_time = time.time()
