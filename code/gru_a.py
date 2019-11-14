@@ -1040,27 +1040,27 @@ data = retrieve_data(FLOW_INTERVAL)
 
 # random_forest(data, False)
 
-random_forest_grid(data, False)
+# random_forest_grid(data, False)
 
-random_forest_grid(data, True)
+# random_forest_grid(data, True)
 
 # support_vector_machine(data, False)
 
-support_vector_machine_grid(data, False)
+# support_vector_machine_grid(data, False)
 
-support_vector_machine_grid(data, True)
+# support_vector_machine_grid(data, True)
 
 # lstm(data, False)
 
-lstm_grid(data, False)
+# lstm_grid(data, False)
 
-lstm_grid(data, True)
+# lstm_grid(data, True)
 
 # gru(data, False)
 
 gru_grid(data, False)
 
-gru_grid(data, True)
+# gru_grid(data, True)
 
 """## Compare"""
 
