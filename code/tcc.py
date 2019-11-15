@@ -39,13 +39,11 @@ PATH = ''
 """## Util"""
 
 class WalkingForwardTimeSeriesSplit():
-  def __init__(self, n_splits, skip = 0, take = 100000000):
+  def __init__(self, n_splits):
     self.n_splits = n_splits
-    self.skip = min(skip, n_splits)
-    self.take = min(take, n_splits)
   
   def get_n_splits(self, X, y, groups):
-    return min(self.skip + self.take, self.n_splits) - self.skip
+    return self.n_splits
   
   def split(self, X, y=None, groups=None):
     n_samples = len(X)
@@ -53,7 +51,7 @@ class WalkingForwardTimeSeriesSplit():
     indices = np.arange(n_samples)
 
     margin = 0
-    for i in range(self.skip, min(self.skip + self.take, self.n_splits)):
+    for i in range(self.n_splits):
       start = i * k_fold_size
       stop = start + k_fold_size
       mid = int(0.8 * (stop - start)) + start
@@ -458,13 +456,10 @@ def generate_dataset(data, useB, n_steps, n_future):
 This implementation just get the mean of every flow value in the input and place it as output.
 """
 
-def moving_average (data):
+def moving_average (X, Y):
   global result_data
 
   name = "Moving Average"
-  
-  X, Y = generate_dataset(data, False, N_STEPS, N_FUTURE)
-
   cv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
   expected, observed, times = [], [], []
 
@@ -487,14 +482,12 @@ def moving_average (data):
 This implementation just use the last value of input as output.
 """
 
-def naive (data):
+def naive (X, Y):
   global result_data
 
-  name = "Naive"
-  
-  X, Y = generate_dataset(data, False, N_STEPS, N_FUTURE)
   X = X.reshape(X.shape[0], X.shape[1])
 
+  name = "Naive"
   cv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
   expected, observed, times = [], [], []
 
@@ -519,103 +512,21 @@ This implementation is based on [Random Forest Algorithm with Python and Scikit-
 
 from sklearn.ensemble import RandomForestRegressor
 
-def random_forest_grid(data, useB):
-  global result_data
-
-  name = "RF Grid B" if useB else "RF Grid A"
-  
-  X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
-  X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])
-    
-  param_grid = {
-    # 'bootstrap': [True, False],
-    'max_depth': [8, 16, 32, 64, None],
-    'n_estimators': [50, 100, 200, 400, 800],
-  }
-  model = sklearn.ensemble.RandomForestRegressor(max_features='auto', random_state=0)
-  scoring = 'neg_mean_squared_error'
-  tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS, take=N_SPLITS-1)
-  n_jobs = 15 if useB else 3
-  grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=tscv, n_jobs=n_jobs, verbose=2)
-
-  start_time = time.time()
-  grid_search.fit(X, Y)
-  end_time = time.time()
-
-  best_model = grid_search.best_estimator_
-
-  expected, observed, times = [], [], []
-
-  cv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS, skip=N_SPLITS-1)
-
-  for train_index, test_index in cv.split(X):
-    X_train, X_test = X[train_index], X[test_index]
-    Y_train, Y_test = Y[train_index], Y[test_index]
-
-    _start_time = time.time()
-    best_model.fit(X_train, Y_train)
-    _end_time = time.time()
-    
-    expected.append(Y_test)
-    observed.append(best_model.predict(X_test))
-    times.append(_end_time - _start_time)
-    
-  res = evaluate(expected, observed, times, name)
-  res['time'] = end_time - start_time
-  res['best_params'] = grid_search.best_params_
-  res['params'] = param_grid
-  res['score'] = clean_cv_results(grid_search.cv_results_)
-
-  store(res, "results/grid", name)
-
-def random_forest(data, useB):
-  global result_data
-  
-  name = "RF B" if useB else "RF A"
-  
-  model = sklearn.ensemble.RandomForestRegressor(n_estimators=100, max_features='auto', random_state=0)
-
-  X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
-  X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])
-
-  expected, observed, times = [], [], []
-  tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
-
-  for train_index, test_index in tscv.split(X):
-    X_train, X_test = X[train_index], X[test_index]
-    Y_train, Y_test = Y[train_index], Y[test_index]
-
-    start_time = time.time()
-    model.fit(X_train, Y_train)
-    end_time = time.time()
-    
-    expected.append(Y_test)
-    observed.append(model.predict(X_test))
-    times.append(end_time - start_time)
-    
-  result_data['results'][name] = evaluate(expected, observed, times, name)
-
-def random_forest_tune(X, Y, useB):
+def get_rf_tuned(X, Y, useB):
   cv = WalkingForwardTimeSeriesSplit(n_splits=1)
 
   for train_index, test_index in cv.split(X):
     X_train, X_test = X[train_index], X[test_index]
     Y_train, Y_test = Y[train_index], Y[test_index]
 
-    # param_grid = {
-    #   # 'bootstrap': [True, False],
-    #   'max_depth': [8, 16, 32, 64, None],
-    #   'n_estimators': [50, 100, 200, 400, 800],
-    # }
     param_grid = {
-      # 'bootstrap': [True, False],
-      'max_depth': [4, 8],
-      'n_estimators': [15],
+      'max_depth': [8, 16, 32, 64, None],
+      'n_estimators': [50, 100, 200, 400, 800],
     }
     model = sklearn.ensemble.RandomForestRegressor(max_features='auto', random_state=0)
     scoring = 'neg_mean_squared_error'
     cv = [(slice(None), slice(None))]
-    n_jobs = 15 if useB else 3
+    n_jobs = -1
 
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
@@ -629,16 +540,18 @@ def random_forest_tune(X, Y, useB):
 
     return grid_search.best_estimator_, res
 
-def random_forest_2(data, useB):
+def get_rf():
+  model = sklearn.ensemble.RandomForestRegressor(n_estimators=100, max_features='auto', random_state=0)
+  res = {}
+
+  return model, res
+
+def random_forest(X, Y, useB=False, tune=False):
   global result_data
   
-  name = "RF B" if useB else "RF A"
-  
-  model = sklearn.ensemble.RandomForestRegressor(n_estimators=100, max_features='auto', random_state=0)
-
-  X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
   X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])
 
+  name = "RF B" if useB else "RF A"
   expected, observed, times, grid_res = [], [], [], []
   tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
 
@@ -647,82 +560,71 @@ def random_forest_2(data, useB):
     Y_train, Y_test = Y[train_index], Y[test_index]
 
     start_time = time.time()
-    tuned_model, res = random_forest_tune(X_train, Y_train, useB)
-    tuned_model.fit(X_train, Y_train) 
+
+    model, res = get_rf_tuned(X_train, Y_train, useB) if tune else get_rf()
+    model.fit(X_train, Y_train) 
+
     end_time = time.time()
     
     grid_res.append(res)
+    observed.append(model.predict(X_test))
     expected.append(Y_test)
-    observed.append(tuned_model.predict(X_test))
     times.append(end_time - start_time)
     
-  result_data['results'][name] = evaluate(expected, observed, times, name)
+  res = evaluate(expected, observed, times, name)  
+
+  if tune:
+    res['grid_res'] = grid_res
+
+  result_data['results'][name] = res
+
   store(result_data['results'][name], "results/grid", name)
 
 """### Support Vector Machine"""
 
 from sklearn import svm
 
-def support_vector_machine_grid(data, useB):
-  global result_data
-
-  name = "SVM Grid B" if useB else "SVM Grid A"
-  
-  X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
-  X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])
-    
-  param_grid = {
-    'C': [1.0, 10.0, 100.0, 1000.0],
-    'gamma': list(np.logspace(-2, 2, 4)) + ['scale'],
-    # 'epsilon': [0.01, 0.1, 1]
-  }
-  model = svm.SVR(epsilon=1.0)
-  scoring = 'neg_mean_squared_error'
-  tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS, take=N_SPLITS-1)
-  n_jobs = 15 if useB else 3
-  grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=tscv, n_jobs=n_jobs, verbose=2)
-
-  start_time = time.time()
-  grid_search.fit(X, Y)
-  end_time = time.time()
-
-  best_model = grid_search.best_estimator_
-
-  expected, observed, times = [], [], []
-
-  cv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS, skip=N_SPLITS-1)
+def get_svm_tuned(X, Y, useB):
+  cv = WalkingForwardTimeSeriesSplit(n_splits=1)
 
   for train_index, test_index in cv.split(X):
     X_train, X_test = X[train_index], X[test_index]
     Y_train, Y_test = Y[train_index], Y[test_index]
 
-    _start_time = time.time()
-    best_model.fit(X_train, Y_train)
-    _end_time = time.time()
-    
-    expected.append(Y_test)
-    observed.append(best_model.predict(X_test))
-    times.append(_end_time - _start_time)
+    param_grid = {
+      'C': [1.0, 10.0, 100.0, 1000.0],
+      'gamma': list(np.logspace(-2, 2, 4)) + ['scale'],
+    }
+    model = svm.SVR(epsilon=0.2)
+    scoring = 'neg_mean_squared_error'
+    cv = [(slice(None), slice(None))]
+    n_jobs = -1
 
-  res = evaluate(expected, observed, times, name)
-  res['time'] = end_time - start_time
-  res['best_params'] = grid_search.best_params_
-  res['params'] = param_grid
-  res['score'] = clean_cv_results(grid_search.cv_results_)
+    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
-  store(res, "results/grid", name)
+    grid_search.fit(X_train, Y_train)
+      
+    res = {
+        'params': param_grid,
+        'best_params': grid_search.best_params_,
+        'score': clean_cv_results(grid_search.cv_results_),
+    }
 
-def support_vector_machine(data, useB):
+    return grid_search.best_estimator_, res
+
+def get_svm():
+  model = svm.SVR(gamma='scale', C=1.0, epsilon=0.2)
+  res = {}
+
+  return model, res
+
+def support_vector_machine(X, Y, useB=False, tune=False):
   global result_data
   
-  name = "SVM B" if useB else "SVM A"
-  
-  model = svm.SVR(gamma='scale', C=1.0, epsilon=0.2)
-
-  X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
   X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])
 
-  expected, observed, times = [], [], []
+  name = "SVM B" if useB else "SVM A"
+  expected, observed, times, grid_res = [], [], [], []
   tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
 
   for train_index, test_index in tscv.split(X):
@@ -730,14 +632,23 @@ def support_vector_machine(data, useB):
     Y_train, Y_test = Y[train_index], Y[test_index]
 
     start_time = time.time()
-    model.fit(X_train, Y_train)
+
+    model, res = get_svm_tuned(X_train, Y_train, useB) if tune else get_svm()
+    model.fit(X_train, Y_train) 
+
     end_time = time.time()
     
-    expected.append(Y_test)
+    grid_res.append(res)
     observed.append(model.predict(X_test))
+    expected.append(Y_test)
     times.append(end_time - start_time)
     
-  result_data['results'][name] = evaluate(expected, observed, times, name)
+  res = evaluate(expected, observed, times, name)  
+
+  if tune:
+    res['grid_res'] = grid_res
+
+  result_data['results'][name] = res
 
 """### LSTM"""
 
@@ -756,83 +667,76 @@ def create_lstm(input_shape):
 
   return create
 
-def lstm_grid(data, useB):		
-  global result_data
-
-  name = "LSTM Grid B" if useB else "LSTM Grid A"
-        
-  X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
-
-  param_grid = {		
-    'n': [50, 100, 200, 400, 800],
-    'batch_size': [8, 16, 32, 64]
-  }
-  model = KerasClassifier(build_fn=create_lstm((X.shape[1], X.shape[2])), validation_split=0.2, epochs=15, verbose=0)
-  scoring = 'neg_mean_squared_error'
-  tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS, take=N_SPLITS-1)
-  n_jobs = 15 if useB else 3
-  grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=tscv, n_jobs=n_jobs, verbose=2)
-      
-  start_time = time.time()
-  grid_search.fit(X, Y)
-  end_time = time.time()
-
-  best_model = grid_search.best_estimator_
-
-  expected, observed, times = [], [], []
-
-  cv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS, skip=N_SPLITS-1)
+def get_lstm_tuned(X, Y, useB):
+  cv = WalkingForwardTimeSeriesSplit(n_splits=1)
 
   for train_index, test_index in cv.split(X):
     X_train, X_test = X[train_index], X[test_index]
     Y_train, Y_test = Y[train_index], Y[test_index]
-
-    _start_time = time.time()
-    best_model.fit(X_train, Y_train)
-    _end_time = time.time()
     
-    expected.append(Y_test)
-    observed.append(best_model.predict(X_test))
-    times.append(_end_time - _start_time)
+    param_grid = {		
+      'n': [50, 100, 200, 400, 800],
+      'batch_size': [8, 16, 32, 64]
+    }
+    model = KerasClassifier(build_fn=create_lstm((X.shape[1], X.shape[2])), validation_split=0.2, epochs=15, verbose=0)
+    scoring = 'neg_mean_squared_error'
+    cv = [(slice(None), slice(None))]
+    n_jobs = -1
 
-  res = evaluate(expected, observed, times, name)
-  res['time'] = end_time - start_time
-  res['best_params'] = grid_search.best_params_
-  res['params'] = param_grid
-  res['score'] = clean_cv_results(grid_search.cv_results_)
+    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
-  store(res, "results/grid", name)
+    grid_search.fit(X_train, Y_train)
+      
+    res = {
+        'params': param_grid,
+        'best_params': grid_search.best_params_,
+        'score': clean_cv_results(grid_search.cv_results_),
+    }
 
-def lstm (data, useB): 
+    return grid_search.best_estimator_, res
+
+def get_lstm(X):
+  model = KerasClassifier(build_fn=create_lstm((X.shape[1], X.shape[2])), validation_split=0.2, batch_size=64, epochs=15, verbose=0)
+  res = {}
+
+  return model, res
+
+def long_short_term_memory(X, Y, useB=False, tune=False):
   global result_data
   
+  X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])
+
   name = "LSTM B" if useB else "LSTM A"
-
-  X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
-
-  model = create_lstm((X.shape[1], X.shape[2]))()
-  
-  expected, observed, times, hist = [], [], [], []
+  expected, observed, times, hist, grid_res = [], [], [], [], []
   tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
 
   for train_index, test_index in tscv.split(X):
     X_train, X_test = X[train_index], X[test_index]
     Y_train, Y_test = Y[train_index], Y[test_index]
-  
-    start_time = time.time()
-    h = model.fit(X_train, Y_train, validation_split=0.2, batch_size=64, epochs=15, verbose=0)
-    end_time = time.time()
 
-    expected.append(Y_test)
+    start_time = time.time()
+
+    model, res = get_lstm_tuned(X_train, Y_train, useB) if tune else get_lstm(X_train)
+    h = model.fit(X_train, Y_train) 
+
+    end_time = time.time()
+    
+    grid_res.append(res)
     observed.append(model.predict(X_test))
+    expected.append(Y_test)
     times.append(end_time - start_time)
     hist.append(h)
-
-  result_data['results'][name] = evaluate(expected, observed, times, name)
-  result_data['results'][name]['history'] = {
+    
+  res = evaluate(expected, observed, times, name) 
+  res['history'] = {
       'loss': [h.history['loss'] for h in hist],
       'val_loss': [h.history['val_loss'] for h in hist],
   }
+
+  if tune:
+    res['grid_res'] = grid_res
+
+  result_data['results'][name] = res
 
 """### GRU"""
 
@@ -851,87 +755,80 @@ def create_gru(input_shape):
     
   return create
 
-def gru_grid(data, useB):		
-  global result_data
-
-  name = "GRU Grid B" if useB else "GRU Grid A"
-        
-  X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
-
-  param_grid = {		
-    'n': [50, 100, 200, 400, 800],
-    'batch_size': [8, 16, 32, 64]
-  }
-  model = KerasClassifier(build_fn=create_gru((X.shape[1], X.shape[2])), validation_split=0.2, epochs=15, verbose=0)
-  scoring = 'neg_mean_squared_error'
-  tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS, take=N_SPLITS-1)
-  n_jobs = 15 if useB else 3
-  grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=tscv, n_jobs=n_jobs, verbose=2)		
-
-  start_time = time.time()
-  grid_search.fit(X, Y)
-  end_time = time.time()
-
-  best_model = grid_search.best_estimator_
-
-  expected, observed, times = [], [], []
-
-  cv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS, skip=N_SPLITS-1)
+def get_gru_tuned(X, Y, useB):
+  cv = WalkingForwardTimeSeriesSplit(n_splits=1)
 
   for train_index, test_index in cv.split(X):
     X_train, X_test = X[train_index], X[test_index]
     Y_train, Y_test = Y[train_index], Y[test_index]
-
-    _start_time = time.time()
-    best_model.fit(X_train, Y_train)
-    _end_time = time.time()
     
-    expected.append(Y_test)
-    observed.append(best_model.predict(X_test))
-    times.append(_end_time - _start_time)
+    param_grid = {		
+      'n': [50, 100, 200, 400, 800],
+      'batch_size': [8, 16, 32, 64]
+    }
+    model = KerasClassifier(build_fn=create_gru((X.shape[1], X.shape[2])), validation_split=0.2, epochs=15, verbose=0)
+    scoring = 'neg_mean_squared_error'
+    cv = [(slice(None), slice(None))]
+    n_jobs = -1
 
-  res = evaluate(expected, observed, times, name)
-  res['time'] = end_time - start_time
-  res['best_params'] = grid_search.best_params_
-  res['params'] = param_grid
-  res['score'] = clean_cv_results(grid_search.cv_results_)
+    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
-  store(res, "results/grid", name)
+    grid_search.fit(X_train, Y_train)
+      
+    res = {
+        'params': param_grid,
+        'best_params': grid_search.best_params_,
+        'score': clean_cv_results(grid_search.cv_results_),
+    }
 
-def gru (data, useB): 
+    return grid_search.best_estimator_, res
+
+def get_gru(X):
+  model = KerasClassifier(build_fn=create_gru((X.shape[1], X.shape[2])), validation_split=0.2, batch_size=64, epochs=15, verbose=0)
+  res = {}
+
+  return model, res
+
+def gated_recurrent_unit(X, Y, useB=False, tune=False):
   global result_data
   
+  X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])
+
   name = "GRU B" if useB else "GRU A"
-
-  X, Y = generate_dataset(data, useB, N_STEPS, N_FUTURE)
-
-  model = create_gru((X.shape[1], X.shape[2]))()
-  
-  expected, observed, times, hist = [], [], [], []
+  expected, observed, times, hist, grid_res = [], [], [], [], []
   tscv = WalkingForwardTimeSeriesSplit(n_splits=N_SPLITS)
 
   for train_index, test_index in tscv.split(X):
     X_train, X_test = X[train_index], X[test_index]
     Y_train, Y_test = Y[train_index], Y[test_index]
-  
-    start_time = time.time()
-    h = model.fit(X_train, Y_train, validation_split=0.2, batch_size=64, epochs=15, verbose=0)
-    end_time = time.time()
 
-    expected.append(Y_test)
+    start_time = time.time()
+
+    model, res = get_gru_tuned(X_train, Y_train, useB) if tune else get_gru(X_train)
+    h = model.fit(X_train, Y_train) 
+
+    end_time = time.time()
+    
+    grid_res.append(res)
     observed.append(model.predict(X_test))
+    expected.append(Y_test)
     times.append(end_time - start_time)
     hist.append(h)
-  
-  result_data['results'][name] = evaluate(expected, observed, times, name)
-  result_data['results'][name]['history'] = {
+    
+  res = evaluate(expected, observed, times, name) 
+  res['history'] = {
       'loss': [h.history['loss'] for h in hist],
       'val_loss': [h.history['val_loss'] for h in hist],
   }
 
+  if tune:
+    res['grid_res'] = grid_res
+
+  result_data['results'][name] = res
+
 """## Comparison Util"""
 
-def run_models():
+def run_models(tune=False):
   global result_data
   
   result_data = {
@@ -946,16 +843,19 @@ def run_models():
 
   data = retrieve_data(FLOW_INTERVAL)
 
-  moving_average(data)
-  naive(data)
-  random_forest(data, False)
-  random_forest(data, True)
-  support_vector_machine(data, False)
-  support_vector_machine(data, True)
-  lstm(data, False)
-  lstm(data, True)
-  gru(data, False)
-  gru(data, True)
+  X_a, Y_a = generate_dataset(data, False, N_STEPS, N_FUTURE)
+  X_b, Y_b = generate_dataset(data, True, N_STEPS, N_FUTURE)
+
+  moving_average(X_a, Y_a)
+  naive(X_a, Y_a)
+  random_forest(X_a, Y_a, useB=False, tune=tune)
+  random_forest(X_b, Y_b, useB=True, tune=tune)
+  support_vector_machine(X_a, Y_a, useB=False, tune=tune)
+  support_vector_machine(X_b, Y_b, useB=True, tune=tune)
+  long_short_term_memory(X_a, Y_a, useB=False, tune=tune)
+  long_short_term_memory(X_b, Y_b, useB=True, tune=tune)
+  gated_recurrent_unit(X_a, Y_a, useB=False, tune=tune)
+  gated_recurrent_unit(X_b, Y_b, useB=True, tune=tune)
 
   store_results()
 
@@ -1040,7 +940,7 @@ def compare_results_by_flow_interval(values):
   DAY_SIZE = (24 * 3600) // FLOW_INTERVAL  
   WEEK_SIZE = 7 * DAY_SIZE
 
-def compare_results_by_predict_in_future(values):
+def compare_results_by_predict_in_future(values, tune=False):
   global PREDICT_IN_FUTURE
   global N_FUTURE
   global comparison_data
@@ -1053,7 +953,7 @@ def compare_results_by_predict_in_future(values):
     N_FUTURE = PREDICT_IN_FUTURE * 60 // FLOW_INTERVAL
 
     start_time = time.time()
-    run_models()
+    run_models(tune=tune)
     end_time = time.time()
     
     comparison_data.append(copy.deepcopy(result_data))
@@ -1065,10 +965,7 @@ def compare_results_by_predict_in_future(values):
   PREDICT_IN_FUTURE = aux
   N_FUTURE = PREDICT_IN_FUTURE * 60 // FLOW_INTERVAL
 
-"""## Train&Test
-
-Run all the models and store the results at the end
-"""
+"""## Compare"""
 
 # Model Parameters
 SEEABLE_PAST = 480 # in minutes
@@ -1083,43 +980,6 @@ DAY_SIZE = (24 * 60 * 60) // FLOW_INTERVAL
 WEEK_SIZE = (7 * 24 * 60 * 60) // FLOW_INTERVAL
 VERBOSITY = True
 
-result_data = {
-    'results': {},
-    'meta': {}
-}
-
-data = retrieve_data(FLOW_INTERVAL)
-
-# moving_average(data)
-
-# naive(data)
-
-random_forest_2(data, False)
-
-# random_forest_grid(data, False)
-
-# random_forest_grid(data, True)
-
-# support_vector_machine(data, False)
-
-# support_vector_machine_grid(data, False)
-
-# support_vector_machine_grid(data, True)
-
-# lstm(data, False)
-
-# lstm_grid(data, False)
-
-# lstm_grid(data, True)
-
-# gru(data, False)
-
-# gru_grid(data, False)
-
-# gru_grid(data, True)
-
-"""## Compare"""
-
 # VERBOSITY = False
 
 # predict_futures = [15, 30, 45, 60]
@@ -1133,6 +993,9 @@ random_forest_2(data, False)
 
 # n_splits = [1, 2, 4, 8]
 # compare_results_by_n_split(n_splits)
+
+predict_futures = [15, 30, 45, 60]
+compare_results_by_predict_in_future(predict_futures, tune=True)
 
 """## Observations:
 
