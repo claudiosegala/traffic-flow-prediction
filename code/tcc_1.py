@@ -573,7 +573,7 @@ def random_forest(X, Y, useB=False, tune=False):
 
   result_data['results'][name] = res
 
-  store(result_data['results'][name], "results/grid", name)
+  store(result_data['results'][name], "results/grid", "{0}_{1}".format(name, PREDICT_IN_FUTURE))
 
 """### Support Vector Machine"""
 
@@ -644,6 +644,8 @@ def support_vector_machine(X, Y, useB=False, tune=False):
     res['grid_res'] = grid_res
 
   result_data['results'][name] = res
+
+  store(result_data['results'][name], "results/grid", "{0}_{1}".format(name, PREDICT_IN_FUTURE))
 
 """### LSTM"""
 
@@ -731,6 +733,8 @@ def long_short_term_memory(X, Y, useB=False, tune=False):
 
   result_data['results'][name] = res
 
+  store(result_data['results'][name], "results/grid", "{0}_{1}".format(name, PREDICT_IN_FUTURE))
+
 """### GRU"""
 
 from keras.layers import GRU
@@ -816,6 +820,8 @@ def gated_recurrent_unit(X, Y, useB=False, tune=False):
     res['grid_res'] = grid_res
 
   result_data['results'][name] = res
+
+  store(result_data['results'][name], "results/grid", "{0}_{1}".format(name, PREDICT_IN_FUTURE))
 
 """## Comparison Util"""
 
