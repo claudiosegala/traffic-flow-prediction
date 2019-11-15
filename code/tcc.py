@@ -16,10 +16,7 @@ from keras.layers import Dense, Activation
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import GridSearchCV
 
-"""## Configurations
-
-Make the environment reproducible
-"""
+"""## Configurations"""
 
 import tensorflow as tf # machine learning library
 import os
@@ -31,8 +28,6 @@ np.random.seed(0)
 random.seed(0)
 
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
-
-"""Set path for the folder in which everything should be stored."""
 
 PATH = ''
 
@@ -703,8 +698,6 @@ def get_lstm(X):
 
 def long_short_term_memory(X, Y, useB=False, tune=False):
   global result_data
-  
-  X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])
 
   name = "LSTM B" if useB else "LSTM A"
   expected, observed, times, hist, grid_res = [], [], [], [], []
@@ -791,8 +784,6 @@ def get_gru(X):
 
 def gated_recurrent_unit(X, Y, useB=False, tune=False):
   global result_data
-  
-  X = X.reshape(X.shape[0], X.shape[1] * X.shape[2])
 
   name = "GRU B" if useB else "GRU A"
   expected, observed, times, hist, grid_res = [], [], [], [], []
