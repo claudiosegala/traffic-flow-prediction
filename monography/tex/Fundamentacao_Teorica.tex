@@ -51,22 +51,28 @@ Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizage
 \footnotetext{\url{https://dsc-spidal.github.io/harp/img/4-5-1.png}}
 
 \section{\acrfull{SVM}}
-% TODO: adicionar exemplo de uma regressão de 2 dimensões
-% TODO: pegar mais referências
 
-\textit{\acrshort{SVM}} foi criado originalmente por Vladimir Vapnik nos anos 60 e foi evoluindo até se tornar o que é hoje  \cite{Smola03atutorial}. Essa técnica é não-paramétrica e supervisionada, sendo que a ideia básica por trás pode ser usada tanto para classificação quanto para regressão. No caso da regressão, tenta-se criar uma função \(f(x)\) de forma que se \(g(x)\) é a função que perfeitamente descreve o conjunto de dados e \(\epsilon\) seja a dimensão do erro, para todo \(f(x)\)  \(\abs{g(x) - f(x)} \leq \epsilon \).
+\textit{\acrshort{SVM}} foi criado originalmente por Vladimir Vapnik nos anos 60 e foi evoluindo até se tornar o que é hoje  \cite{Smola03atutorial}. Essa técnica é não-paramétrica e supervisionada, sendo que a ideia básica por trás pode ser usada tanto para classificação quanto para regressão.
 
-A aprendizagem do modelo é iterativa.
+% TODO: falar de onde o nome veio (o que são os support vector machines)
 
-Variável C indica quanto os erros penalizam. Se for baixo, erros não serão muito penalizados e se for alto os erros serão muito penalizados
+% TODO: falar como ela é e da insensibilidade epsilon
+%No caso da regressão, tenta-se criar uma função \(f(x)\) de forma que se \(g(x)\) é a função que perfeitamente descreve o conjunto de dados e \(\epsilon\) seja a dimensão do erro, para todo \(f(x)\)  \(\abs{g(x) - f(x)} \leq \epsilon \).
 
-Além disso, \textit{\acrshort{SVM}} possuem funções \textit{Kernel}, que permitem a mudança de dimensão da entrada para alguma outra de forma rápida. Essa mudança pode aumentar ou diminuir a dimensão da entrada. Assim o modelo não tem que converter o conjunto de dados todo para tentar interpolar em outra dimensão de dados. Existem diversas funções de \textit{Kernel}, como por exemplo, Linear, Não-Linear, \textit{Radial Basis Function} e Polinomial.
+% TODO: falar sobre as caracteristicas iterativas
+%A aprendizagem do modelo é iterativa.
 
-% TODO: a referência no final se refere ao parágrafo todo, posso fazer isso?
+% TODO: falar do mapeamento para outra dimensão pode auxiliar na SVM
+%Só que nem todo o problema pode ser resolvido com qualquer coisa, porem pode ser resolvido em outra dimensão.
+
 Mapear todo um conjunto de dados para outra representação do espaço é computacionalmente intenso. Porém uma função \textit{Kernel} consegue mapear dois pontos que pertencem a algum certo espaço para a distância deles em alguma outra representação desse espaço. Esse mapeamento é menos exigente computacionalmente, tornando então desnecessário mapear todo o conjunto de dados para a outra representação. Porém, mesmo com o \textit{Kernels}, \textit{\acrshort{SVM}} não escala muito bem para conjunto de dados muito grandes \cite{chollet2018deep}.
 
+% TODO: just mention that you can do this and on methodology you say the variable that does it
+Para ajustar a \textit{\acrshort{SVR}} podemos controlar o tamanho do tubo (\(\epsilon\)) e, entre outros, quão influentes são os pontos que não localizados no tubo (C). A variável C dessa técnica indica quanto os erros serão penalizados. Se for baixo, erros não serão muito penalizados e se for alto os erros serão muito penalizados. Além disso, alguns \textit{Kernels} possuem variáveis (\(\gamma\)), por exemplo) que ajudam no ajuste da função aos dados. \(\gamma\) determina a influência dos \textit{support vectors} no treinamento. Quanto maior o valor, menor a influência do \textit{support vectors}, quanto menor o valor, maior a influência. Valores baixos podem levar a uma função que não se ajusta muito ao conjunto de dados, prono a sub-ajuste. Já valores altos podem levar a uma função que se ajusta muito ao conjunto de dados, prono a sobre-ajuste.
 
-Vale notar que algumas funções \textit{Kernel} possuem podem se ajustar quanto ao conjunto de dados. Funções como \textit{Radial Basis Function} e Polinomial possuem uma variável \textit{Gamma} (\(\gamma\)) para controlar esse ajuste. Essa variável determina a influência dos \textit{support vectors} no treinamento. Quanto maior o valor, menor a influência do \textit{support vectors}, quanto menor o valor, maior a influência. Valores baixos podem levar a uma função que não se ajusta muito ao conjunto de dados, prono a sub-ajuste. Já valores altos podem levar a uma função que se ajusta muito ao conjunto de dados, prono a sobre-ajuste.
+% TODO: Mostrar exemplo simples de 1 dimensão
+
+
 
 
 \begin{figure}[htbp]
