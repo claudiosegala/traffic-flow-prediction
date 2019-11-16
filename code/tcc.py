@@ -523,7 +523,7 @@ def get_rf_tuned(X, Y, useB):
     model = sklearn.ensemble.RandomForestRegressor(max_features='auto', random_state=0)
     scoring = 'neg_mean_squared_error'
     cv = [(slice(None), slice(None))]
-    n_jobs = 30
+    n_jobs = 15
 
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
@@ -595,7 +595,7 @@ def get_svm_tuned(X, Y, useB):
     model = svm.SVR(epsilon=0.2)
     scoring = 'neg_mean_squared_error'
     cv = [(slice(None), slice(None))]
-    n_jobs = 30
+    n_jobs = 15
 
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
@@ -680,7 +680,7 @@ def get_lstm_tuned(X, Y, useB):
     model = KerasClassifier(build_fn=create_lstm((X.shape[1], X.shape[2])), validation_split=0.2, epochs=15, verbose=0)
     scoring = 'neg_mean_squared_error'
     cv = [(slice(None), slice(None))]
-    n_jobs = 30
+    n_jobs = 15
 
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
@@ -768,7 +768,7 @@ def get_gru_tuned(X, Y, useB):
     model = KerasClassifier(build_fn=create_gru((X.shape[1], X.shape[2])), validation_split=0.2, epochs=15, verbose=0)
     scoring = 'neg_mean_squared_error'
     cv = [(slice(None), slice(None))]
-    n_jobs = 30
+    n_jobs = 15
 
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
