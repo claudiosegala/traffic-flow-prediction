@@ -1,7 +1,3 @@
-% TODO: adicionar explicação de como vai funcionar o capitulo, quais artigos võa ser detalhados e um ultra resumo do que eles consistem.
-
-% TODO: Deve ter pelo menos 5 artigos explicados nesse capitulo
-
 % TODO: Adicionar critica a todos eles quando achar. Para o urbano falar que ele utilizou o dados de diferentes tipos de vias que podem apresentar comportamentos diferentes.
 
 \label{chapter:trabalhos_relacionados}
@@ -10,9 +6,8 @@ O objetivo deste capítulo é apresentar trabalhos relacionados à predição de
 
 \section{Aprendizagem Profunda}
 
-No trabalho de Zainab Abbas et. al. em \textit{Short-term traffic prediction using long short-term memory neural networks} \cite{Zainab_2018} é apresentado um trabalho de predição de tráfego (calculando a densidade da via em vez do fluxo) que tem como objetivo antecipar congestionamentos em rodovias de Estocolmo, Suécia, utilizando aprendizagem profunda. No caso, o autor propõe uma variação do \textit{\acrshort{LSTM}}, mais precisamente \textit{\acrfull{SLSTM}}. Para tal, são utilizados dados coletados por sensores do sistema de controle da autoestrada da cidade. Tais sensores monitoram as principais vias da metrópole e coletam informações como fluxo e velocidade de cada faixa a cada 1 minuto. O trabalho propõe três modelos de predição de densidade da via:
- 
- % TODO: colocar a imagem que o artigo utiliza para ficar mais fácil entender 
+No trabalho de Zainab Abbas et. al. \cite{Zainab_2018} é apresentado um trabalho de predição de tráfego (calculando a densidade da via em vez do fluxo) que tem como objetivo antecipar congestionamentos em rodovias de Estocolmo, Suécia, utilizando aprendizagem profunda. No caso, o autor propõe uma variação do \textit{\acrshort{LSTM}}, mais precisamente \textit{\acrfull{SLSTM}}. Para tal, são utilizados dados coletados por sensores do sistema de controle da autoestrada da cidade. Tais sensores monitoram as principais vias da metrópole e coletam informações como fluxo e velocidade de cada faixa a cada 1 minuto. O trabalho propõe três modelos de predição de densidade da via:
+
 \begin{itemize}
     \item O (1-1) Modelo utilizando apenas um sensor que faz a predição apenas do local daquele sensor
     \item O (n-n) Modelo que utiliza n sensores de uma determinada área e faz a predição de todas as localidades
@@ -24,9 +19,9 @@ k = q / v
 \end{equation}
 Fórmula do cálculo da densidade utilizada pelo trabalho na Equação \ref{eq:solve}, onde \textit{k} se refere a densidade, \textit{q} ao fluxo e \textit{v} à velocidade média.
 
-Dos três modelos apresentados, o mais eficiente foi o m-n, pois faz a previsão de tráfego em vários pontos diferentes da via e tem um custo computacional menor que o n-n, além disso, utiliza menos sensores, o que diminui os dados de entrada da rede neural. Esse Modelo foi comparado com outros usando as métricas \textit{\acrshort{RMSE}} e \textit{\acrshort{MAE}}. O resultado dessas métricas é comparado com a acurácia de outros modelos como \textit{\acrfull{RNN}} e \textit{\acrfull{FFN}}. O erro calculado foi menor na metodologia proposta pelo autor em todos os casos, comprovando a eficácia do modelo apresentado (SLSTM).
+Dos três modelos apresentados, o mais eficiente foi o m-n, pois faz a previsão de tráfego em vários pontos diferentes da via e tem um custo computacional menor que o n-n, pois utiliza menos sensores, o que diminui os dados de entrada da rede neural. Esse Modelo foi comparado com outros usando as métricas \textit{\acrshort{RMSE}} e \textit{\acrshort{MAE}}. O resultado dessas métricas é comparado com a acurácia de outros modelos como \textit{\acrfull{RNN}} e \textit{\acrfull{FFN}}. O erro calculado foi menor na metodologia proposta pelo autor em todos os casos, comprovando a eficácia do modelo apresentado (SLSTM). Vale ressaltar que a ideia do 
 
-No artigo \textit{Traffic Flow Prediction with Big Data: A Deep Learning Approach} \cite{lv_6894591} por Yisheng Lv et. al. foi proposto um trabalho semelhante de comparação de modelos de predição, mas utilizando \textit{\acrfull{SAE}}. O modelo de predição proposto pelo artigo é aplicado aos dados coletados por 15,000 sensores espalhados pelas estradas da Califórnia. As predições são divididas em intervalos de 15, 30, 45 e 60 minutos. Mais uma vez, a acurácia dos testes foi medida utilizando  \acrshort{MAE}, \acrshort{MRE} e \acrshort{RMSE} para cada intervalo de tempo e comparada com a acurácia de predição de outros métodos, como \acrfull{BPNN}, \acrfull{RW}, \acrfull{SVM} e \acrfull{RBFNN}. Novamente, o método apresentado pelo artigo foi o mais eficiente.
+No artigo \cite{lv_6894591} por Yisheng Lv et. al. foi proposto um trabalho semelhante de comparação de modelos de predição, mas utilizando \textit{\acrfull{SAE}}. O modelo de predição proposto pelo artigo é aplicado aos dados coletados por 15,000 sensores espalhados pelas estradas da Califórnia. As predições são divididas em intervalos de 15, 30, 45 e 60 minutos. Mais uma vez, a acurácia dos testes foi medida utilizando  \acrshort{MAE}, \acrshort{MRE} e \acrshort{RMSE} para cada intervalo de tempo e comparada com a acurácia de predição de outros métodos, como \acrfull{BPNN}, \acrfull{RW}, \acrfull{SVM} e \acrfull{RBFNN}. Novamente, o método apresentado pelo artigo foi o mais eficiente.
 
 Um modelo mais próximo do utilizado em nossos testes é descrito em \textit{Long Short-Term Memory Recurrent Neural Network For Urban Traffic Prediction: A Case Study of Seoul} \cite{Seoul} por Yong-Ju Lee et. al.. Diferentemente dos trabalhos relacionados apresentados nos parágrafos anteriores, esse artigo apresenta um estudo feito com dados coletados de vias urbanas de Seul, e não somente de rodovias expressas. O trabalha utiliza 3 base de dados diferentes:
 

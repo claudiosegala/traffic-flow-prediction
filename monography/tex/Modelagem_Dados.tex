@@ -9,7 +9,6 @@ Dessa forma, é comum na literatura optar-se por usar apenas dados com fatores e
 Além disso, segundo Zainab Abbas et. al. \cite{Zainab_2018}, o tráfego pode ser interpretado de maneiras diferentes. Pode ser interpretado como a quantidade de veículos que passaram por um ponto em um determinado intervalo de tempo, ou seja, o fluxo. Também pode ser interpretado como o fluxo dividido pela média de velocidade dos veículos em um certo espaço de tempo, ou seja, a densidade. Ou como uma média de velocidade em um intervalo de tempo, a velocidade média.
 
 \section{Análise do Conjunto de Dados}
-% TODO: Usar a análise de dados do Fábio como inspiração para ver se tem mais algo que podemos escrever aqui
 
 \subsection{Aquisição dos Dados}
 
@@ -57,8 +56,7 @@ Os dados\footnote{http://bit.ly/processed-data-2l5MaAG} provêm de dois cruzamen
 
 \subsection{Características dos Dados}
 
-% TODO: verificar com Vinícius se isso ta correto
-Quanto as características das colunas, o conjunto de dados possui tanto colunas quantitativas quanto qualitativas. Só existe uma coluna qualitativa, \texttt{Id Equipamento}, sendo ela ordinal, pois em seu nome ocorre uma numeração. Todas as outras colunas são quantitativas, sendo a de tamanho a única contínua e o resto discreto. Porém a coluna de \texttt{km/h Max} tem seu valor constante constante.  Os registros são de 8 sensores com um total de 10.801.781 registros de veículos, sendo a quantidade de registros por sensor não distribuídos igualmente:
+Quanto as características das colunas, o conjunto de dados possui tanto colunas quantitativas quanto qualitativas. Só existe uma coluna qualitativa, \texttt{Id Equipamento}, sendo ela ordinal, pois em seu nome ocorre uma numeração. Todas as outras colunas são quantitativas, sendo a de tamanho a única contínua e o resto discreto. Porém a coluna de \texttt{km/h Max} tem seu valor constante constante.  Os registros são de 8 sensores com um total de 10.801.781 registros de veículos. Vale notar que nem todos os sensores estão localizados na Avenida Hélio Prates, ou seja, alguns estão localizados na avenidas que cruzam a mesma. Além disso, a quantidade de registros por sensor não distribuídos igualmente:
 
 \begin{itemize}
     \item \textbf{RSI033:} 2.382.754 registros de veículos
@@ -71,8 +69,6 @@ Quanto as características das colunas, o conjunto de dados possui tanto colunas
     \item \textbf{RSI128:} 536.879 registros de veículos
 \end{itemize}
 
-% TODO: falar que os outros sensores vêm do cruzamento de outras vias com a Helio Prates como a via M1.
-
 Visto que o sensores contém dados de um mesmo período, os sensores com maior quantidade de veículos tiveram um tráfego mais intenso. Vale notar que os quatro sensores com maior fluxo pertencem a via principal, assim como pode ser visto na Figura \ref{figure:helio_cruzamento_1} e \ref{figure:helio_cruzamento_2}.
 
 Vale salientar que não foram encontrados atributos incompletos ou nulos. Porém uma das colunas possui dados inconsistentes com a realidade. Isso acontece pois, como pode ser visto na Tabela \ref{table:data} existem veículos com tamanho 0, o que é impossível. Por último, mas não menos importante, também deve-se notar que os fiscalizadores eletrônicos utilizados ficam próximos de semáforos, ou seja, existem momentos em que o fluxo diminui bastante, devido aos sinais vermelhos. 
@@ -84,17 +80,16 @@ Vale salientar que não foram encontrados atributos incompletos ou nulos. Porém
     \caption[Visão Espacial da Avenida Hélio Prates Provindos do Apple Maps]{Visão Espacial da Avenida Hélio Prates Provindos do Apple Maps}
 \end{figure}
 
-% TODO: especificar melhor onde estão os sensores e qual o cruzamento modificando a imagem, que nem a imagem maps/example.png
 \begin{figure}[htpb]
     \centering
-    \includegraphics[scale=0.6]{monography/img/maps/cruzamento_1.png}
+    \includegraphics[scale=0.3]{monography/img/Cruzamento1.png}
     \label{figure:helio_cruzamento_1}
     \caption[Visão Espacial do Cruzamento referente aos sensores \textbf{RSI128}, \textbf{RSI129}, \textbf{RSI017} e \textbf{RSI018}]{Visão Espacial do Cruzamento referente aos sensores \textbf{RSI128}, \textbf{RSI129}, \textbf{RSI017} e \textbf{RSI018}}
 \end{figure}
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[scale=0.6]{monography/img/maps/cruzamento_2.png}
+    \includegraphics[scale=0.4]{monography/img/cruzamento2.png}
     \label{figure:helio_cruzamento_2}
     \caption[Visão Espacial do Cruzamento referente aos sensores \textbf{RSI131}, \textbf{RSI132}, \textbf{RSI032} e \textbf{RSI033}]{Visão Espacial do Cruzamento referente aos sensores \textbf{RSI131}, \textbf{RSI132}, \textbf{RSI032} e \textbf{RSI033}}
 \end{figure}
@@ -114,9 +109,3 @@ Além disso, existem casos e cenários que os fiscalizadores eletrônicos não s
     \item Carros transitando em velocidades ilegais na falta de presença de fiscalização eletrônica.
 \end{itemize}
 
-\section{Descrição do Problema}
-% TODO?: colocar uma imagem que reflita o problema.
-
-% TODO: é viável, modificar
-
-Visto as limitações dos dados disponíveis é inviável a utilização de grande volume de dados de fluxo na tarefa de predição. É necessário um modelo que seja capaz de identificar características relevantes e padrões a partir desta quantidade limitada de dados para predição do fluxo no futuro. Sendo assim, nosso problema é encontrar o modelo mais adequado para a tarefa de predição no cenário de cruzamentos.

@@ -40,22 +40,30 @@
 \usepackage{listings}
 
 % add pseudo code in portuguese --------------------
+\usepackage{algorithm}
 \usepackage{algorithmic}
 
-\newcommand{\algorithmicrequire}{\textbf{Require:}}
-\newcommand{\algorithmicensure}{\textbf{Ensure:}}
-\newcommand{\algorithmiccomment}[1]{\{#1\}}
-\newcommand{\algorithmicend}{\textbf{end}}
-\newcommand{\algorithmicif}{\textbf{if}}
-\newcommand{\algorithmicthen}{\textbf{then}}
-\newcommand{\algorithmicelse}{\textbf{else}}
-\newcommand{\algorithmicelsif}{\algorithmicelse\ \algorithmicif}
-\newcommand{\algorithmicendif}{\algorithmicend\ \algorithmicif}
-\newcommand{\algorithmicfor}{\textbf{for}}
-\newcommand{\algorithmicforall}{\textbf{for all}}
-\newcommand{\algorithmicdo}{\textbf{do}}
-\newcommand{\algorithmicendfor}{\algorithmicend\ \algorithmicfor}
-\newcommand{\algorithmicwhile}{\textbf{while}}
+\floatname{algorithm}{Algoritmo}
+\renewcommand{\listalgorithmname}{Lista de Algoritmos}
+\renewcommand{\algorithmicrequire}{\textbf{Entrada:}}
+\renewcommand{\algorithmicensure}{\textbf{Saída:}}
+% \renewcommand{\algorithmicprocedure}{\textbf{procedimento}}
+\renewcommand{\algorithmicreturn}{\textbf{retorna}}
+\renewcommand{\algorithmiccomment}[1]{\{#1\}}
+% \renewcommand{\Not}{\textbf{não}\ }
+% \renewcommand{\And}{\textbf{e}\ }
+% \renewcommand{\Or}{\textbf{ou}\ }
+\renewcommand{\algorithmicend}{\textbf{fim}}
+\renewcommand{\algorithmicif}{\textbf{se}}
+\renewcommand{\algorithmicthen}{\textbf{então}}
+\renewcommand{\algorithmicelse}{\textbf{senão}}
+\renewcommand{\algorithmicelsif}{\algorithmicelse\ \algorithmicif}
+\renewcommand{\algorithmicendif}{\algorithmicend\ \algorithmicif}
+\renewcommand{\algorithmicfor}{\textbf{para}}
+\renewcommand{\algorithmicforall}{\textbf{para todo}}
+\renewcommand{\algorithmicdo}{\textbf{faça}}
+\renewcommand{\algorithmicendfor}{\algorithmicend\ \algorithmicfor}
+\renewcommand{\algorithmicwhile}{\textbf{enquanto}}
 % --------------------------------------------------
 
 % break line on url --------------------------------
@@ -74,7 +82,7 @@
     \capitulo{Introducao}{Introdução}
     \capitulo{Fundamentacao_Teorica}{Fundamentação Teórica}
     \capitulo{Trabalhos_Relacionados}{Trabalhos Relacionados}
-    \capitulo{Modelagem_Problema}{Modelagem do Problema}
+    \capitulo{Modelagem_Dados}{Modelagem dos Dados}
     \capitulo{Metodologia}{Metodologia}
     \capitulo{Resultados}{Resultados e Análise}
     \capitulo{Conclusao}{Conclusão e Trabalhos Futuros}
