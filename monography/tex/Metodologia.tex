@@ -40,59 +40,7 @@ Como visto na literatura, existem algumas maneiras de se fazer a predição de v
 
 Sendo assim, o conjunto de dados será transformado de uma série temporal de registros de veículos para uma série temporal de fluxos. Isto é, será calculado a quantidade de veículos que passaram por um local em um determinado intervalo de tempo. Além disso, também foram calculadas a velocidade média e a densidade no mesmo intervalo. Para definir o intervalo que foi utilizado, testou-se os valores de intervalo para 2.5, 5 e 7.5 minutos. Note que foram utilizados intervalos que sejam múltiplos de 15, visto que todos os tempos de predição no futuro serão múltiplos de 15.
 
-É preciso levar em consideração que quando se acumula os registros em um intervalo de tempo muito pequeno, o conjunto de dados apresenta muito ruído, dificultando a aprendizagem e afetando a qualidade da previsão. Em contrapartida, ao se aumentar o intervalo, o conjunto de dados pode se tornar muito pequeno, o que também pode dificultar a aprendizagem.
-
-Para se escolher qual dos intervalos seria o melhor para a predição, o tamanho do intervalo de fluxo será um dos parâmetros a serem escolhidos. Isto é, será realizado uma comparação entre os modelos para ver como que eles reagem. Abaixo também pode ser observado parte do código responsável por realizar esta transformação:
-
-\begin{algorithm}[H]
-\Entrada{o proprio texto}
-\Saida{como escrever algoritmos com \LaTeX2e }
-\Inicio{
-inicializa\c{c}\~ao\;
-\Repita{fim do texto}{
-leia o atual\;
-\uIf{entendeu}{
-vá para o próximo\;
-próximo se torna o atual\;}
-\Else{volte ao início da seção\;}
-}
-}
-\caption{Como escrever algoritmos no \LaTeX2e}
-\end{algorithm}
-
-\begin{lstlisting}[language=Python, caption = GetFlow Python Function]
-def get_flow (data, flow_interval, normalize, verbosity):
-  date = np.asarray(data['Date'])
-  weekDay = np.asarray(data['WeekDay'])
-  time = np.asarray(data['Time'])
-  speed = np.asarray(data['Speed'])
-  
-  dateControl = date[0]
-  timeBlock = flow_interval
-  countFlow = 0
-  accSpeed = 0
-  flowData = []
-
-  for i in range(len(date)):
-    if time[i] >= timeBlock: # init a new time block
-      flowData.append(get_flow_data(countFlow, accSpeed, weekDay[i])) 
-      timeBlock += flow_interval
-      accSpeed = 0
-      countFlow = 0
-      
-    if date[i] > dateControl: # reset on day change
-      dateControl = date[i]
-      timeBlock = flow_interval 
-      countFlow = 0
-      accSpeed = 0
-      
-    if time[i] < timeBlock: # add car on flow
-      countFlow += 1
-      accSpeed += speed[i]
-
-  return flowData
-
-\end{lstlisting}
+É preciso levar em consideração que quando se acumula os registros em um intervalo de tempo muito pequeno, o conjunto de dados apresenta muito ruído, dificultando a aprendizagem e afetando a qualidade da previsão. Em contrapartida, ao se aumentar o intervalo, o conjunto de dados pode se tornar muito pequeno, o que também pode dificultar a aprendizagem. Para se escolher qual dos intervalos seria o melhor para a predição, o tamanho do intervalo de fluxo será um dos parâmetros a serem escolhidos. Isto é, será realizado uma comparação entre os modelos para ver como que eles reagem. 
 
 \begin{table}[H]
     \begin{tabular}{cccccccccc}
@@ -174,6 +122,22 @@ Dos modelos não-paramétricos, se destacam o \textit{\acrfull{LSTM}} e o \texti
 % TODO: falar que estamos utilizando um modelo para cada tipo de viés (rf para arvores, etc)
 
 Todos os modelos não-paramétricos citados foram implementados para este trabalho. Quanto aos modelos paramétricos, foram testados dois modelos, sendo eles o \textit{\acrshort{ARIMA}} e o \textit{\acrshort{LR}}. Porém, ambos tiveram resultados inferiores em relação aos modelos não-paramétricos testados, sendo que ambos estavam utilizando os parâmetros padrões da biblioteca \textit{StatModels}. Além disso, \textit{\acrshort{ARIMA}} se mostrou extremamente custosos computacionalmente de se treinar e otimizar. Por estes dois motivos citados, os modelos paramétricos foram retirados dos experimentos.
+
+\begin{algorithm}[H]
+\Entrada{o proprio texto}
+\Saida{como escrever algoritmos com \LaTeX2e }
+\Inicio{
+inicializa\c{c}\~ao\;
+\Repita{fim do texto}{
+leia o atual\;
+\uIf{entendeu}{
+vá para o próximo\;
+próximo se torna o atual\;}
+\Else{volte ao início da seção\;}
+}
+}
+\caption{Como escrever algoritmos no \LaTeX2e}
+\end{algorithm}
 
 \subsection{Modelos de Comparação}
 
