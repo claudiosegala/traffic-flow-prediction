@@ -517,32 +517,26 @@ This implementation is based on [Random Forest Algorithm with Python and Scikit-
 from sklearn.ensemble import RandomForestRegressor
 
 def get_rf_tuned(X, Y, useB):
+  param_grid = {
+    'max_depth': [8, 16, 32, 64, None],
+    'n_estimators': [50, 100, 200, 400, 800],
+  }
+  model = sklearn.ensemble.RandomForestRegressor(max_features='auto', random_state=0)
+  scoring = 'neg_mean_squared_error'
   cv = WalkingForwardTimeSeriesSplit(n_splits=1)
+  n_jobs = 15
 
-  for train_index, test_index in cv.split(X):
-    X_train, X_test = X[train_index], X[test_index]
-    Y_train, Y_test = Y[train_index], Y[test_index]
+  grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
-    param_grid = {
-      'max_depth': [8, 16, 32, 64, None],
-      'n_estimators': [50, 100, 200, 400, 800],
-    }
-    model = sklearn.ensemble.RandomForestRegressor(max_features='auto', random_state=0)
-    scoring = 'neg_mean_squared_error'
-    cv = [(slice(None), slice(None))]
-    n_jobs = 15
+  grid_search.fit(X, Y)
+    
+  res = {
+      'params': param_grid,
+      'best_params': grid_search.best_params_,
+      'score': clean_cv_results(grid_search.cv_results_),
+  }
 
-    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
-
-    grid_search.fit(X_train, Y_train)
-      
-    res = {
-        'params': param_grid,
-        'best_params': grid_search.best_params_,
-        'score': clean_cv_results(grid_search.cv_results_),
-    }
-
-    return grid_search.best_estimator_, res
+  return grid_search.best_estimator_, res
 
 def get_rf():
   model = sklearn.ensemble.RandomForestRegressor(n_estimators=100, max_features='auto', random_state=0)
@@ -589,32 +583,26 @@ def random_forest(X, Y, useB=False, tune=False):
 from sklearn import svm
 
 def get_svm_tuned(X, Y, useB):
+  param_grid = {
+    'C': [1.0, 10.0, 100.0, 1000.0],
+    'gamma': list(np.logspace(-2, 2, 4)) + ['scale'],
+  }
+  model = svm.SVR(epsilon=0.2)
+  scoring = 'neg_mean_squared_error'
   cv = WalkingForwardTimeSeriesSplit(n_splits=1)
+  n_jobs = 15
 
-  for train_index, test_index in cv.split(X):
-    X_train, X_test = X[train_index], X[test_index]
-    Y_train, Y_test = Y[train_index], Y[test_index]
+  grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
-    param_grid = {
-      'C': [1.0, 10.0, 100.0, 1000.0],
-      'gamma': list(np.logspace(-2, 2, 4)) + ['scale'],
-    }
-    model = svm.SVR(epsilon=0.2)
-    scoring = 'neg_mean_squared_error'
-    cv = [(slice(None), slice(None))]
-    n_jobs = 15
+  grid_search.fit(X, Y)
+    
+  res = {
+      'params': param_grid,
+      'best_params': grid_search.best_params_,
+      'score': clean_cv_results(grid_search.cv_results_),
+  }
 
-    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
-
-    grid_search.fit(X_train, Y_train)
-      
-    res = {
-        'params': param_grid,
-        'best_params': grid_search.best_params_,
-        'score': clean_cv_results(grid_search.cv_results_),
-    }
-
-    return grid_search.best_estimator_, res
+  return grid_search.best_estimator_, res
 
 def get_svm():
   model = svm.SVR(gamma='scale', C=1.0, epsilon=0.2)
@@ -674,32 +662,26 @@ def create_lstm(input_shape):
   return create
 
 def get_lstm_tuned(X, Y, useB):
+  param_grid = {		
+    'n_units': [50, 75, 100, 125],
+    'learning_rate': [0.001, 0.002, 0.004, 0.008, 0.016]
+  }
+  model = KerasRegressor(build_fn=create_lstm((X.shape[1], X.shape[2])), validation_split=0.2, batch_size=64, epochs=15, verbose=0)
+  scoring = 'neg_mean_squared_error'
   cv = WalkingForwardTimeSeriesSplit(n_splits=1)
+  n_jobs = 15
 
-  for train_index, test_index in cv.split(X):
-    X_train, X_test = X[train_index], X[test_index]
-    Y_train, Y_test = Y[train_index], Y[test_index]
+  grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
+
+  grid_search.fit(X, Y)
     
-    param_grid = {		
-      'n_units': [50, 75, 100, 125],
-      'learning_rate': [0.001, 0.002, 0.004, 0.008, 0.016]
-    }
-    model = KerasRegressor(build_fn=create_lstm((X.shape[1], X.shape[2])), validation_split=0.2, batch_size=64, epochs=15, verbose=0)
-    scoring = 'neg_mean_squared_error'
-    cv = [(slice(None), slice(None))]
-    n_jobs = 15
+  res = {
+      'params': param_grid,
+      'best_params': grid_search.best_params_,
+      'score': clean_cv_results(grid_search.cv_results_),
+  }
 
-    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
-
-    grid_search.fit(X_train, Y_train)
-      
-    res = {
-        'params': param_grid,
-        'best_params': grid_search.best_params_,
-        'score': clean_cv_results(grid_search.cv_results_),
-    }
-
-    return grid_search.best_estimator_, res
+  return grid_search.best_estimator_, res
 
 def get_lstm(X):
   model = KerasRegressor(build_fn=create_lstm((X.shape[1], X.shape[2])), validation_split=0.2, batch_size=64, epochs=15, verbose=0)
@@ -762,32 +744,26 @@ def create_gru(input_shape):
   return create
 
 def get_gru_tuned(X, Y, useB):
+  param_grid = {		
+    'n_units': [50, 75, 100, 125],
+    'learning_rate': [0.001, 0.002, 0.004, 0.008, 0.016]
+  }
+  model = KerasRegressor(build_fn=create_gru((X.shape[1], X.shape[2])), validation_split=0.2, batch_size=64, epochs=15, verbose=0)
+  scoring = 'neg_mean_squared_error'
   cv = WalkingForwardTimeSeriesSplit(n_splits=1)
+  n_jobs = 15
 
-  for train_index, test_index in cv.split(X):
-    X_train, X_test = X[train_index], X[test_index]
-    Y_train, Y_test = Y[train_index], Y[test_index]
+  grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
+
+  grid_search.fit(X, Y)
     
-    param_grid = {		
-      'n_units': [50, 75, 100, 125],
-      'learning_rate': [0.001, 0.002, 0.004, 0.008, 0.016]
-    }
-    model = KerasRegressor(build_fn=create_gru((X.shape[1], X.shape[2])), validation_split=0.2, batch_size=64, epochs=15, verbose=0)
-    scoring = 'neg_mean_squared_error'
-    cv = [(slice(None), slice(None))]
-    n_jobs = 15
+  res = {
+      'params': param_grid,
+      'best_params': grid_search.best_params_,
+      'score': clean_cv_results(grid_search.cv_results_),
+  }
 
-    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
-
-    grid_search.fit(X_train, Y_train)
-      
-    res = {
-        'params': param_grid,
-        'best_params': grid_search.best_params_,
-        'score': clean_cv_results(grid_search.cv_results_),
-    }
-
-    return grid_search.best_estimator_, res
+  return grid_search.best_estimator_, res
 
 def get_gru(X):
   model = KerasRegressor(build_fn=create_gru((X.shape[1], X.shape[2])), validation_split=0.2, batch_size=64, epochs=15, verbose=0)
