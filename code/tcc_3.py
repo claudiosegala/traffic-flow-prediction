@@ -13,7 +13,8 @@ import statsmodels as sm # statistical models
 
 from keras.models import Sequential
 from keras.layers import Dense, Activation
-from keras.wrappers.scikit_learn import KerasClassifier
+from keras.optimizers import Adam, Adagrad
+from keras.wrappers.scikit_learn import KerasRegressor
 from sklearn.model_selection import GridSearchCV
 
 """## Configurations"""
@@ -22,10 +23,16 @@ import tensorflow as tf # machine learning library
 import os
 
 os.environ['PYTHONHASHSEED'] = '0'
-tf.reset_default_graph()
-tf.set_random_seed(0)
+tf.compat.v1.reset_default_graph()
+tf.compat.v1.random.set_random_seed(0)
 np.random.seed(0)
 random.seed(0)
+
+# 5. Configure a new global `tensorflow` session
+from keras import backend as K
+session_conf = tf.compat.v1.ConfigProto(intra_op_parallelism_threads=1, inter_op_parallelism_threads=1)
+sess = tf.compat.v1.Session(graph=tf.compat.v1.get_default_graph(), config=session_conf)
+K.set_session(sess)
 
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
@@ -523,7 +530,7 @@ def get_rf_tuned(X, Y, useB):
     model = sklearn.ensemble.RandomForestRegressor(max_features='auto', random_state=0)
     scoring = 'neg_mean_squared_error'
     cv = [(slice(None), slice(None))]
-    n_jobs = 30
+    n_jobs = 15
 
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
@@ -595,7 +602,7 @@ def get_svm_tuned(X, Y, useB):
     model = svm.SVR(epsilon=0.2)
     scoring = 'neg_mean_squared_error'
     cv = [(slice(None), slice(None))]
-    n_jobs = 30
+    n_jobs = 15
 
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
@@ -654,16 +661,16 @@ def support_vector_machine(X, Y, useB=False, tune=False):
 from keras.layers import LSTM
 
 def create_lstm(input_shape):
-  def create(n=100, activation='sigmoid'):
+  def create(n_units=100, learning_rate=0.001):
     model = Sequential()		
 
-    model.add(LSTM(n, activation=activation, input_shape=input_shape))		
+    model.add(LSTM(n_units, activation='sigmoid', input_shape=input_shape))		
     model.add(Dense(1))		
 
-    model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])	
+    model.compile(optimizer=Adam(lr=learning_rate), loss='mse', metrics = ["accuracy"])
 
-    return model
-
+    return model		
+    
   return create
 
 def get_lstm_tuned(X, Y, useB):
@@ -674,13 +681,13 @@ def get_lstm_tuned(X, Y, useB):
     Y_train, Y_test = Y[train_index], Y[test_index]
     
     param_grid = {		
-      'n': [50, 100, 200, 400, 800],
-      'batch_size': [8, 16, 32, 64]
+      'n_units': [50, 75, 100, 125],
+      'learning_rate': [0.001, 0.002, 0.004, 0.008, 0.016]
     }
-    model = KerasClassifier(build_fn=create_lstm((X.shape[1], X.shape[2])), validation_split=0.2, epochs=15, verbose=0)
+    model = KerasRegressor(build_fn=create_lstm((X.shape[1], X.shape[2])), validation_split=0.2, batch_size=64, epochs=15, verbose=0)
     scoring = 'neg_mean_squared_error'
     cv = [(slice(None), slice(None))]
-    n_jobs = 30
+    n_jobs = 15
 
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
@@ -695,7 +702,7 @@ def get_lstm_tuned(X, Y, useB):
     return grid_search.best_estimator_, res
 
 def get_lstm(X):
-  model = KerasClassifier(build_fn=create_lstm((X.shape[1], X.shape[2])), validation_split=0.2, batch_size=64, epochs=15, verbose=0)
+  model = KerasRegressor(build_fn=create_lstm((X.shape[1], X.shape[2])), validation_split=0.2, batch_size=64, epochs=15, verbose=0)
   res = {}
 
   return model, res
@@ -742,13 +749,13 @@ def long_short_term_memory(X, Y, useB=False, tune=False):
 from keras.layers import GRU
 
 def create_gru(input_shape):
-  def create(n=100, activation='sigmoid'):
+  def create(n_units=100, learning_rate=0.001):
     model = Sequential()		
 
-    model.add(GRU(n, activation=activation, input_shape=input_shape))		
+    model.add(GRU(n_units, activation='sigmoid', input_shape=input_shape))		
     model.add(Dense(1))		
 
-    model.compile(optimizer='adam', loss='mse', metrics = ["accuracy"])		
+    model.compile(optimizer=Adam(lr=learning_rate), loss='mse', metrics = ["accuracy"])
 
     return model		
     
@@ -762,13 +769,13 @@ def get_gru_tuned(X, Y, useB):
     Y_train, Y_test = Y[train_index], Y[test_index]
     
     param_grid = {		
-      'n': [50, 100, 200, 400, 800],
-      'batch_size': [8, 16, 32, 64]
+      'n_units': [50, 75, 100, 125],
+      'learning_rate': [0.001, 0.002, 0.004, 0.008, 0.016]
     }
-    model = KerasClassifier(build_fn=create_gru((X.shape[1], X.shape[2])), validation_split=0.2, epochs=15, verbose=0)
+    model = KerasRegressor(build_fn=create_gru((X.shape[1], X.shape[2])), validation_split=0.2, batch_size=64, epochs=15, verbose=0)
     scoring = 'neg_mean_squared_error'
     cv = [(slice(None), slice(None))]
-    n_jobs = 30
+    n_jobs = 15
 
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
@@ -783,7 +790,7 @@ def get_gru_tuned(X, Y, useB):
     return grid_search.best_estimator_, res
 
 def get_gru(X):
-  model = KerasClassifier(build_fn=create_gru((X.shape[1], X.shape[2])), validation_split=0.2, batch_size=64, epochs=15, verbose=0)
+  model = KerasRegressor(build_fn=create_gru((X.shape[1], X.shape[2])), validation_split=0.2, batch_size=64, epochs=15, verbose=0)
   res = {}
 
   return model, res
@@ -845,12 +852,12 @@ def run_models(tune=False):
   X_a, Y_a = generate_dataset(data, False, N_STEPS, N_FUTURE)
   X_b, Y_b = generate_dataset(data, True, N_STEPS, N_FUTURE)
 
-  moving_average(X_a, Y_a)
-  naive(X_a, Y_a)
+  # moving_average(X_a, Y_a)
+  # naive(X_a, Y_a)
   # random_forest(X_a, Y_a, useB=False, tune=tune)
-  random_forest(X_b, Y_b, useB=True, tune=tune)
-  support_vector_machine(X_a, Y_a, useB=False, tune=tune)
-  support_vector_machine(X_b, Y_b, useB=True, tune=tune)
+  # random_forest(X_b, Y_b, useB=True, tune=tune)
+  # support_vector_machine(X_a, Y_a, useB=False, tune=tune)
+  # support_vector_machine(X_b, Y_b, useB=True, tune=tune)
   long_short_term_memory(X_a, Y_a, useB=False, tune=tune)
   long_short_term_memory(X_b, Y_b, useB=True, tune=tune)
   gated_recurrent_unit(X_a, Y_a, useB=False, tune=tune)
