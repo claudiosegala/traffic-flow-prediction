@@ -1,10 +1,4 @@
-% TODO?: Usar a metodologia do Fábio como inspiração
-
-% TODO: Incluir métricas de precisão
-
-% TODO?: Falar sobre a especificação do ambiente
-
-Este capítulo tem como objetivo explicar como foram realizadas as comparações dos modelos quanto as suas predições, assim como mostrado na Figura \ref{figure:metodologia}. Primeiramente será discutido os pré-processamentos dos dados, seguindo para os modelos, incluindo a razão por estes terem sido incluídos. Logo após será discutido como as otimizações foram feitas e como fora feita a avaliação dos modelos.
+Esse capítulo tem como objetivo mostrar a metodologia utilizada para atingir o objetivo do trabalho. A Figura \ref{figure:metodologia} mostra, de maneira geral, o esquema da metodologia proposta. Primeiramente, será discutido o ambiente de experimento. Em seguida, será explicitado como os dados foram pré-processados. Por último, será discutido a escolha e implementação dos modelos e as métricas de avaliação utilizadas, assim como qual foi o ambiente de teste utilizado.
 
 \begin{figure}
     \centering
@@ -14,17 +8,16 @@ Este capítulo tem como objetivo explicar como foram realizadas as comparações
 \end{figure}
 
 \section{Ambiente de Experimento}
-% TODO: get more information about this
 
-O ambiente de experimento foi um servidor equipado com Ubuntu. O servidor possui dois CPUs \textit{Intel(R) Xeon(R) Platinum 8160 CPU @ 2.10GHz} e 251 GiB de memória principal.
+O ambiente de experimento foi um servidor equipado com Ubuntu 64 bits. O servidor possui dois CPUs \textit{Intel(R) Xeon(R) Platinum 8160 CPU @ 2.10GHz} e 251 GiB de memória principal. Cada CPU dessas possui 24 núcleos e executa até 48 \textit{threads} em paralelo. No total então são 96 \textit{threads}, que foram usados paralelamente para acelerar a execução do experimento. Porém, em algumas partes da execução, menos \textit{threads} tiveram que ser usadas, pois não havia memória principal o suficiente para todas as instâncias em paralelo.
 
 \section{Pré-Processamento dos Dados}
 
-Nesta etapa serão feitas remoções de inconsistências e transformações nos dados da Tabela \ref{table:data} para melhorar o aprendizado dos modelos. Assim como também será mostrado como os conjuntos de dados para treinamento e teste foram definidos.
+Nesta etapa serão feitos ajustes no conjunto de dados inicial, como remoções de inconsistências e transformações nos dados mostrados na Tabela \ref{table:data}. Esse ajustes têm como propósito melhorar a aprendizagem dos modelos que serão utilizados. Subsequentemente, será mostrado como os conjuntos de treino e teste foram criados a partir do conjunto de dados e das variações do modelo. Por fim, é realizado uma exploração da sazonalidade do fluxo.
 
 \subsection{Limpeza dos Dados}
 
-Para realizar a limpeza dos dados, as colunas que não são relevantes para o treinamento dos modelos serão removidas. São elas:
+No conjunto de dados inicial existem colunas que não são relevantes para o problema, ou possuem algum tipo de inconsistência. Devido a este fato, as colunas a seguir serão removidas:
 
 \begin{itemize}
     \item \texttt{Faixa}
@@ -33,55 +26,21 @@ Para realizar a limpeza dos dados, as colunas que não são relevantes para o tr
     \item  \texttt{Tamanho do Veículo}
 \end{itemize}
 
-A coluna \texttt{Faixa} será removida, pois nas transformações que virão a seguir, esse dado se tornará desnecessário, visto que o objetivo deste trabalho é prever o fluxo na via como um todo e não em faixas específicas. A coluna \texttt{Hora} será removida, pois com o intervalo de fluxo, já é possível saber a qual momento do dia se refere determinado registro. Além disso, para utilizar a hora propriamente dita como entrada dos modelos, seria necessária uma análise mais minuciosa de como tratá-la, o que foge do escopo definido pelo trabalho. A coluna \texttt{Limite de Velocidade da Via} será removida, pois este dado tem seu valor repetido ao longo de todos os registros, ou seja, é uma constante em todo o conjunto de dados e não afeta no treinamento dos modelos. A coluna \texttt{Tamanho do Veículo} será removida, pois não foi medida de forma precisa, visto que existem registros com veículos de tamanho zero (o que não é fisicamente possível).
+A coluna \texttt{Faixa} será removida, pois nas transformações que virão a seguir, esse dado se tornará desnecessário, visto que o objetivo deste trabalho é prever o fluxo na via como um todo e não em faixas específicas. A coluna \texttt{Hora} será removida, pois com o intervalo de fluxo, já é possível saber a qual momento do dia se refere determinado registro. Além disso, para utilizar a hora propriamente dita como entrada dos modelos, seria necessária uma análise mais minuciosa de como tratá-la, o que foge do escopo definido pelo trabalho. A coluna \texttt{Limite de Velocidade da Via} será removida, pois este dado tem seu valor repetido ao longo de todos os registros, isto é, o valor é constante em todo o conjunto de dados e não afeta no treinamento dos modelos. A coluna \texttt{Tamanho do Veículo} será removida, pois não foi medida de forma precisa, visto que existem registros com veículos de tamanho zero (o que não é fisicamente possível).
 
 \subsection{Transformação dos Dados}
 
-A transformação dos dados se torna necessária nas colunas cujo o valor representado por elas pode gerar ambiguidade. Isto é, pode causar interpretações que não são necessariamente verdade. Tome como exemplo a coluna \texttt{Data}: Caso fosse utilizada sem tratamento nos modelos, ficaria a cargo dos mesmos extrair muitos dos significados por trás dos seus valores. Como por exemplo: qual o dia da semana e o dia do mês referente àquela data? A qual a estação do ano aquele dia específico pertence? Então, para facilitar o aprendizado e evitar falsas suposições, foi utilizado o método \textit{one-hot encoding} para transformar a coluna de \texttt{Data} em 7 colunas \textit{booleanas} que representam os dias da semana. Este tipo de tratamento se torna necessário devido ao fato de que o dia da semana é uma variável qualitativa e, caso fosse representada como quantitativa, (0 como domingo e 1 como segunda, por exemplo) o modelo poderia realizar inferências, como "segunda" é maior que "quarta", ou analogias similares.
+A transformação dos dados se torna útil quando um tipo de dado pode ser representado de outra forma, em geral mais simples, que ajude no treinamento do modelo. No caso, a coluna \texttt{Data} será transformada, pois existem diversas informações subtendidas em uma data como dia da semana, se é feriado, início ou fim do mês, entre outros. Essas informações que podem ser extraídas de uma data podem ter uma relação direta ou indireta com o comportamento de uma via. Visto que a quantidade de dados que temos não chega nem a cobrir todas as datas de 1 ano, se torna difícil para os modelos aprenderem a extrair e utilizar essas informações. 
+
+Sendo assim, a coluna \texttt{Data} será simplificada para o dia da semana, dado que o fluxo aparenta apresentar comportamentos similares nos mesmos dias da semana. Para evitar falsas suposições do modelo, será utilizado a técnica \textit{one hot encoding} para transformar essa coluna \texttt{Data} e 7 colunas diferentes (uma para cada dia da semana). Cada uma dessas colunas terá valores 1 ou 0 para representar se é ou não um certo dia da semana. Isso é necessário, pois caso fosse uma coluna quantitativa (0 representando domingo e 1 representando segunda, por exemplo) o modelo poderia realizar inferências, como "segunda" é maior que "quarta", ou analogias similares.
 
 \subsection{Acumulação dos registros}
 
-% TODO: mAdicionar referencia de artigos que usem fluxo para fazer prediçao.
-Como visto na literatura, existem algumas maneiras de se fazer a predição de veículos em uma via. Seja pelo fluxo, pela densidade, ou pela velocidade média dos carros, por exemplo. Neste trabalho, optou-se por utilizar o fluxo como método de predição.
+Como visto na literatura, existem algumas maneiras de se fazer a predição de veículos em uma via. Seja pelo fluxo, pela densidade, ou pela velocidade média dos carros, por exemplo. Neste trabalho, optou-se por utilizar o fluxo como método de predição, seguindo o padrão visto em \cite{lana_2018}.
 
-% TODO: Falar que aproveitamos e adicionamos no multivariado a densidade e a velocidade média
-Sendo assim, será transformado o conjunto de dados de uma série temporal de registro de veículos para uma série temporal de fluxos. Isto é, será calculado a quantidade de veículos que passaram por um local em um determinado intervalo de tempo. Para definir o intervalo que utilizado, testou-se os valores de intervalo para 1, 2.5, 5 e 7.5 minutos. Note que foram utilizados intervalos que sejam múltiplos de 15, visto que todos os tempos de predição no futuro serão múltiplos de 15.
+Sendo assim, o conjunto de dados será transformado de uma série temporal de registros de veículos para uma série temporal de fluxos. Isto é, será calculado a quantidade de veículos que passaram por um local em um determinado intervalo de tempo. Além disso, também foram calculadas a velocidade média e a densidade no mesmo intervalo. Para definir o intervalo que foi utilizado, testou-se os valores de intervalo para 2.5, 5 e 7.5 minutos. Note que foram utilizados intervalos que sejam múltiplos de 15, visto que todos os tempos de predição no futuro serão múltiplos de 15.
 
-Após os testes, constatou-se que os melhores resultados foram com a acumulação dos registros em um intervalo de 7.5 minutos. Isso se deve, em parte, ao fato de que quando se acumula os registros em um intervalo de tempo muito pequeno, o conjunto de dados apresenta muito ruído, dificultando a aprendizagem e afetando a qualidade da previsão. Em contrapartida, ao se aumentar o intervalo, o conjunto de dados pode se tornar muito pequeno, o que pode dificultar a aprendizagem. Visto isso, observou-se que 7.5 minutos obteve o resultado mais equilibrado, pois como a primeira previsão é para 15 minutos no futuro, não poderia ser utilizado um intervalo que não fosse divisor de 15, nem maior que 15. Ao final da transformação, tem-se um conjunto de dados similar ao mostrado na Tabela \ref{table:data_pre}. Abaixo também pode ser observado parte do código responsável por realizar esta transformação:
-
-\begin{lstlisting}[language=Python, caption = GetFlow Python Function]
-def get_flow (data, flow_interval, normalize, verbosity):
-  date = np.asarray(data['Date'])
-  weekDay = np.asarray(data['WeekDay'])
-  time = np.asarray(data['Time'])
-  speed = np.asarray(data['Speed'])
-  
-  dateControl = date[0]
-  timeBlock = flow_interval
-  countFlow = 0
-  accSpeed = 0
-  flowData = []
-
-  for i in range(len(date)):
-    if time[i] >= timeBlock: # init a new time block
-      flowData.append(get_flow_data(countFlow, accSpeed, weekDay[i])) 
-      timeBlock += flow_interval
-      accSpeed = 0
-      countFlow = 0
-      
-    if date[i] > dateControl: # reset on day change
-      dateControl = date[i]
-      timeBlock = flow_interval 
-      countFlow = 0
-      accSpeed = 0
-      
-    if time[i] < timeBlock: # add car on flow
-      countFlow += 1
-      accSpeed += speed[i]
-
-  return flowData
-
-\end{lstlisting}
+É preciso levar em consideração que quando se acumula os registros em um intervalo de tempo muito pequeno, o conjunto de dados apresenta muito ruído, dificultando a aprendizagem e afetando a qualidade da previsão. Em contrapartida, ao se aumentar o intervalo, o conjunto de dados pode se tornar muito pequeno, o que também pode dificultar a aprendizagem. Para se escolher qual dos intervalos seria o melhor para a predição, o tamanho do intervalo de fluxo será um dos parâmetros a serem escolhidos. Isto é, será realizado uma comparação entre os modelos para ver como que eles reagem. 
 
 \begin{table}[H]
     \begin{tabular}{cccccccccc}
@@ -126,12 +85,23 @@ def get_flow (data, flow_interval, normalize, verbosity):
     \caption{Amostra do pré-processamento dos dados ao se utilizar 7.5 minutos de intervalo do sensor RSI128}
 \end{table}
 
-No final do pré-processamento o resultado possuirá 3 colunas quantitativas e 7 qualitativas. As colunas de \textit{Density} e \textit{Average Speed} são contínuas e a coluna \textit{Flow} é discreto. As outras 7 colunas representam uma classificação indicando se é ou não (0 representa falso e 1 verdadeiro) um certo dia da semana, sendo assim uma coluna qualitativa ordinal.
+No final do pré-processamento o resultado possuirá 3 colunas quantitativas e 7 qualitativas. As colunas de \textit{Density} e \textit{Average Speed} são contínuas e a coluna \textit{Flow} é discreta. As outras 7 colunas representam uma classificação indicando se é ou não (0 representa falso e 1 verdadeiro) um certo dia da semana, sendo assim uma coluna qualitativa ordinal.
 
-Vale notar que como o período é o mesmo para qualquer dos sensores, ao se acumular os registros, o tamanho do conjunto de dados será o mesmo. Isto é, será equivalente ao intervalo de tempo do conjunto de dados, 92 dias, divido pelo tempo de agregação, 7.5 minutos, o que gera 17.664 registros de fluxo dos 536.879 registros de passagem de veículos.
+Vale notar que, como o período é o mesmo para qualquer um dos sensores, ao se acumular os registros, o tamanho do conjunto de dados será sempre igual. Isto é, será equivalente ao intervalo de tempo do conjunto de dados, 92 dias, divido pelo tempo de agregação de fluxo (7.5 minutos), o que gera 17.664 registros de fluxo dos 536.879 registros de passagem de veículos disponíveis.
+
+\subsection{Normalização dos Dados}
+% TODO: adicionar referência do porque normalizar dados
+Na área de aprendizagem de máquina, é comum vermos modelos de predições para diferentes tipo de variáveis. Por vezes, os valores assumidos por essas variáveis podem apresentar um domínio grande demais, como no caso da predição de valores de ações da bolsa de valores. Com valores em um intervalo tão grande, o treinamento dos modelos tende a piorar. Para contornar este problema, é comum utilizar técnicas que visam diminuir o intervalo de valores que as variáveis podem assumir. Uma destas técnicas é a normalização. 
+
+Em um dos tipos da normalização, utiliza-se o maior e o menor valor que o seu conjunto de dados atinge para ajustar os valores intermediários. Por exemplo, o maior fluxo calculado foi 94 veículos para o sensor \textbf{RSI128} com acumulação de 7,5 minutos e o menor foi 0. Assim, foram ajustados os valores do conjunto de dados dentro de um intervalo entre 0 e 1, com 0 representando o menor valor e 60, o maior valor. Porém, os testes realizados mostraram que a normalização não trouxe melhorias significativas para as predições deste trabalho, apresentando, inclusive, resultados levemente piores em alguns modelos. Por este motivo, optou-se por continuar os experimentos sem normalização.
+
+\subsection{Criação dos Conjunto de Treino e Teste}
+
+Será utilizado o conjunto dos dados pré-processados (\(D\)) para gerar o conjunto de dados de treino (\(X\)) e teste (\(Y\)). Cada elemento (\(x_i\)) do conjunto de treino  será uma série temporal dos atributos. Essa série temporal representa uma visão contínua limitada do passado ao presente momento. Ou seja, cada elemento de treino será uma subsequência de \(D\) de tamanho \(m\), com cada instância (\(x_{i, j}\)) será uma das linhas da Tabela \ref{table:data_pre}. Para o conjunto de testes, cada elemento (\(y_i\)) será o fluxo no futuro (\(x_{i + k, m_{flow}}\)). Para fins de análise, será utilizado o conjunto de treino para gerar um outro mais simples. Este possuirá somente o fluxo, permitindo assim verificar se as colunas de \texttt{Average Speed}, \texttt{Density} e as de dias da semana melhoram a performance do modelo. 
+
+Os modelos no entanto não possuem uma entrada parecida. Logo, é necessário adaptar o conjunto de testes os modelos. Uma versão será para os modelos de aprendizagem profunda (\textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}}) com três dimensões (amostras por passos por atributos), assim como mostrado acima. A outra versão será para os modelos tradicionais (\textit{\acrshort{RF}} e \textit{\acrshort{SVM}}), que terá somente duas dimensões (amostras por atributos). Ou seja, \(x'_i\), nesse caso, não é uma lista de tupla e sim somente uma tupla com todos os elementos da lista de tupla.
 
 \subsection{Sazonalidade dos dados}
-
 
 Na Figura \ref{figure:flow_discution} é mostrado o resultado da agregação dos registros de veículos em um intervalo de 7.5 minutos. É possível observar que existem flutuações na quantidade de fluxo de veículo de acordo com o dia. Este fato fica mais evidente se observarmos o primeiro pico do gráfico, referente ao Domingo, pois este apresenta um menor fluxo de veículos, o que é esperado que aconteça em um dia não comercial. Isso mostra que os dados apresentam certa sazonalidade. Esta sazonalidade se manifesta em várias escalas, no gráfico mostrado é possível ver apenas a sazonalidade referente aos dias da semana, mas ela também se aplica, por exemplo, a semana do mês, ao mês do ano, etc. Por este motivo, o escopo deste trabalho foi definido apenas para os 3 meses de dados disponíveis. 
 
@@ -143,31 +113,31 @@ Na Figura \ref{figure:flow_discution} é mostrado o resultado da agregação dos
     \caption[Fluxo da Primeira Semana]{Fluxo da Primeira Semana}
 \end{figure}
 
-\subsection{Normalização dos Dados}
-% TODO: adicionar referência do porque normalizar dados
-Na área de aprendizagem de máquina, é comum vermos modelos de predições para diferentes tipo de variáveis. Por vezes, os valores assumidos por essas variáveis podem apresentar um domínio grande demais, como no caso da predição de valores de ações da bolsa de valores. Com valores em um intervalo tão grande, o treinamento dos modelos tende a piorar. Para contornar este problema, é comum utilizar técnicas que visam diminuir o intervalo de valores que as variáveis podem assumir. Uma destas técnicas é a normalização. 
-
-Em um dos tipos da normalização, utiliza-se o maior e o menor valor que o seu conjunto de dados atinge para ajustar os valores intermediários. Por exemplo, o maior fluxo calculado foi 94 veículos para o sensor \textbf{RSI128} com acumulação de 7,5 minutos e o menor foi 0. Assim, ajustamos os valores do conjunto de dados dentro de um intervalo entre 0 e 1, com 0 representando o menor valor e 60, o maior valor. Porém, nos nosso testes a normalização piorou os resultados, então decidimos continuar sem normalização.
-
-\subsection{Produção dos Conjunto de Dados}
-
-Será utilizado o conjunto de dados pré-processados para gerar o conjunto de dados de treino e teste. Cada elemento do conjunto de treino será série temporal de atributos. Ou seja, cada elemento de treino terá \(n\) instâncias do passado, cada instância será uma das linhas da Tabela \ref{table:data_pre_norm}. Para o conjunto de testes, cada elemento será o fluxo corresponde no futuro.
-
-% TODO: adicionar imagem ou formulas matemáticas para melhorar o entendimento
-
-Para se adaptar aos modelos, serão gerados duas versões do conjunto de dados de treino e teste. Uma versão será para os modelos tradicionais (\textit{\acrshort{RF}} e \textit{\acrshort{SVM}}), que terá somente duas dimensões (amostras por atributos) e a outra para os modelos de aprendizagem profunda (\textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}}) com três dimensões (amostras por passos por atributos).
-
-Para fins de análise, utiliza-se o conjunto de dados de treino para gerar um outro conjunto de dados de treino mais simples. Este conjunto mais simples possuirá somente o fluxo, permitindo assim verificar se as colunas de \texttt{VelocidadeMédia}, \texttt{Density} e as de dias da semana melhoram a performance do modelo. Deste modo, tem-se um conjunto de dados uni-variado, isto é, possuirá somente um tipo de variável, o fluxo. E o outro será multi-variado, isto é, possuirá vários tipos de variáveis, sendo elas o fluxo, a velocidade média no intervalo e o dia da semana.
-
-\section{Modelos}
+\section{Modelos Desenvolvidos}
 
 Visto que a predição do fluxo é o foco do trabalho, que temos um conjunto de pares entrada e saída, e que que o fluxo é quantitativo. Será utilizado técnicas de aprendizagem de máquina supervisionadas de regressão para prever a curto prazo o fluxo da via. Dentre essas técnicas, podemos dividi-las novamente em paramétricos e não-paramétricos.
 
-Dos modelos não-paramétricos, se destacam o \textit{\acrfull{LSTM}} e o \textit{\acrfull{GRU}}, sendo ambos \textit{\acrshort{RNN}}'s. Quanto ao \textit{\acrfull{LSTM}}, vale ressaltar que existem diversas variações e implementações. Porém, como Greff et al mostrou em \cite{Greff_2015}, as enormes variedades de \textit{\acrshort{LSTM}} não possuem tantas diferenças quanto a qualidade de suas previsões. Por este motivo, este trabalho utilizou o \textit{\acrfull{LSTM}} comum. Dos modelos paramétricos, o mais utilizado na literatura para previsão de fluxo é o \textit{\acrfull{ARIMA}} e suas variações \cite{doi:10.1080/01441647.2014.992496}, além de modelos mais simples como \textit{\acrfull{LR}}. 
+Dos modelos não-paramétricos, se destacam o \textit{\acrfull{LSTM}} e o \textit{\acrfull{GRU}}, sendo ambos \textit{\acrshort{RNN}}'s. Quanto ao \textit{\acrfull{LSTM}}, vale ressaltar que existem diversas variações e implementações. Porém, segundo Greff et. al. \cite{Greff_2015} as variações da \textit{\acrshort{LSTM}} não possuem tantas diferenças quanto a qualidade de suas previsões. Por este motivo, este trabalho utilizou o \textit{\acrfull{LSTM}} comum. Dos modelos paramétricos, o mais utilizado na literatura para previsão de fluxo é o \textit{\acrfull{ARIMA}} e suas variações \cite{doi:10.1080/01441647.2014.992496}, além de modelos mais simples como \textit{\acrfull{LR}}. 
 
 % TODO: falar que estamos utilizando um modelo para cada tipo de viés (rf para arvores, etc)
 
 Todos os modelos não-paramétricos citados foram implementados para este trabalho. Quanto aos modelos paramétricos, foram testados dois modelos, sendo eles o \textit{\acrshort{ARIMA}} e o \textit{\acrshort{LR}}. Porém, ambos tiveram resultados inferiores em relação aos modelos não-paramétricos testados, sendo que ambos estavam utilizando os parâmetros padrões da biblioteca \textit{StatModels}. Além disso, \textit{\acrshort{ARIMA}} se mostrou extremamente custosos computacionalmente de se treinar e otimizar. Por estes dois motivos citados, os modelos paramétricos foram retirados dos experimentos.
+
+\begin{algorithm}[H]
+\Entrada{o proprio texto}
+\Saida{como escrever algoritmos com \LaTeX2e }
+\Inicio{
+inicializa\c{c}\~ao\;
+\Repita{fim do texto}{
+leia o atual\;
+\uIf{entendeu}{
+vá para o próximo\;
+próximo se torna o atual\;}
+\Else{volte ao início da seção\;}
+}
+}
+\caption{Como escrever algoritmos no \LaTeX2e}
+\end{algorithm}
 
 \subsection{Modelos de Comparação}
 
@@ -220,52 +190,42 @@ Para \textit{\acrshort{SVM}} os hiper-parâmetros ...
 \end{itemize}
 
 \section{Avaliação Final}
-% TODO: Justificar que não podemos usar MAPE como avaliação, pois nosso dataset inclui zeros (https://stats.stackexchange.com/questions/280464/is-mape-a-good-error-measurement-statistic-and-what-alternatives-are-there)
 
-% TODO: worth a reading to complement the reason why we use normalised version (https://stats.stackexchange.com/questions/10289/whats-the-difference-between-normalization-and-standardization)
-
-% TODO: Explicar porque tem que ser utilizado janela deslizante em séries temporais, onde acho um artigo sobre isso?
-
-% TODO: Falar das principais métricas usadas na literatura e colocar a referência.
-
-Visto que os dados deste trabalho são séries temporais, realizou-se vários testes utilizando uma janela deslizante. Desta forma, foi possível testar os modelos sobre um conjunto de testes maior. Dessa forma, foi possível ter uma análise melhor de como os modelos se comportam com diferentes janelas de treinamento e teste. Todos os modelos serão treinados e testados com os mesmos subconjuntos de dados, para fins de comparação. Como métricas, fora utilizados \acrshort{MAE}, \acrshort{RMSE} e \acrshort{NRMSE}. 
+Na literatura é comum serem utilizados as métricas \textit{\acrfull{RMSE}} e \textit{\acrfull{MAPE}}, mesmo que elas não sejam as melhores métricas \cite{lana_2018}. Porém, como pode ser visto na Equação \ref{eq:mape}, \textit{\acrshort{MAPE}} possui divisão pelo \({y_i}\) e este pode ser zero. Logo, \textit{\acrshort{MAPE}} foi descartado. 
 
 \begin{equation}
-MAE = \frac{1}{n} \times \sum_{i=1}^{n} \quad \abs{result_i - expected_i}
+\label{eq:mape}
+MAPE = \frac{100\%}{n} \times \sum_{i=1}^{n} \quad \abs{\frac{y_i - \hat{y_i}}{y_i}}
+\end{equation}
+
+Para substituir o \textit{\acrshort{MAPE}}, iremos utilizar o \textit{\acrfull{MAE}}. Sendo assim as métricas de erro dos modelos são \textit{\acrshort{MAE}} (Equação \ref{eq:mae}) e \textit{\acrshort{RMSE}} (Equação \ref{eq:rmse}).
+
+\begin{equation}
+\label{eq:mae}
+MAE = \frac{1}{n} \times \sum_{i=1}^{n} \quad \abs{y_i - \hat{y_i}}
 \end{equation}
 
 \begin{equation}
-RMSE = \sqrt{ \frac{1}{n} \times \sum_{i=1}^{n} \quad (result_i - expected_i) ^ 2}
+\label{eq:rmse}
+RMSE = \sqrt{ \frac{1}{n} \times \sum_{i=1}^{n} \quad (y_i - \hat{y_i}) ^ 2}
 \end{equation}
 
-\begin{equation}
-\sigma = \sqrt{ \frac{1}{n} \times \sum_{i=1}^{n} \quad (result_i - \overline{result}) ^ 2}
-\end{equation}
+Além disso, adicionalmente será avaliado quanto a precisão (\(\alpha\)). Essa precisão é quanto a capacidade de prever se o fluxo irá aumentar ou diminuir, isto é:
 
 \begin{equation}
-NRMSE = \frac{RMSE(result, expected)}{\sigma(expected)}
-\end{equation}
-
-As duas primeiras métricas podem ser encontradas na literatura para avaliação dos modelos de predição de fluxo, a última é uma métrica utilizada para permitir comparações entre modelos que usam conjunto de dados diferentes, visto que ao ser normalizado ele perde a correlação com o conjunto de dados. Essas medições serão feitas para cada tempo de previsão discutido.
-
-Além disso, será avaliado quanto a precisão (\(\alpha\)). No caso, será analisado com qual precisão o modelo consegue prever se o fluxo vai aumentar ou diminuir. Isto é:
-
-\begin{equation}
-f(x, y, z) =
+f(a, b, k) =
 \begin{cases}
-  0, & \text{if}\ (x - z) \times (y - z) \textless 0 \\
+  0, & \text{if}\ (a - k) \times (b - k) \textless 0 \\
   1, & \text{otherwise}
 \end{cases}
 \end{equation}
 
 \begin{equation}
-\alpha = \frac{\sum_{i=1}^{n} f(expected_i, result_i, k_i)}{n}
+\alpha = \frac{100\%}{n} \times \sum_{i=1}^{n} f(y_i, \hat{y_i}, x_{i, m_{flow}})
 \end{equation}
 
-Com \(k_i\) sendo o fluxo mais recente que o modelo possuiu como entrada quando ver a predição \(result_i\).
-
 \section{Out Of Sample Testing}
-%TODO: Adicionar imagem do Blocking
+
 Para validar a performance de um modelo, é necessário fazer a utilização de métodos que comprovem a capacidade do mesmo de generalizar. Isto é, é preciso mostrar que o modelo é eficaz de maneira geral, ou para mais de um conjunto de dados. Uma das técnicas mais utilizadas é a \textit{Cross Validation}, que consiste em separar o conjunto de dados em conjuntos de dados menores para que se tenha mais blocos de dados para teste, treinamento e validação. Ao realizar esta divisão, utilizando-se \textit{Cross Validation}, a ordem dos dados não é necessariamente respeitada. Porém, o conjunto de dados deste trabalho é uma série temporal e a ordem dos registros importa, o que impossibilita a utilização deste método para este conjunto de dados. Entretanto, existem técnicas que se aplicam a predição de dados temporais. Tahsman em seu trabalho \cite{Tashman_2000} e Vitor et al em \cite{Vitor_2019} discorrem sobre esses métodos, chamados de \textit{Out of Sample Testing}, mostrando como são implementados estes tipos de validação e porque elas são adequadas para predição de séries temporais. Resumidamente, \textit{Out of Sample Testing} consiste em separar o conjunto de dados em conjunto de dados menores e independentes entre si, ou seja, dados que foram usados como treinamento em um conjunto, não serão utilizados como teste nos outros. Além de serem independentes, \textit{Out of Sample Testing} também respeita a ordem temporal dos dados, o que não afeta a correlação das informações com o tempo. Ainda em \cite{Tashman_2000}, são mostrados dois tipos de \textit{Out of Sample Testing}:
 
 \begin{itemize}
@@ -277,7 +237,7 @@ Neste trabalho, utilizou-se um método de \textit{Out Of Sample Testing} do tipo
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.7]{monography/img/methods/blocking_cv.png}
+    \includegraphics[scale=0.9]{monography/img/methods/blocking_cv.png}
     \label{figure:blocking}
     \caption[Representação do \textit{Out-of-Sample Testing} realizado]{Representação do \textit{Out-of-Sample Testing} realizado}
 \end{figure}
