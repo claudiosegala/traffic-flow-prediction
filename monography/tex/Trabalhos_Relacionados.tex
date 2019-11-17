@@ -6,13 +6,13 @@
 
 \label{chapter:trabalhos_relacionados}
 
-O objetivo deste capítulo é apresentar trabalhos relacionados à predição de tráfego urbano, mostrar suas contribuições e contextualizar o trabalho atual. O primeiro trabalho mencionado é sobre predição de fluxo utilizando \textit{\acrshort{LSTM}}. O segundo também utiliza aprendizagem de máquina, explorando o modelo \textit{\acrshort{SAE}} para prever o fluxo de veículos em vias da Califórnia. Por último, é apresentado um trabalho que utiliza \acrshort{GRU}.
+O objetivo deste capítulo é apresentar trabalhos relacionados à predição de tráfego urbano, mostrar suas contribuições e contextualizar o trabalho atual. A primeira seção do capítulo apresenta os trabalhos relacionados que utilizam algoritmos de aprendizagem profunda em seus modelos. A segunda seção apresenta trabalhos da área de predição de fluxo de veículos que utilizam algoritmos tradicionais.
 
 \section{Aprendizagem Profunda}
 
 No trabalho de Zainab Abbas et. al. em \textit{Short-term traffic prediction using long short-term memory neural networks} \cite{Zainab_2018} é apresentado um trabalho de predição de tráfego (calculando a densidade da via em vez do fluxo) que tem como objetivo antecipar congestionamentos em rodovias de Estocolmo, Suécia, utilizando aprendizagem profunda. No caso, o autor propõe uma variação do \textit{\acrshort{LSTM}}, mais precisamente \textit{\acrfull{SLSTM}}. Para tal, são utilizados dados coletados por sensores do sistema de controle da autoestrada da cidade. Tais sensores monitoram as principais vias da metrópole e coletam informações como fluxo e velocidade de cada faixa a cada 1 minuto. O trabalho propõe três modelos de predição de densidade da via:
  
- % TODO: colocar a imagem que o artigo utiliza para ficar mais fácil entender
+ % TODO: colocar a imagem que o artigo utiliza para ficar mais fácil entender 
 \begin{itemize}
     \item O (1-1) Modelo utilizando apenas um sensor que faz a predição apenas do local daquele sensor
     \item O (n-n) Modelo que utiliza n sensores de uma determinada área e faz a predição de todas as localidades
@@ -22,7 +22,7 @@ No trabalho de Zainab Abbas et. al. em \textit{Short-term traffic prediction usi
 \begin{equation}\label{eq:solve}
 k = q / v
 \end{equation}
-Fórmula do cálculo da densidade utilizada pelo trabalho na Equação \ref{eq:solve}
+Fórmula do cálculo da densidade utilizada pelo trabalho na Equação \ref{eq:solve}, onde \textit{k} se refere a densidade, \textit{q} ao fluxo e \textit{v} à velocidade média.
 
 Dos três modelos apresentados, o mais eficiente foi o m-n, pois faz a previsão de tráfego em vários pontos diferentes da via e tem um custo computacional menor que o n-n, além disso, utiliza menos sensores, o que diminui os dados de entrada da rede neural. Esse Modelo foi comparado com outros usando as métricas \textit{\acrshort{RMSE}} e \textit{\acrshort{MAE}}. O resultado dessas métricas é comparado com a acurácia de outros modelos como \textit{\acrfull{RNN}} e \textit{\acrfull{FFN}}. O erro calculado foi menor na metodologia proposta pelo autor em todos os casos, comprovando a eficácia do modelo apresentado (SLSTM).
 
@@ -57,7 +57,11 @@ Outro trabalho que também foge da abordagem tradicional é o apresentado por Xi
 
 Depois de calculadas a tendência e as flutuações dos dados, o autor combina os resultados para gerar a predição de fluxo nos dias de feriado, mais especificamente, os feriados \textit{ Tomb-sweeping Day} e \textit{National Day}. Para validar os seus resultados, Xianglong Luo et. al utiliza outros três modelos para comparação: \acrshort{ARIMA}, \textit{SVR} sozinha e \textit{EMD-SVR}. Como métrica de comparação, é utilizado \acrshort{MAPE}, \acrshort{MAE} e \acrshort{RMSE}.  Para ambos os feriados, as predições do modelo proposto pelo autor, o \textit{DFT-SVR}, foram superiores a todas as outras. O trabalho do autor foi bem inovador ao escolher por analisar as flutuações e \textit{Outliers} dos dados, visto que a maioria dos trabalhos na literatura escolhe por analisar a tendência principal do fluxo das vias.
 
-Yanyan Xu et. a. em \textit{Short-term Traffic Volume Prediction using Classification and Regression Trees} \cite{xu2013short} ...
+Yanyan Xu et. al. em \textit{Short-term Traffic Volume Prediction using Classification and Regression Trees} \cite{xu2013short} mostrou um trabalho promissor acerca de previsão de fluxo utilizando árvores de regressão. O Autor se propôs a prever o fluxo em cinco pontos distintos em uma rodovia interestadual localizada em \textit{Portland}, nos Estados Unidos.
+
+Além do modelo de árvore de regressão proposto pelo autor, foram utilizados outros dois modelos para serem comparados. São eles: o modelo paramétrico \textit{Kalman Filter} e o modelo não paramétrico \textit{K-NN} (\textit{K Nearest Neighbours}). Para avaliação dos resultados, foram utilizadas as métricas \textit{MAPE}, que é comumente utilizada em trabalhos do gênero, e a métrica \textit{MASE} (\textit{Mean
+Absolute Scaled Error}) proposta pelo autor, pois, segundo o mesmo, com esta métrica é possível comparar os resultados não apenas de modelos diferentes para um mesmo conjunto de dados, mas também de modelos diferentes com conjunto de dados diferentes. 
+Quanto as previsões, o trabalho apresentou predições de fluxo de curto prazo para todas as cinco localidades (15 minutos no futuro) e em todos os testes o modelo proposto pelo autor se mostrou superior. Apesar dos resultados favoráveis aos modelos não paramétricos (em especial à arvore de regressão), talvez fosse mais interessante caso tivessem sido incluídos modelos não paramétricos considerados mais robustos e promissores na área de predição de fluxo, como \acrshort{SVM}, ou algum modelo de redes neurais recorrentes. 
 
 
 Em \textit{A Short-term Traffic Flow Forecasting Method Based on the Hybrid PSO-SVR} por Wenbin Hu et. al. \cite{Hu2016} propõe uma variação do \textit{\acrfull{SVR}}. A escolha do \textit{\acrshort{SVR}} se deve ao método tendo extenso uso na literatura para problemas não lineares e predições de séries temporais. Além disso, \textit{\acrshort{SVR}} possui a capacidade de achar a melhor solução global de acordo com os estudos do autor. Nessa variação é utilizado \textit{\acrfull{PSO}} para a escolha de parâmetros do \textit{\acrshort{SVR}}. Esse trabalho se diferencia ao fazer a junção dos dois métodos, pois os modelos na literatura não costumam ser adaptativos, isto é, capaz de se adaptarem ao conjunto que estão vendo para assim prover uma solução precisa em tempo real.

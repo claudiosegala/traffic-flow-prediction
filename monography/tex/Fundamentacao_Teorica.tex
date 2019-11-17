@@ -1,18 +1,20 @@
-Este capítulo tem como objetivo apresentar uma base teórica de todos os conceitos necessários para o entendimento das demais capítulos deste trabalho. Primeiramente, serão explicados os conceitos básicos de uma árvore de regressão, que é utilizada pelo modelo \textit{\acrshort{RF}}. Subsequentemente, serão explicados os conceitos por trás da \textit{\acrshort{SVM}}. Por último, serão introduzidos os conceitos de uma \textit{\acrfull{RNN}} e explicados os mecanismos por trás do funcionamento de dois modelos derivados dela, o \textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}}.
+Este capítulo tem como objetivo apresentar uma base teórica de todos os conceitos necessários para o entendimento das demais seções deste trabalho. Primeiramente, será explorado o que é aprendizagem de máquina e algumas classificações úteis. Subsequentemente, será explicado os conceitos básicos por trás de cada um dos modelos utilizados nesse trabalho. Para a explicação de alguns modelos, será necessária uma elucidação prévia de alguns conceitos fundamentais por trás de seu funcionamento. Ou seja, será explicado o conceito de árvores de regressão para depois ser explicado o funcionamento de \textit{\acrshort{RF}} e, posteriormente, será explicado o que é uma \textit{\acrshort{RNN}}, para que seja possível explicar como funcionam os modelos \textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}}.
 
-\section{Aprendizagem Máquina}
+\section{Aprendizagem de Máquina}
 
-%TODO: colocar aqui mais uns parágrafos
+No livro \textit{Machine Learning: a Probabilistic Perspective} \cite{murphy2012machine}, aprendizagem de máquina é definida como um conjunto de técnicas que encontram, automaticamente, padrões em um dado conjunto de dados, que pode estar imperfeito ou incompleto para determinado problema. Também é dito que a aprendizagem de máquina utiliza os padrões descobertos para tentar prever ou decidir algo. Para realizar tal tarefa, existe uma variedade de técnicas, mas que são sempre classificadas como supervisionadas, não-supervisionadas, ou de reforço. A classificação se dá pela maneira como o algoritmo utilizado aprende o padrão dos dados.
 
-% O que é aprendizagem de máquina
-% Tipos (Supervisionada e Não supervisionada)
-% Supervisiada e seus tipos
-% Visão geral dos modelos escolhidos
+Técnicas não-supervisionadas são aquelas que buscam, a partir de um conjunto de dados(\(\set{x_i \mid 1\leq i\leq N}\)) utilizado como entrada do algoritmo, prever sua a saída, mas sem nenhum tipo de comentário sobre suas previsões e/ou classificações. Ou seja, a aprendizagem é feita sem que se conheça o formato da saída ideal do algoritmo. Esse tipo de técnica é utilizada em problemas menos definidos no que diz respeito ao tipo de saída esperada. Técnicas de reforço são aquelas que tentam aprender a partir da tentativa e erro, dado que o problema forneça recompensa e/ou punição para certas ações. Esse tipo de técnica pode ser usada para ensinar um robô a jogar \textit{Tetris}, por exemplo.
+
+Técnicas supervisionadas são aquelas que tentam mapear uma entrada a uma saída correspondente (\(f(x) = y\)). Normalmente, essas técnicas utilizam de um conjunto de pares de entrada e saída (\(\set{(x_i, y_i) \mid 1\leq i\leq N}\)) para aprender a fazer o mapeamento, isto é, utilizam um conjunto de treinamento para aprender, onde o treinamento é testado sobre um conjunto de teste, ou seja, existe um \textit{feedback} quanto a previsão do algoritmo. Por exemplo, a entrada de um determinado algoritmo poderia ser uma imagem ou um conjunto de características de um medicamento. Caso a saída seja do tipo nominal, a técnica é do sub-tipo classificador. Caso a saída seja do tipo ordinal, a técnica é do sub-tipo regressor.
+
+\subsection{Paramétrico e Não-paramétrico}
+
+As técnicas de aprendizagem de máquina também podem ser classificadas de acordo com as suposições feitas por elas sobre o conjunto de dados utilizados. Essas classificações podem ser paramétricas ou não-paramétricas. Técnicas paramétricas dispõe de um número fixo de parâmetros para tentar descrever os dados, supondo assim que os dados seguem uma distribuição específica. Um exemplo de modelo paramétrico seria a regressão linear, que utiliza uma equação com parâmetros fixos para traçar uma reta que melhor representa a distribuição dos dados. Já modelos não-paramétricos possuem um número variável de parâmetros que dependem dos dados utilizados. Desse modo, não é feita uma suposição de que existe uma distribuição específica nos dados. Modelos paramétricos levam a vantagem na questão de velocidade de treinamento, porém perdem na questão flexibilidade. A escolha de qual tipo utilizar depende muito do formato dos dados do problema e do seu tamanho, dentre outros fatores.
 
 \section{Árvores de Regressão}
 
-De acordo com Trevor Hastie et. al. no Livro \textit{The Elements of Statistical Learning}, árvore é uma técnica que pode ser utilizado para aprendizagem supervisionada. No qual pode ser usado tanto para classificação (árvores de decisão), quanto para regressão (árvores de regressão). Elas são consideradas extremamente poderosas e simples de entender. Basicamente, árvores dividem o espaço de características utilizando de regras.
-
+De acordo com Trevor Hastie et. al. no Livro \textit{The Elements of Statistical Learning}, árvore é uma técnica que pode ser utilizado para aprendizagem de máquina supervisionada. No qual pode ser usado tanto para classificação (árvores de decisão), quanto para regressão (árvores de regressão). Elas são consideradas extremamente poderosas e simples de entender. Basicamente, árvores dividem o espaço de características utilizando de regras.
 
 Árvores utilizam de um algoritmo guloso. Isto é, os melhores resultados locais fazem parte do melhor resultado global. Inicialmente, o algoritmo escolhe uma das características e define uma regra a partir da mesma. Assim, dividindo os dados em dois conjuntos. Por exemplo, considere que uma característica seja idade, uma regra possível seria \texttt{Idade \(\leq\) 40}. Seguindo esta regra o algoritmo divide os dados. Para os conjuntos resultantes, é definido uma nova regra e isso acontece sucessivamente até que não seja mais possível dividir os dados.
 
@@ -49,18 +51,29 @@ Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizage
 \footnotetext{\url{https://dsc-spidal.github.io/harp/img/4-5-1.png}}
 
 \section{\acrfull{SVM}}
-% TODO: adicionar exemplo de uma regressão de 2 dimensões
-% TODO: pegar mais referências
 
-\textit{\acrshort{SVM}} foi criado originalmente por Vladimir Vapnik nos anos 60 e foi evoluindo até se tornar o que é hoje, segundo Smola et. al. \cite{Smola03atutorial}. A ideia básica por trás do método pode ser usada tanto para classificação quanto para regressão. A aprendizagem do modelo é iterativa.
+\textit{\acrshort{SVM}} foi criado originalmente por Vladimir Vapnik nos anos 60 e foi evoluindo até se tornar o que é hoje  \cite{Smola03atutorial}. Essa técnica é não-paramétrica e supervisionada, sendo que a ideia básica por trás pode ser usada tanto para classificação quanto para regressão.
 
-Variável C indica quanto os erros penalizam. Se for baixo, erros não serão muito penalizados e se for alto os erros serão muito penalizados
+% TODO: falar de onde o nome veio (o que são os support vector machines)
 
-No caso da regressão, tenta-se criar uma função \(f(x)\) de forma que se \(y(x)\) é a função que perfeitamente descreve o conjunto de dados e \(\epsilon\) seja a dimensão do erro, o ideal seria \(\abs{y(x) - f(x)} \leq \epsilon \).
+% TODO: falar como ela é e da insensibilidade epsilon
+%No caso da regressão, tenta-se criar uma função \(f(x)\) de forma que se \(g(x)\) é a função que perfeitamente descreve o conjunto de dados e \(\epsilon\) seja a dimensão do erro, para todo \(f(x)\)  \(\abs{g(x) - f(x)} \leq \epsilon \).
 
-Além disso, \textit{\acrshort{SVM}} possuem funções \textit{Kernel}, que permitem a mudança de dimensão da entrada para alguma outra de forma rápida. Essa mudança pode aumentar ou diminuir a dimensão da entrada. Assim o modelo não tem que converter o conjunto de dados todo para tentar interpolar em outra dimensão de dados. Existem diversas funções de \textit{Kernel}, como por exemplo, Linear, Não-Linear, \textit{Radial Basis Function} e Polinomial.
+% TODO: falar sobre as caracteristicas iterativas
+%A aprendizagem do modelo é iterativa.
 
-Vale notar que algumas funções \textit{Kernel} possuem podem se ajustar quanto ao conjunto de dados. Funções como \textit{Radial Basis Function} e Polinomial possuem uma variável \textit{Gamma} (\(\gamma\)) para controlar esse ajuste. Essa variável determina a influência dos \textit{support vectors} no treinamento. Quanto maior o valor, menor a influência do \textit{support vectors}, quanto menor o valor, maior a influência. Valores baixos podem levar a uma função que não se ajusta muito ao conjunto de dados, prono a sub-ajuste. Já valores altos podem levar a uma função que se ajusta muito ao conjunto de dados, prono a sobre-ajuste.
+% TODO: falar do mapeamento para outra dimensão pode auxiliar na SVM
+%Só que nem todo o problema pode ser resolvido com qualquer coisa, porem pode ser resolvido em outra dimensão.
+
+Mapear todo um conjunto de dados para outra representação do espaço é computacionalmente intenso. Porém uma função \textit{Kernel} consegue mapear dois pontos que pertencem a algum certo espaço para a distância deles em alguma outra representação desse espaço. Esse mapeamento é menos exigente computacionalmente, tornando então desnecessário mapear todo o conjunto de dados para a outra representação. Porém, mesmo com o \textit{Kernels}, \textit{\acrshort{SVM}} não escala muito bem para conjunto de dados muito grandes \cite{chollet2018deep}.
+
+% TODO: just mention that you can do this and on methodology you say the variable that does it
+Para ajustar a \textit{\acrshort{SVR}} podemos controlar o tamanho do tubo (\(\epsilon\)) e, entre outros, quão influentes são os pontos que não localizados no tubo (C). A variável C dessa técnica indica quanto os erros serão penalizados. Se for baixo, erros não serão muito penalizados e se for alto os erros serão muito penalizados. Além disso, alguns \textit{Kernels} possuem variáveis (\(\gamma\)), por exemplo) que ajudam no ajuste da função aos dados. \(\gamma\) determina a influência dos \textit{support vectors} no treinamento. Quanto maior o valor, menor a influência do \textit{support vectors}, quanto menor o valor, maior a influência. Valores baixos podem levar a uma função que não se ajusta muito ao conjunto de dados, prono a sub-ajuste. Já valores altos podem levar a uma função que se ajusta muito ao conjunto de dados, prono a sobre-ajuste.
+
+% TODO: Mostrar exemplo simples de 1 dimensão
+
+
+
 
 \begin{figure}[htbp]
     \centering
@@ -96,7 +109,7 @@ Porém, existem determinados problemas que exigem certa correlação entre os da
 
 % TODO: cite a book
 
-\acrshort{LSTM} é um método proposto pela primeira vez por Sepp Hochreiter e Jurgen Schmidhuber em \textit{Long short-term memory} \cite{doi:10.1162/neco.1997.9.8.1735}. Ele é utilizado para predição de informações que derivam de dados sequenciais e séries temporais, sendo possível encontrar diversos trabalhos na literatura que mostram sua eficiência quando comparado a outros métodos. \acrshort{LSTM} é um tipo de \acrshort{RNN} que utiliza de estados anteriores e do estado atual da rede para gerar sua saída \cite{Xiaolei_2015, Zainab_2018}. Ao utilizar dos estados anteriores, a \acrshort{RNN} acaba por simular uma memória, melhorando sua capacidade de aprender. 
+\textit{\acrshort{LSTM}} é um método proposto pela primeira vez por Sepp Hochreiter e Jurgen Schmidhuber em \textit{Long short-term memory} \cite{doi:10.1162/neco.1997.9.8.1735}. Ele é utilizado para predição de informações que derivam de dados sequenciais e séries temporais, sendo possível encontrar diversos trabalhos na literatura que mostram sua eficiência quando comparado a outros métodos. \acrshort{LSTM} é um tipo de \acrshort{RNN} que utiliza de estados anteriores e do estado atual da rede para gerar sua saída \cite{Xiaolei_2015, Zainab_2018}. Ao utilizar dos estados anteriores, a \acrshort{RNN} acaba por simular uma memória, melhorando sua capacidade de aprender. 
 
 \begin{figure}[htbp]
     \centering
