@@ -39,12 +39,31 @@
 \usepackage{color}
 \usepackage{listings}
 
-% break line on url ----
+% add pseudo code in portuguese --------------------
+\usepackage{algorithmic}
+
+\newcommand{\algorithmicrequire}{\textbf{Require:}}
+\newcommand{\algorithmicensure}{\textbf{Ensure:}}
+\newcommand{\algorithmiccomment}[1]{\{#1\}}
+\newcommand{\algorithmicend}{\textbf{end}}
+\newcommand{\algorithmicif}{\textbf{if}}
+\newcommand{\algorithmicthen}{\textbf{then}}
+\newcommand{\algorithmicelse}{\textbf{else}}
+\newcommand{\algorithmicelsif}{\algorithmicelse\ \algorithmicif}
+\newcommand{\algorithmicendif}{\algorithmicend\ \algorithmicif}
+\newcommand{\algorithmicfor}{\textbf{for}}
+\newcommand{\algorithmicforall}{\textbf{for all}}
+\newcommand{\algorithmicdo}{\textbf{do}}
+\newcommand{\algorithmicendfor}{\algorithmicend\ \algorithmicfor}
+\newcommand{\algorithmicwhile}{\textbf{while}}
+% --------------------------------------------------
+
+% break line on url --------------------------------
 \usepackage{url} 
 \makeatletter
 \g@addto@macro{\UrlBreaks}{\UrlOrds}
 \makeatother
-% ----------------------
+% --------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Texto
