@@ -977,7 +977,7 @@ VERBOSITY = True
 # compare_results_by_n_split(n_splits)
 
 predict_futures = [30]
-compare_results_by_predict_in_future(predict_futures, tune=True)
+compare_results_by_predict_in_future(predict_futures, tune=False)
 
 """## Observations:
 
