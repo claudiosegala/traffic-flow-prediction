@@ -19,6 +19,8 @@ import numpy as np # math library
 import datetime as dt # to discover week day
 import statsmodels as sm # statistical models
 import statsmodels.api as sma # statistical models api
+import time as tm
+import matplotlib.pyplot as plt
 
 TCC_FOLDER = '/content/drive/My Drive/TCC/'
 

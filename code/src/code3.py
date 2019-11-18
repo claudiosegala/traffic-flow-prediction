@@ -35,10 +35,10 @@ def plot_history (history, name):
   
   plt.plot(history.history['loss'])
   plt.plot(history.history['val_loss'])
-  plt.title(name + ' Model Loss')
-  plt.ylabel('Loss')
-  plt.xlabel('Epoch')
-  plt.legend(['train', 'test'], loc='upper left')
+  plt.title(f"Perda do Modelo {name}")
+  plt.ylabel('Perda')
+  plt.xlabel('Época')
+  plt.legend(['treino', 'teste'], loc='upper left')
   plt.rcdefaults()
   
   plt.savefig(path + ".png", bbox_inches='tight')
@@ -59,10 +59,10 @@ def plot_prediction (Y, Y_hat, title):
     
     plt.plot(Y[i])
     plt.plot(Y_hat[i])
-    plt.title(title + 'Prediction')
-    plt.ylabel('Flow')
-    plt.xlabel('Time')
-    plt.legend(['actual', 'prediction'], loc='upper left')
+    plt.title(f"Predição do Modelo {title}")
+    plt.ylabel('Fluxo')
+    plt.xlabel('Tempo')
+    plt.legend(['esperado', 'observado'], loc='upper left')
     plt.rcdefaults()
 
     plt.savefig(path + ".png", bbox_inches='tight')
@@ -97,11 +97,11 @@ def plot_precision_bucket (results):
   for i in range(n_buckets):
     _p = plt.bar(ind, tuple(pre[i]), width, bottom=tuple(bott[i]))
     leg_lin.append(_p[0])
-    leg_lab.append(f"Bucket of {2**i}")
+    leg_lab.append(f"Balde de {2**i}")
     p.append(_p)
 
-  plt.ylabel('Scores')
-  plt.title('Precision by model and bucket')
+  plt.ylabel('Resultado')
+  plt.title('Precisão por modelo e balde')
   plt.xticks(ind, models, rotation=90)
   plt.yticks(np.arange(0, 1.05, 0.05))
   plt.legend(tuple(leg_lin), tuple(leg_lab))
@@ -157,7 +157,7 @@ def plot_performance_improved(results, metric, y_label, title):
   
   ax_plot.set_title(title)
   ax_plot.set_xlabel(y_label)
-  ax_plot.set_ylabel('Model')
+  ax_plot.set_ylabel('Modelos')
   
   bplot = ax_plot.boxplot([v['raw'][metric] for v in results.values()], vert=False)
   ax_plot.set_yticklabels(list(results.keys()))
@@ -189,20 +189,23 @@ def plot_results_comparison(name, xlabel, xticks, metric):
 
 def plot_snapshot(results):
   # plot_precision_bucket(results)
-  # plot_performance(results, 'TIME', 'Seconds', 'Training Time Comparison')
-  plot_performance_improved(results, 'TIME', 'Seconds', 'Training Time Comparison')
-  # plot_performance(results, 'RMSE', 'RMSE', 'Root Mean Square Error Comparison')
-  plot_performance_improved(results, 'RMSE', 'RMSE', 'Root Mean Square Error Comparison')
-  # plot_performance(results, 'NRMSE', 'NRMSE', 'Normalized Root Mean Square Error Comparison')
-  # plot_performance_improved(results, 'NRMSE', 'NRMSE', 'Normalized Root Mean Square Error Comparison')
-  # plot_performance(results, 'MAE', 'MAE', 'Max Absolute Error Comparison')
-  plot_performance_improved(results, 'MAE', 'MAE', 'Max Absolute Error Comparison')
-  # plot_performance(results, 'HR', 'Percentage', 'Hit Ratio Comparison')
-  plot_performance_improved(results, 'HR', 'Percentage', 'Hit Ratio Comparison')
+  # plot_performance(results, 'TIME', 'Segundos', 'Comparação do Tempo de Treinamento')
+  plot_performance_improved(results, 'TIME', 'Segundos', 'Comparação do Tempo de Treinamento')
+  # plot_performance(results, 'RMSE', 'RMSE', 'Comparação do RMSE')
+  plot_performance_improved(results, 'RMSE', 'RMSE', 'Comparação do RMSE')
+  # plot_performance(results, 'NRMSE', 'NRMSE', 'Comparação de NRMSE')
+  # plot_performance_improved(results, 'NRMSE', 'NRMSE', 'Comparação de NRMSE')
+  # plot_performance(results, 'MAE', 'MAE', 'Comparação de MAE')
+  plot_performance_improved(results, 'MAE', 'MAE', 'Comparação de MAE')
+  # plot_performance(results, 'HR', 'Porcentagem', 'Comparação de Precisão')
+  plot_performance_improved(results, 'HR', 'Porcentagem', 'Comparação de Precisão')
 
   for name in results:
     raw = results[name]['raw']
+    print(f"RMSE {name}: RMSE {np.mean(raw['RMSE'])} +/- {np.std(raw['RMSE'])}")
 
+  for name in results:
+    raw = results[name]['raw']
     plot_prediction(raw['expected'], raw['observed'], name)
     
     if 'history' in raw:
@@ -231,9 +234,9 @@ def plot_grid_search(name, cv_results, grid_param_1, grid_param_2, name_param_1,
     for idx, val in enumerate(grid_param_2):
         ax.plot(grid_param_1, scores_mean[idx,:], '-o', label= name_param_2 + ': ' + str(val))
 
-    ax.set_title("Grid Search Scores")
+    ax.set_title("Resultados da Busca em Grade")
     ax.set_xlabel(name_param_1)
-    ax.set_ylabel('CV Average Score')
+    ax.set_ylabel('Média dos Resultados')
     ax.legend(loc="best", fontsize=15)
     ax.grid('on')
 
@@ -264,12 +267,12 @@ def plot_blocking(n_splits, n_samples):
   for i in range(2):
     _p = plt.barh(ind, tuple(pre[i]), left=tuple(bott[i]))
     leg_lin.append(_p[0])
-    leg_lab.append("Testing" if i == 1 else "Training")
+    leg_lab.append("Teste" if i == 1 else "Treino")
     p.append(_p)
 
-  plt.title("Blocking Time Series Split ({0} Samples, {1} Splits)".format(n_samples, n_splits))
-  plt.xlabel('Samples')
-  plt.ylabel('Split')
+  plt.title("Divisão de Séries Temporais ({0} Amostras, {1} Divisões)".format(n_samples, n_splits))
+  plt.xlabel('Amostras')
+  plt.ylabel('Divisões')
   plt.xticks(np.arange(0, n_samples+1, n_samples // 5))
   plt.yticks(ind, np.arange(1, n_splits+1))
   plt.legend(tuple(leg_lin), tuple(leg_lab))
@@ -282,9 +285,40 @@ def plot_blocking(n_splits, n_samples):
 def print_json (obj):
   print(json.dumps(obj, sort_keys=True, indent=4))
 
+def build_tune_json():
+  path = f"{PATH}results/grid/"
+  models = ['Moving Average', 'Naive', 'RF A', 'RF B', 'SVM A', 'SVM B', 'LSTM A', 'LSTM B', 'GRU A', 'GRU B']
+  times = [15, 30, 45, 60]
+
+  comparison_data = []
+
+  for time in times:
+    results = {}
+    meta = {
+      "FLOW_INTERVAL": 150,
+      "N_SPLITS": 8,
+      "PREDICT_IN_FUTURE": time,
+      "SEEABLE_PAST": 480
+    }
+
+    for model in models:
+      
+      with open(f"{path}{model}_{time}.json", 'r') as json_file:
+        results[model] = json.load(json_file)
+
+    comparison_data.append({
+        "results": results,
+        "meta": meta
+    })
+
+  with open(f"{PATH}results/comparison/predict_future_comparison_0.json", 'w') as json_file:
+    json.dump(comparison_data, json_file, sort_keys=True, indent=4)
+
+build_tune_json()
+
 plot_blocking(8, 10000)
 
-name_time = 1573342241
+name_time = 1573441102
 
 with open(f"{PATH}results/comparison/flow_interval_comparison_{name_time}.json", 'r') as json_file:
   comparison_data = json.load(json_file)
@@ -292,8 +326,8 @@ with open(f"{PATH}results/comparison/flow_interval_comparison_{name_time}.json",
   for result_data in comparison_data:
     plot_snapshot(result_data['results'])
 
-  plot_name = 'Flow Interval for Training Comparison'
-  plot_y_label = 'Flow Size in Seconds'
+  plot_name = 'Comparação do Tamanho do Intervalo do Fluxo'
+  plot_y_label = 'Intervalo do FLuxo (Segundos)'
   values = [r['meta']['FLOW_INTERVAL'] for r in comparison_data]
 
   # plot_results_comparison(plot_name, plot_y_label, values, 'NRMSE')
@@ -302,7 +336,7 @@ with open(f"{PATH}results/comparison/flow_interval_comparison_{name_time}.json",
   plot_results_comparison(plot_name, plot_y_label, values, 'HR')
   plot_results_comparison(plot_name, plot_y_label, values, 'TIME')
 
-name_time = 1573342172
+name_time = 1573499125
 
 with open(f"{PATH}results/comparison/n_split_comparison_{name_time}.json", 'r') as json_file:
   comparison_data = json.load(json_file)
@@ -310,8 +344,8 @@ with open(f"{PATH}results/comparison/n_split_comparison_{name_time}.json", 'r') 
   for result_data in comparison_data:
     plot_snapshot(result_data['results'])
 
-  plot_name = 'Number of Splits for Training Comparison'
-  plot_y_label = 'Number of Splits'
+  plot_name = 'Comparação do Número de Divisões do Conjunto de Dados'
+  plot_y_label = 'Número de Divisões'
   values = [r['meta']['N_SPLITS'] for r in comparison_data]
 
   # plot_results_comparison(plot_name, plot_y_label, values, 'NRMSE')
@@ -320,16 +354,18 @@ with open(f"{PATH}results/comparison/n_split_comparison_{name_time}.json", 'r') 
   plot_results_comparison(plot_name, plot_y_label, values, 'HR')
   plot_results_comparison(plot_name, plot_y_label, values, 'TIME')
 
-name_time = 1573342238
+tune_mode = True
+name_time = 1573429292
 
-with open(f"{PATH}results/comparison/predict_future_comparison_{name_time}.json", 'r') as json_file:
+with open(f"{PATH}results/comparison/predict_future_comparison_{0 if tune_mode else name_time}.json", 'r') as json_file:
   comparison_data = json.load(json_file)
 
+  # plot_snapshot(comparison_data[0]['results'])
   for result_data in comparison_data:
     plot_snapshot(result_data['results'])
 
-  plot_name = 'Predict Future for Training Comparison'
-  plot_y_label = 'Time in the Future in Minutes'
+  plot_name = 'Comparação da Previsão de Curto Prazo'
+  plot_y_label = 'Tempo (Minutos)'
   values = [r['meta']['PREDICT_IN_FUTURE'] for r in comparison_data]
 
   # plot_results_comparison(plot_name, plot_y_label, values, 'NRMSE')
@@ -338,7 +374,7 @@ with open(f"{PATH}results/comparison/predict_future_comparison_{name_time}.json"
   plot_results_comparison(plot_name, plot_y_label, values, 'HR')
   plot_results_comparison(plot_name, plot_y_label, values, 'TIME')
 
-name_time = 1573342180
+name_time = 1573458076
 
 with open(f"{PATH}results/comparison/seeable_past_comparison_{name_time}.json", 'r') as json_file:
   comparison_data = json.load(json_file)
@@ -346,8 +382,8 @@ with open(f"{PATH}results/comparison/seeable_past_comparison_{name_time}.json", 
   for result_data in comparison_data:
     plot_snapshot(result_data['results'])
 
-  plot_name = 'Seeable Past for Training Comparison'
-  plot_y_label = 'Seeable Past in Seconds'
+  plot_name = 'Comparação do Passado Visível'
+  plot_y_label = 'Passado Visível (Segundos)'
   values = [r['meta']['SEEABLE_PAST'] for r in comparison_data]
 
   # plot_results_comparison(plot_name, plot_y_label, values, 'NRMSE')
