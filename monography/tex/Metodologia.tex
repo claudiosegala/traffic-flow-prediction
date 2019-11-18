@@ -1,6 +1,3 @@
-% TODO: explain the new arquitecture and cite both algorithms
-% TODO: falar que olhamos na literatura e os artigos não mencionam como fizeram, e utilizamos os parâmetros defaults e escolhemos alguns que faziam mais sentido para SVM apenas
-
 Esse capítulo tem como objetivo mostrar a metodologia utilizada para atingir o objetivo do trabalho. A Figura \ref{figure:metodologia} mostra, de maneira geral, o esquema da metodologia proposta. Primeiramente, será discutido o ambiente de experimento. Em seguida, será explicitado como os dados foram pré-processados. Por último, será discutido a escolha e implementação dos modelos e as métricas de avaliação utilizadas, assim como qual foi o ambiente de teste utilizado.
 
 \begin{figure}
@@ -93,7 +90,7 @@ No final do pré-processamento o resultado possuirá 3 colunas quantitativas e 7
 Vale notar que, como o período é o mesmo para qualquer um dos sensores, ao se acumular os registros, o tamanho do conjunto de dados será sempre igual. Isto é, será equivalente ao intervalo de tempo do conjunto de dados, 92 dias, divido pelo tempo de agregação de fluxo (7.5 minutos), o que gera 17.664 registros de fluxo dos 536.879 registros de passagem de veículos disponíveis.
 
 \subsection{Normalização dos Dados}
-% TODO: adicionar referência do porque normalizar dados
+
 Na área de aprendizagem de máquina, é comum vermos modelos de predições para diferentes tipo de variáveis. Por vezes, os valores assumidos por essas variáveis podem apresentar um domínio grande demais, como no caso da predição de valores de ações da bolsa de valores. Com valores em um intervalo tão grande, o treinamento dos modelos tende a piorar. Para contornar este problema, é comum utilizar técnicas que visam diminuir o intervalo de valores que as variáveis podem assumir. Uma destas técnicas é a normalização. 
 
 Em um dos tipos da normalização, utiliza-se o maior e o menor valor que o seu conjunto de dados atinge para ajustar os valores intermediários, como pode ser visto em \cite{Dorian_1999}. Por exemplo, o maior fluxo calculado foi 94 veículos para o sensor \textbf{RSI128} com acumulação de 2,5 minutos e o menor foi 0. Assim, foram ajustados os valores do conjunto de dados dentro de um intervalo entre 0 e 1, com 0 representando o menor valor e 94, o maior valor. Porém, os testes realizados mostraram que a normalização não trouxe melhorias significativas para as predições deste trabalho, apresentando, inclusive, resultados levemente piores em alguns modelos. Por este motivo, optou-se por continuar os experimentos sem normalização.
@@ -210,7 +207,8 @@ Para o número de divisões e passado visível é utilizado uma escala exponenci
 
 \subsection{Escolha de Hiper-Parâmetros}
 
-A escolha de hiper-parâmetros, diferente da escolha de parâmetros, é mais sensível. Isto é, os melhores hiper-parâmetros são mais sensíveis a mudança dependendo dos dados. Sendo assim, é uma tarefa complexa recomendar um conjunto de hiper-parâmetros que resolve o problema de previsão de fluxo a curto prazo. Com isso em mente, os modelos foram alterados para que a escolha de hiper-parâmetros fizesse parte do treino assim como mostrado no Pseudo-Código \ref{algo:tuned_training}. Como essa escolha agora faz parte do treino e são realizadas diversos treinos devido ao \textit{Out-of-Sample-Testing}, teremos várias escolhas de hiper-parâmetros e podemos verficar quais foram as mais comuns.
+% TODO: melhorar a escrita deste parágrafo
+A escolha de hiper-parâmetros, diferente da escolha de parâmetros, é mais sensível. Isto é, os melhores hiper-parâmetros são mais sensível a mudança dependendo dos dados. Sendo assim, é uma tarefa complexa recomendar um conjunto de hiper-parâmetros que resolve o problema de previsão de fluxo a curto prazo. Com isso em mente, os modelos foram alterados para que a escolha de hiper-parâmetros fizesse parte do treino assim como mostrado no Pseudo-Código \ref{algo:tuned_training}. Como essa escolha agora faz parte do treino e são realizadas diversos treinos devido ao \textit{Out-of-Sample-Testing}, teremos várias escolhas de hiper-parâmetros e podemos verficar quais foram as mais comuns.
 
 Como escolha de hiper-parâmetros (\textit{tuning}) será utilizada para verificar a sensibilidade dos modelos com os hiper-parâmetros antes escolhidos. Para essa fase, o conjunto de testes é novamente divido em dois(treino e teste \textit{tuning}). Esta etapa é necessária para evitar o sobre-ajuste (\textit{overfitting}) e para garantir que os resultados finais sejam genéricos o suficiente para casos nunca visto antes (outro conjunto de dados, por exemplo). Os testes realizados serão feitos de forma que todos os hiper-parâmetros sejam testados uns com os outros, ou seja, todas as combinações e instâncias possíveis serão verificadas. 
 
@@ -230,14 +228,15 @@ Para \textit{\acrshort{RF}} os hiper-parâmetros foram escolhidos para evitar o 
     \item \textbf{Altura Máxima}: 8, 16, 32, 64 e sem limitações no tamanho;
 \end{itemize}
 
-% TODO: terminar SVM
-Para \textit{\acrshort{SVM}} os hiper-parâmetros ...
+Para \textit{\acrshort{SVM}}, segundo Vladimir Cherkassky et. al. \cite{CHERKASSKY2004113}, a literatura não entra em consenso quanto a uma recomendação de hiper-parâmetros, com até algumas se contradizendo. Sendo assim, foram escolhidos os hiper-parâmetros:
 
 \begin{itemize}
     \item \textbf{C}: 1, 10, 100 e 1000;
     \item \textbf{\(\gamma\)}: 4 valores espaçados, do espaço logarítmico de -2 a 2, e o padrão da biblioteca; 
 \end{itemize}
 
+% TODO: terminar SVM
+C 
 
 \begin{algorithm}
 \label{algo:training}
