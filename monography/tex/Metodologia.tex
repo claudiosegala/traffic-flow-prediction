@@ -228,7 +228,7 @@ Para \textit{\acrshort{RF}} os hiper-parâmetros foram escolhidos para evitar o 
     \item \textbf{Altura Máxima}: 8, 16, 32, 64 e sem limitações no tamanho;
 \end{itemize}
 
-Para \textit{\acrshort{SVM}}, segundo Vladimir Cherkassky et. al. \cite{CHERKASSKY2004113}, a literatura não entra em consenso quanto a uma recomendação de hiper-parâmetros, com até algumas se contradizendo. Sendo assim, foram escolhidos os hiper-parâmetros:
+Para \textit{\acrshort{SVM}}, segundo Vladimir Cherkassky et. al. \cite{CHERKASSKY2004113}, a literatura não entra em consenso quanto a uma recomendação de hiper-parâmetros, com até algumas se contradizendo. Sendo assim, foram escolhidos os hiper-parâmetros C que indica quanto os erros serão penalizados e o parâmetro Os valores escolhidos foram:
 
 \begin{itemize}
     \item \textbf{C}: 1, 10, 100 e 1000;
@@ -236,11 +236,11 @@ Para \textit{\acrshort{SVM}}, segundo Vladimir Cherkassky et. al. \cite{CHERKASS
 \end{itemize}
 
 % TODO: terminar SVM
-C 
+O hiper-parâmetro C representa ... Já o hiper-parâmetro \(\gamma\) representa ...
 
 \begin{algorithm}
 \label{algo:training}
-\caption{Pseudo-Código de Treinamento dos Modelos Sem \texit{Tuning}}
+\caption{Pseudo-Código de Treinamento dos Modelos Sem \textit{Tuning}}
 \begin{algorithmic}
 \REQUIRE $X$, $Y$, $k$ (número de divisões)
 \ENSURE $[\hat{y_0}, ..., \hat{y_k}]$
@@ -260,7 +260,7 @@ C
 
 \begin{algorithm}
 \label{algo:tuned_training}
-\caption{Pseudo-Código de Treinamento dos Modelos Com \texit{Tuning}}
+\caption{Pseudo-Código de Treinamento dos Modelos Com \textit{Tuning}}
 \begin{algorithmic}
 \REQUIRE $X$, $Y$, $k$ (número de divisões)
 \ENSURE $[\hat{y_0}, ..., \hat{y_k}]$

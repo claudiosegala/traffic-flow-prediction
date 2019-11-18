@@ -24,7 +24,7 @@ Após o tratamento dos dados, foram realizados diversos testes para definir os m
 
 \subsection{Número de Divisões do Conjunto de Dados}
 
-Na Figura \ref{figure:res_split} pode não só ser observado que todos os modelos tem uma performance melhor que os modelos de comparação como também um indicativo que não é necessário um tamanho muito grande de treino para que os modelos se ajustem a distribuição do conjunto de dados. No caso, a melhor divisão do conjunto de dados para quase todos os modelos foi de 8, como pode ser observado na Tabela \ref{table:res_split}. Como o tamanho do conjunto de dados é de 52.992 (intervalo de fluxo padrão foi de 150 segundos), os modelos foram capazes de se ajustar com por volta de 5300 dados, que seria equivalente a um pouco mais de 1 semana. As únicas exceções para melhora com 8 foi a \textit{\acrshort{SVM}} e \textit{\acrshort{GRU}} que utilizou a versão A do conjunto de dados. Porém, mesmo elas tiveram diferenças muito pequenas para o resultado de 8 divisões. Vale notar que a maioria dos modelos teve uma piora quando fora utilizado 4 como divisão, o que seria equivalente a duas semanas.
+Na Figura \ref{figure:res_split} pode ser observado que todos os modelos apresentaram uma performance melhor que as bases de comparação. Os resultados também são um indicativo que não é necessário um tamanho muito grande de treino para que os modelos se ajustem a distribuição do conjunto de dados. No caso, o melhor número de divisão do conjunto de dados para a maioria os modelos foi  8, como pode ser observado na Tabela \ref{table:res_split}. Como o tamanho do conjunto de dados é de 52.992 (intervalo de fluxo padrão foi de 150 segundos), os modelos foram capazes de se ajustar com apenas 5300 dados (aproximadamente), o que seria equivalente a um pouco mais de 1 semana. Os únicos modelos que não apresentaram os melhores resultados com o número de divisões igual a 8 foram \textit{\acrshort{SVM}} e \textit{\acrshort{GRU}} que utilizaram a versão A do conjunto de dados. Porém, mesmo estes modelos tiveram diferenças pouco significativas se comparados com os seus resultado de 8 divisões. Vale notar também que a maioria dos modelos apresentou uma piora nas predições quando fora utilizado 4 como número de divisão, o que seria equivalente a duas semanas.
 
 \begin{figure}[htbp]
     \centering
@@ -81,7 +81,8 @@ Na Figura \ref{figure:res_split} pode não só ser observado que todos os modelo
 
 % TODO: reference the seeable_past_time
 
-Quanto a variação no quanto do passado o modelo tem acesso, é perceptível na Figura \ref{figure:res_past} que quanto mais acesso ao passado melhor sua predição. No caso, temos que o melhor quantidade de acesso do passado, dentre os testado, são 480 minutos, 8 horas. Vale notar que mais acesso também significa uma quantidade de treino maior, particularmente para modelos de aprendizagem profunda. E que os valores testados estão em escala exponencial, o que significa que para melhor mais teria que aumentar bastante a quantidade de horas que o modelo teria acesso. Além disso, o modelo \textit{Naive} não é afetado pela quantidade de tempo, porém há uma leve mudança no conjunto de dados, gerando as diferenças vistas na Tabela \ref{table:res_past}. E o modelo \textit{Moving Average} é o único que piora com o tempo. 
+A respeito da variação no quanto do passado o modelo tem acesso, é perceptível na Figura \ref{figure:res_past} que quanto mais acesso ao passado o modelo tiver, melhor será sua predição. Percebe-se também que o melhor valor para a quantidade de acesso do passado, dentre os testados, são 480 minutos (ou 8 horas). Porém, é importante ressaltar que mais acesso ao passado também implica em uma quantidade de treino maior, ou seja, maior custo computacional, especialmente para modelos de aprendizagem profunda. Dito isso, e considerando que a escala do eixo X é exponencial (Passado visível: 60, 120, 240, 480), pode-se que concluir que para conseguir resultados ainda melhores, seria necessário aumentar de maneira significativa a quantidade de passado visível, o que, talvez, não valesse o aumento do custo computacional, já que, para cada aumento exponencial do eixo X, a qualidade da predição melhora apenas de maneira linear. A respeito das bases de comparação, também é claro que o modelo \textit{Naive} não é afetado pela quantidade de tempo de passado visível, mas ainda assim há uma leve mudança no conjunto de dados, pois ao se mudar este parâmetro, o último valor recebido pelo modelo \textit{Naive} é mudado também, afetando suas predições e gerando as diferenças vistas na Tabela \ref{table:res_past}. Já o modelo \textit{Moving Average} é o único que piora com o tempo. 
+
 
 \begin{figure}[htbp]
     \centering
@@ -136,16 +137,16 @@ Quanto a variação no quanto do passado o modelo tem acesso, é perceptível na
  
 \subsection{Tamanho do Intervalo do Fluxo}
 
-Por último, pode-se notar na Figura \ref{figure:res_flow} que o tamanho do intervalo do fluxo adotado impacta de maneira significativa a qualidade das predições dos modelos. Esse efeito pode ser justificado pela quantidade de dados resultantes de cada tamanho do intervalo de fluxo, visto que quanto maior o intervalo, menor a quantidade de dados. Por exemplo, são 52.992 dados para 2,5 minutos (150 segundos) e 17.664 para 7.5 minutos (450 segundos). O que torna mais extenso o tempo de treinamento. No caso, dos valores testados, 2,5 minutos é o melhor tamanho de intervalo de fluxo, sendo isso em todos os modelos como é ver na Tabela \ref{table:res_flow}.
+Por último, pode-se notar na Figura \ref{figure:res_flow} que o tamanho do intervalo do fluxo adotado impacta de maneira significativa a qualidade das predições dos modelos. Esse efeito pode ser justificado pela quantidade de dados resultantes de cada tamanho do intervalo de fluxo, visto que quanto maior o intervalo, menor a quantidade de dados. Por exemplo, são 52.992 dados para 2,5 minutos (150 segundos) e 17.664 para 7.5 minutos (450 segundos). O que torna mais extenso o tempo de treinamento. Dos valores testados, 2.5 minutos é o melhor tamanho de intervalo de fluxo para todos os modelo, como pode ser visto na Tabela \ref{table:res_flow}.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.8]{monography/img/flow_interval_for_training_comparison_rmse.png}
     \label{figure:res_flow}
-    \caption{Resposta dos modelos à variação dos valores de divisão do cojunto}
+    \caption{Resposta dos modelos à variação dos valores de intervalo de fluxo}
 \end{figure}
 
-\begin{table}[htbp]
+\begin{table}[H]
     \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}llll}
     \toprule
      & 
@@ -185,11 +186,11 @@ Por último, pode-se notar na Figura \ref{figure:res_flow} que o tamanho do inte
     \bottomrule
     \end{tabular*}
     \label{table:res_flow}
-    \caption{Resultados da Comparação entre os intervalos. Melhores resultados de cada modelo em negrito.}
+    \caption{Resultados da Comparação entre os intervalos de fluxo. Melhores resultados de cada modelo em negrito.}
 \end{table}
 
 
-\section{Resultados das escolhas de Hiper-parâmetros}
+\section{Análise dos Resultados com \textit{Tuning} dos Modelos}
 
 O próximo passo foi escolher os melhores valores de hiper-parâmetros de cada modelo. Para os modelos de aprendizagem de máquina e aprendizagem profunda utilizou-se a biblioteca \textit{Hyperas} para descobrir os melhores valores dos seguintes hiper-parâmetros:
 
