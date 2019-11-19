@@ -105,11 +105,26 @@ Porém, existem determinados problemas que exigem certa correlação entre os da
     \caption[Representação simples do conceito de um RNN]{Representação simples do conceito de uma RNN \footnotemark}
 \end{figure}
 
-\subsection{\acrfull{LSTM}}
+\section{\acrfull{LSTM}}
 
-% TODO: cite a book
+\textit{\acrshort{LSTM}} é um método proposto pela primeira vez por Sepp Hochreiter e Jurgen Schmidhuber \cite{doi:10.1162/neco.1997.9.8.1735}. 
 
-\textit{\acrshort{LSTM}} é um método proposto pela primeira vez por Sepp Hochreiter e Jurgen Schmidhuber em \textit{Long short-term memory} \cite{doi:10.1162/neco.1997.9.8.1735}. Ele é utilizado para predição de informações que derivam de dados sequenciais e séries temporais, sendo possível encontrar diversos trabalhos na literatura que mostram sua eficiência quando comparado a outros métodos. \acrshort{LSTM} é um tipo de \acrshort{RNN} que utiliza de estados anteriores e do estado atual da rede para gerar sua saída \cite{Xiaolei_2015, Zainab_2018}. Ao utilizar dos estados anteriores, a \acrshort{RNN} acaba por simular uma memória, melhorando sua capacidade de aprender. 
+A técnica foi criada como uma solução para o problema do \textit{Vanishing Gradient}, que ocorre em \textit{\acrshort{RNN}}'s \cite{doi:10.1162/neco.1997.9.8.1735}. Isto é, \textit{\acrshort{BPTT}} e \textit{\acrshort{RTRL}}, técnicas usadas para propagar o erro na rede, podiam ou decair a ponto de não ter efeito em algumas camadas da \textit{\acrshort{RNN}} ou ficarem com erros exorbitantes, o que dificulta o aprendizado.
+
+% TODO: falar o que é vanish gradient
+
+Sua estrutura é uma variação da \textit{\acrshort{RNN}} que gira em torno de células de memórias para fluir o erro de forma constante \cite{doi:10.1162/neco.1997.9.8.1735}.
+
+Porém, mesmo com esses avanços, \textit{\acrshort{LSTM}} ainda tem dificuldades com sequências muito longas \cite{kawakami2008supervised}.
+
+
+% TODO: falta referências
+Ele é utilizado para predição de informações que derivam de dados sequenciais e séries temporais, sendo possível encontrar diversos trabalhos na literatura que mostram sua eficiência quando comparado a outros métodos.
+
+
+\acrshort{LSTM} é um tipo de \acrshort{RNN} que utiliza de estados anteriores e do estado atual da rede para gerar sua saída .
+
+Ao utilizar dos estados anteriores, a \acrshort{RNN} acaba por simular uma memória, melhorando sua capacidade de aprender. 
 
 \begin{figure}[htbp]
     \centering
@@ -135,7 +150,7 @@ Na célula de memória do \textit{\acrshort{LSTM}}, existem estruturas que são 
 % TODO: Falar que podemos responder a quantidade de camadas da LSTM com o problema que RNN tem com back-propagation que o gradiente começa a diminuir exponencialmente. Mas tem que dar uma conferida melhor.
 
 
-\subsection{\acrfull{GRU}}
+\section{\acrfull{GRU}}
 
 % TODO: da onde ta vindo essa explicação
 
