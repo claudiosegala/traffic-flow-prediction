@@ -32,11 +32,11 @@ A coluna \texttt{Faixa} será removida, pois nas transformações que virão a s
 
 A transformação dos dados se torna útil quando um tipo de dado pode ser representado de outra forma, em geral mais simples, que ajude no treinamento do modelo. No caso, a coluna \texttt{Data} será transformada, pois existem diversas informações subtendidas em uma data como dia da semana, se é feriado, início ou fim do mês, entre outros. Essas informações que podem ser extraídas de uma data podem ter uma relação direta ou indireta com o comportamento de uma via. Visto que a quantidade de dados que temos não chega nem a cobrir todas as datas de 1 ano, se torna difícil para os modelos aprenderem a extrair e utilizar essas informações. 
 
-Sendo assim, a coluna \texttt{Data} será simplificada para o dia da semana, dado que o fluxo aparenta apresentar comportamentos similares nos mesmos dias da semana. Para evitar falsas suposições do modelo, será utilizado a técnica \textit{one hot encoding} para transformar essa coluna \texttt{Data} e 7 colunas diferentes (uma para cada dia da semana). Cada uma dessas colunas terá valores 1 ou 0 para representar se é ou não um certo dia da semana. Isso é necessário, pois caso fosse uma coluna quantitativa (0 representando domingo e 1 representando segunda, por exemplo) o modelo poderia realizar inferências, como "segunda" é maior que "quarta", ou analogias similares.
+Sendo assim, a coluna \texttt{Data} será simplificada para o dia da semana, dado que o fluxo aparenta apresentar comportamentos similares nos mesmos dias da semana. Para evitar falsas suposições do modelo, será utilizado a técnica \textit{one hot encoding} para transformar essa coluna \texttt{Data} e 7 colunas diferentes (uma para cada dia da semana). Cada uma dessas colunas terá valores 1 ou 0 para representar se é ou não um certo dia da semana. Isso é necessário, pois caso fosse uma coluna quantitativa (0 representando domingo e 1 representando segunda, por exemplo) o modelo poderia realizar inferências, como ``segunda'' é maior que ``quarta'', ou analogias similares.
 
 \subsection{Acumulação dos registros}
 
-Como visto na literatura, existem algumas maneiras diferentes de se fazer a predição de veículos em uma via. Seja pelo fluxo, pela densidade, ou pela velocidade média dos carro. Neste trabalho, optou-se por utilizar o fluxo como método de predição, seguindo o padrão visto em \cite{lana_2018}. Para o cálculo do fluxo deste trabalho, foi utilizado o sensor \textbf{RSI128} disponível no conjunto de registros inciais.
+Como visto na literatura, existem algumas maneiras diferentes de se fazer a predição de veículos em uma via. Seja pelo fluxo, pela densidade, ou pela velocidade média dos veículos. Neste trabalho, optou-se por utilizar o fluxo como método de predição, seguindo o padrão visto em \cite{lana_2018}. Para o cálculo do fluxo deste trabalho, foi utilizado o sensor \textbf{RSI128} disponível no conjunto de registros iniciais.
 
 Sendo assim, o conjunto de dados será transformado de uma série temporal de registros de veículos para uma série temporal de fluxos. Isto é, será calculado a quantidade de veículos que passaram por um local em um determinado intervalo de tempo. Além disso, também foram calculadas a velocidade média e a densidade no mesmo intervalo. Para definir o intervalo que foi utilizado, testou-se os valores de intervalo para 2.5, 5 e 7.5 minutos. Note que foram utilizados intervalos que sejam múltiplos de 15, visto que todos os tempos de predição no futuro serão múltiplos de 15.
 
@@ -45,10 +45,10 @@ Sendo assim, o conjunto de dados será transformado de uma série temporal de re
 \begin{table}[H]
     \begin{tabular}{cccccccccc}
     \toprule
-    \multicolumn{1}{l}{\textbf{Flow}} & \multicolumn{1}{l}{\textbf{Density}} & \multicolumn{1}{l}{\textbf{Average Speed}} & \multicolumn{1}{l}{\textbf{Sun}} &
-    \multicolumn{1}{l}{\textbf{Mon}} & \multicolumn{1}{l}{\textbf{Tue}} & \multicolumn{1}{l}{\textbf{Wed}} & \multicolumn{1}{l}{\textbf{Thu}} &
-    \multicolumn{1}{l}{\textbf{Fri}} &
-    \multicolumn{1}{l}{\textbf{Sat}} \\
+    \multicolumn{1}{l}{\textbf{Fluxo}} & \multicolumn{1}{l}{\textbf{Densidade}} & \multicolumn{1}{l}{\textbf{Velocidade Média}} & \multicolumn{1}{l}{\textbf{Dom}} &
+    \multicolumn{1}{l}{\textbf{Seg}} & \multicolumn{1}{l}{\textbf{Ter}} & \multicolumn{1}{l}{\textbf{Qua}} & \multicolumn{1}{l}{\textbf{Qui}} &
+    \multicolumn{1}{l}{\textbf{Sex}} &
+    \multicolumn{1}{l}{\textbf{Sab}} \\
     \midrule
      6 & 0.260870 & 23.500000 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
     \midrule
@@ -85,7 +85,7 @@ Sendo assim, o conjunto de dados será transformado de uma série temporal de re
     \caption{Amostra do pré-processamento dos dados ao se utilizar 7.5 minutos de intervalo do sensor RSI128}
 \end{table}
 
-No final do pré-processamento o resultado possuirá 3 colunas quantitativas e 7 qualitativas. As colunas de \textit{Density} e \textit{Average Speed} são contínuas e a coluna \textit{Flow} é discreta. As outras 7 colunas representam uma classificação indicando se é ou não (0 representa falso e 1 verdadeiro) um certo dia da semana, sendo assim uma coluna qualitativa ordinal.
+No final do pré-processamento o resultado possuirá 3 colunas quantitativas e 7 qualitativas. As colunas de \textit{Densidade} e \textit{Velocidade Média} são contínuas e a coluna \textit{Fluxo} é discreta. As outras 7 colunas representam uma classificação indicando se é ou não (0 representa falso e 1 verdadeiro) um certo dia da semana, sendo assim uma coluna qualitativa ordinal.
 
 Vale notar que, como o período é o mesmo para qualquer um dos sensores, ao se acumular os registros, o tamanho do conjunto de dados será sempre igual. Isto é, será equivalente ao intervalo de tempo do conjunto de dados, 92 dias, divido pelo tempo de agregação de fluxo (7.5 minutos), o que gera 17.664 registros de fluxo dos 536.879 registros de passagem de veículos disponíveis.
 
@@ -97,7 +97,7 @@ Em um dos tipos da normalização, utiliza-se o maior e o menor valor que o seu 
 
 \subsection{Criação dos Conjunto de Treino e Teste}
 
-Será utilizado o conjunto dos dados pré-processados (\(D\)) para gerar o conjunto de dados de treino (\(X\)) e teste (\(Y\)). Cada elemento (\(x_i\)) do conjunto de treino  será uma série temporal dos atributos. Essa série temporal representa uma visão contínua do passado em relação ao presente momento. Ou seja, cada elemento de treino será uma subsequência de \(D\) de tamanho \(m\), onde cada instância (\(x_{i, j}\)) é uma das linhas da Tabela \ref{table:data_pre}. Para o conjunto de testes, cada elemento (\(y_i\)) será o fluxo no futuro (\(x_{i + k, m_{flow}}\)). Para fins de análise, será utilizado o conjunto de treino para gerar um outro conjunto mais simples. Este novo conjunto possuirá apenas o fluxo. Desta forma, será possível comparar os resultados dos modelos utilizando apenas o fluxo com os resultados dos modelos utilizando a densidade e a velocidade média também. Com isso, será possível dizer se as colunas de \texttt{Average Speed}, \texttt{Density} e as de dias da semana melhoram a performance das predições, ou não. 
+Será utilizado o conjunto dos dados pré-processados (\(D\)) para gerar o conjunto de dados de treino (\(X\)) e teste (\(Y\)). Cada elemento (\(x_i\)) do conjunto de treino  será uma série temporal dos atributos. Essa série temporal representa uma visão contínua do passado em relação ao presente momento. Ou seja, cada elemento de treino será uma subsequência de \(D\) de tamanho \(m\), onde cada instância (\(x_{i, j}\)) é uma das linhas da Tabela \ref{table:data_pre}. Para o conjunto de testes, cada elemento (\(y_i\)) será o fluxo no futuro (\(x_{i + k, m_{fluxo}}\)). Para fins de análise, será utilizado o conjunto de treino para gerar um outro conjunto mais simples. Este novo conjunto possuirá apenas o fluxo. Desta forma, será possível comparar os resultados dos modelos utilizando apenas o fluxo com os resultados dos modelos utilizando a densidade e a velocidade média também. Com isso, será possível dizer se as colunas de \texttt{Velocidade Média}, \texttt{Densidade} e as de dias da semana melhoram a performance das predições, ou não. 
 
 No entanto, os modelos não possuem o mesmo formato de entrada de dados. Logo, é necessário adaptar o conjunto de testes aos modelos e seus formatos. Uma versão será para os modelos de aprendizagem profunda (\textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}}) com três dimensões (amostras por sequência por atributos), assim como mostrado acima. A outra versão será para os modelos tradicionais (\textit{\acrshort{RF}} e \textit{\acrshort{SVM}}), que terá somente duas dimensões (amostras por atributos). Ou seja, \(x'_i\), nesse caso, não é uma lista de tupla e sim somente uma tupla com todos os elementos da lista de tupla.
 
@@ -145,7 +145,7 @@ f(a, b, k) =
 \end{equation}
 
 \begin{equation}
-\alpha = \frac{100\%}{n} \times \sum_{i=1}^{n} f(y_i, \hat{y_i}, x_{i, m_{flow}})
+\alpha = \frac{100\%}{n} \times \sum_{i=1}^{n} f(y_i, \hat{y_i}, x_{i, m_{fluxo}})
 \end{equation}
 
 \section{Out Of Sample Testing}
@@ -183,7 +183,7 @@ Um ponto interessante a se notar é que os modelos considerados tradicionais pos
 
 \subsection{Modelos de Comparação}
 
-Serão utilizados também dois modelos com o único propósito de estabelecer uma base de comparação inicial para os outros modelos. Serão eles o \textit{Naive} e o \textit{Moving Average}. O primeiro faz suas predições apenas escolhendo o valor de fluxo mais recente (\(x_{i, m_{fluxo}}\)) dentre os valores de fluxo recebidos como entrada. Já o segundo faz a média dos valores de fluxo recebidos na entrada. Dessa forma, é possível colocar em perspectiva o desempenho dos modelos escolhidos e avaliá-los de maneira mais consistente.
+Serão utilizados também dois modelos com o único propósito de estabelecer uma base de comparação inicial para os outros modelos. Serão eles o \textit{Naive} e o \acrfull{MM}. O primeiro faz suas predições apenas escolhendo o valor de fluxo mais recente (\(x_{i, m_{fluxo}}\)) dentre os valores de fluxo recebidos como entrada. Já o segundo faz a média dos valores de fluxo recebidos na entrada. Dessa forma, é possível colocar em perspectiva o desempenho dos modelos escolhidos e avaliá-los de maneira mais consistente.
 
 \subsection{Implementação}
 
@@ -267,9 +267,9 @@ O hiper-parâmetro C representa ... Já o hiper-parâmetro \(\gamma\) representa
 \STATE $\hat{Y} \leftarrow [] $ 
 \newline
 \FOR{$(X_{train}, X_{test}, Y_{train}, Y_{test})$ $\in$ divisaoBlocos(X, Y, k)} 
-    \STATE $hiperParametros \leftarrow {...}$
+    \STATE $hp \leftarrow pegarHiperParametros()$
     \STATE $dados \leftarrow divisaoBlocos(X_{train}, Y_{train}, 1)$
-    \STATE $modelo \leftarrow escolheMelhorModelo(geraModelo, hiperParametros, dados)$
+    \STATE $modelo \leftarrow escolheMelhorModelo(geraModelo, hp, dados)$
     \newline
     \STATE $modelo \leftarrow treinaModelo(modelo, X_{train}, Y_{train})$ 
     \newline
