@@ -84,24 +84,11 @@ Para ajustar a \textit{\acrshort{SVR}} podemos controlar o tamanho do tubo (\(\e
 
 \section{\textit{\acrfull{RNN}}}
 
-% TODO: adiconar referência de onde vc tirou essa explicação
+\textit{\acrshort{RNN}} é uma classe de redes neurais artificiais que a arquitetura foi baseada nas conexões cíclicas do cérebro. Ou seja, diferente das redes neurais comuns, essas possuem ciclos. Além disso, em sua arquitetura, essas técnicas utilizam de laços iterativos para guardar informação. \cite{alex2012} 
 
-% TODO: Falar que sofre de memória curta e outros defeitos
+Ao se permitir guardar informações, é possível resolver uma outra classe de problemas, já que agora resultados passados podem influenciar o resultado atual \cite{alex2012}. Redes neurais comuns \textit{feedforward} utilizam apenas o seu estado atual para gerar o resultado. Estas conseguem resolver, por exemplo, problemas de classificação de imagens e até regressões. Porém não lidam bem com problemas que a resposta atual tem correlação com algo no passado. Um exemplo de problema que exige essa correlação seria a de tentar prever a próxima palavra ou tentar extrair um contexto de um documento. Para esse tipo de situação, \textit{\acrshort{RNN}} são mais adequadas segundo Mitchell et. al. \cite{Mitchell_1997}. Mais especificamente, problemas onde dados isolados não tem tanto significado quanto o conjunto, é exigido um conceito de memória.
 
-% TODO: veja esse coisa apra explicar melhor LSTM e RNN (https://www.youtube.com/watch?v=6niqTuYFZLQ)
-
-\textit{\acrshort{RNN}} é uma classe de redes neurais artificiais que a arquitetura foi baseada nas conexões cíclicas do cérebro. Ou seja, diferente das redes neurais comuns, essas possuem ciclos. Em sua arquitetura, essas técnicas utilizam de laços iterativos para guardar informação. \cite{alex2012}
-
-
-Um das maiores falhas da \textit{\acrshort{RNN}} é que ela não conseguem guardar informações por um longo período de tempo \cite{hochreiter2001gradient}.
-
-
-
-
-
- surgiu da incapacidade de redes neurais comuns (\textit{\acrshort{NN}}) de levar em consideração resultados produzidos anteriormente pela rede. Resultados esses que poderiam vir a influenciar o resultado atual. Ou seja, redes neurais artificiais comuns, ou do tipo \textit{feedforward} utilizam apenas do seu estado atual para gerar sua saída. Para exemplificar, considere um problema de classificação, onde, a partir de uma imagem de um cachorro, ou gato, uma rede neural deva ser capaz de dizer corretamente qual animal a imagem representa. Para cada rodada de classificação, a imagem utilizada na rodada passada não importa, pois uma não tem relação direta com a outra. 
-
-Porém, existem determinados problemas que exigem certa correlação entre os dados, como por exemplo, interpretar um documento, entender o contexto de um filme, ou avaliar a oscilação de uma bolsa de valores ao longo do tempo. Como descrito por Mitchell em \textit{Machine Learning} \cite{Mitchell_1997}, \textit{\acrshort{RNN}} são mais adequadas para estas situações, pois nesse tipo de problema, dados isolados não tem tanto significado quanto o conjunto, o que exige um conceito de memória. Para simular este efeito de memória, \textit{\acrshort{RNN}} dispõe de uma arquitetura onde a saída do nó anterior é utilizada como entrada no nó seguinte, juntamente com a entrada nova atual da rede. Para passar estes valores de um nó para o outro, a \textit{\acrshort{RNN}} dispõe de um mecanismo chamado \textit{Hidden Layer}. Na Figura \ref{figure:rnn} é exemplificada a sua arquitetura, onde o último resultado utiliza como entrada valores resultantes das execuções anteriores.
+Para simular este efeito de memória, \textit{\acrshort{RNN}} dispõe de uma arquitetura onde a saída do nó anterior é utilizada como entrada no nó seguinte, juntamente com a entrada nova atual da rede (\(y_t = f(y_{t-1}, x_t)\)). Para passar estes valores de um nó para o outro, a \textit{\acrshort{RNN}} dispõe de um mecanismo chamado \textit{Hidden Layer}. Na Figura \ref{figure:rnn} é exemplificada a sua arquitetura quando desdobrada, onde o último resultado utiliza como entrada valores resultantes das execuções anteriores.
 
 \begin{figure}[htbp]
     \centering
@@ -109,6 +96,10 @@ Porém, existem determinados problemas que exigem certa correlação entre os da
     \label{figure:rnn}
     \caption[Representação simples do conceito de um RNN]{Representação simples do conceito de uma RNN \footnotemark}
 \end{figure}
+
+É importante notar que essa técnica possui limitações como só acessar informações em uma direção, ou seja, em um contexto temporal, só acessa o passado. O que encaixa com problemas que envolvam séries temporais, mas pode não encaixar em outros tipos de problema que podem exigir acesso de informações bidirecional \cite{alex2012}. Outra falha é a incapacidade de armazenar informações por um longo período de tempo \cite{hochreiter2001gradient}. 
+
+Além disso, \textit{\acrshort{RNN}s} são muito difíceis de treinar por causa de um problema chamado \textit{Vanishing Gradient}. Esse problema se refere a decaimento do erro, utilizado para ajustar a rede, em escala exponencial. Isso fazia com que o o erro desaparecesse tornando difícil a convergência. \cite{doi:10.1162/neco.1997.9.8.1735}
 
 \section{\textit{\acrfull{LSTM}}}
 
@@ -145,7 +136,10 @@ Porém, diferentemente de uma \textit{\acrshort{RNN}} comum, o \textit{\acrshort
 
 % TODO: falhas do GRU
 
-\textit{\acrshort{GRU}} é um tipo de \textit{\acrshort{RNN}} semelhante ao \textit{\acrshort{LSTM}} e, assim como ele, também faz uso de mecanismos chamados de Portas que possibilitam que a informação seja atualizada ou esquecida ao ser transferida de uma célula para outra. Ou seja, \textit{\acrshort{GRU}} também é capaz de guardar informações importantes na rede de maneira mais eficaz que uma \textit{\acrshort{RNN}} comum. Apesar de parecidos, \textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}} possuem algumas diferenças, como pode ser visto abaixo, o \textit{\acrshort{GRU}} possui apenas a \textit{Hidden Layer} e duas Portas para fazer o tratamento da informação para simular o efeito de memória:
+\textit{\acrshort{GRU}} é um tipo de \textit{\acrshort{RNN}} semelhante ao \textit{\acrshort{LSTM}} proposto recentemente por Cho et. al. \cite{cho2014}.
+
+
+ e, assim como ele, também faz uso de mecanismos chamados de Portas que possibilitam que a informação seja atualizada ou esquecida ao ser transferida de uma célula para outra. Ou seja, \textit{\acrshort{GRU}} também é capaz de guardar informações importantes na rede de maneira mais eficaz que uma \textit{\acrshort{RNN}} comum. Apesar de parecidos, \textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}} possuem algumas diferenças, como pode ser visto abaixo, o \textit{\acrshort{GRU}} possui apenas a \textit{Hidden Layer} e duas Portas para fazer o tratamento da informação para simular o efeito de memória:
 
 \begin{itemize}
     \item Porta da atualização: A porta de atualização tem um papel semelhante às Portas de Entrada e Porta de Esquecimento do \textit{\acrshort{LSTM}}. Nela, é decidido quais dos valores provindos das células passadas serão adicionados a rede.
