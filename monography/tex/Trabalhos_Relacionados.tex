@@ -1,17 +1,15 @@
-% TODO: Adicionar critica a todos eles quando achar. Para o urbano falar que ele utilizou o dados de diferentes tipos de vias que podem apresentar comportamentos diferentes.
-
 \label{chapter:trabalhos_relacionados}
 
 O objetivo deste capítulo é apresentar trabalhos relacionados à predição de tráfego urbano, mostrar suas contribuições e contextualizar o trabalho atual. A primeira seção do capítulo apresenta os trabalhos relacionados que utilizam algoritmos de aprendizagem profunda em seus modelos. A segunda seção apresenta trabalhos da área de predição de fluxo de veículos que utilizam algoritmos tradicionais.
 
-\section{Aprendizagem Profunda}
+\section{Trabalhos que Usam Aprendizagem Profunda}
 
-No trabalho de Zainab Abbas et. al. \cite{Zainab_2018} é apresentado um trabalho de predição de tráfego (calculando a densidade da via em vez do fluxo) que tem como objetivo antecipar congestionamentos em rodovias de Estocolmo, Suécia, utilizando aprendizagem profunda. No caso, o autor propõe uma variação do \textit{\acrshort{LSTM}}, mais precisamente \textit{\acrfull{SLSTM}}. Para tal, são utilizados dados coletados por sensores do sistema de controle da autoestrada da cidade. Tais sensores monitoram as principais vias da metrópole e coletam informações como fluxo e velocidade de cada faixa a cada 1 minuto. O trabalho propõe três modelos de predição de densidade da via:
+No trabalho de Zainab Abbas et. al. \cite{Zainab_2018} é apresentado um modelo de predição de tráfego (calculando a densidade da via em vez do fluxo) que tem como objetivo antecipar congestionamentos em rodovias de Estocolmo, Suécia, utilizando aprendizagem profunda. No caso, o autor propõe uma variação do \textit{\acrshort{LSTM}}, mais precisamente \textit{\acrfull{SLSTM}}. Para tal, são utilizados dados coletados por sensores do sistema de controle da autoestrada da cidade. Tais sensores monitoram as principais vias da metrópole e coletam informações como fluxo e velocidade de cada faixa a cada 1 minuto. O trabalho propõe três modelos de predição de densidade da via:
 
 \begin{itemize}
-    \item O (1-1) Modelo utilizando apenas um sensor que faz a predição apenas do local daquele sensor
-    \item O (n-n) Modelo que utiliza n sensores de uma determinada área e faz a predição de todas as localidades
-    \item O (m-n) Modelo que utiliza os m sensores mais significantes de uma área que contém um total de n sensores e que faz a predição para todos os n locais.
+    \item \textbf{(1 para 1)}: Modelo utilizando apenas um sensor que faz a predição apenas do local daquele sensor
+    \item \textbf{(n para n)}: Modelo que utiliza n sensores de uma determinada área e faz a predição de todas as localidades
+    \item \textbf{(m para n)}: Modelo que utiliza os m sensores mais significantes de uma área que contém um total de n sensores e que faz a predição para todos os n locais.
 \end{itemize}
 
 \begin{equation}\label{eq:solve}
@@ -39,9 +37,11 @@ Em \textit{Using LSTM and GRU Neural Network Methods for Traffic Flow Prediction
 Para o treinamento foram utilizados 50 séries temporais, cada um gerada por um sensor diferente. Já para as métricas similares aos outros artigos, \textit{\acrshort{MSE}} e \textit{\acrshort{MAE}}. No final do experimento os modelos tinham suas métricas similares, sem um diferença muito significativa. Porém com o modelo \textit{\acrshort{GRU}} sendo superior a \textit{\acrshort{LSTM}} por 84\% da série temporal e os modelos não-paramêtricos demonstrando uma melhor capacidade de se ajustar aos dados.
 % TODO: adicionar critica de que ele poderia ter feito uma seleção de sensores por porximidade para tentar melhorar os resultados
 
-\section{Algoritmos Tradicionais}
+\section{Trabalhos que Usam Algoritmos Tradicionais}
 
-Posteriormente neste trabalho, mais especificamente no Capítulo 4, seção 4.1, serão mostrado alguns fatores que influenciam no comportamento do tráfego urbano, sendo um deles o fator aleatório. A maioria dos trabalhos na área de predição de fluxo descarta os fatores aleatórios e considera apenas cenários ideais, descartando também os períodos de manutenção, onde ocorre a total, ou parcial interrupção das vias. Porém, Yi Hou et al. em \textit{Traffic Flow Forecasting for Urban Work Zones} \cite{hou2014traffic} realizou um trabalho de predição de fluxo justamente nessas condições e, segundo o próprio autor, a falta de trabalhos da área para este tipo de cenário foi sua motivação. 
+%Posteriormente neste trabalho, mais especificamente no Capítulo 4, seção 4.1, serão mostrado alguns fatores que influenciam no comportamento do tráfego urbano, sendo um deles o fator aleatório. 
+
+A maioria dos trabalhos na área de predição de fluxo descarta os fatores aleatórios e considera apenas cenários ideais, descartando também os períodos de manutenção, onde ocorre a total, ou parcial interrupção das vias. Porém, Yi Hou et al. em \textit{Traffic Flow Forecasting for Urban Work Zones} \cite{hou2014traffic} realizaram um trabalho de predição de fluxo justamente nessas condições e, segundo o próprio autor, a falta de trabalhos da área para este tipo de cenário foi sua motivação. 
 
 O trabalho de Yi Hou et al. apresenta um modelo de predição de fluxo em duas rodovias do \textit{Missouri}, nos Estados Unidos, mais precisamente em \textit{St.Louis}. Ambas as rodovias apresentaram um total de 161 zonas de trabalho rodoviários (ou \textit{Work Zones} como descrito pelo autor) ao longo do ano em que os dados foram coletados (Junho de 2012 até Setembro de 2013). \textit{Work Zones} são áreas de manutenção, ou construção, onde as rodovias apresentam placas de desvio, barreiras e bloqueio de algumas faixas. Outro ponto que deve ser notado é que as duas rodovias são diferentes entre si, uma delas é uma via expressa e a outra é uma via arterial sinalizada com semáforos.
 
