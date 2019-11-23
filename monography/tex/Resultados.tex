@@ -1,14 +1,6 @@
 % TODO: Falar que utilizamos o hit rate para ver se nossos modelos eram capazes de pelo menos prever quando que vai diminuir e quando que vai aumentar
 
-% TODO: Melhorar os gráficos
-
 % TODO?: Adicionar gráfico que mostra o tempo de predição
-
-% TODO: Adicionar gráfico de como os modelos se comportam com o aumento do tamanho da janela
-
-% TODO: Adicionar gráfico de como os modelos se comportam com o aumento da visão do passado
-
-% TODO: Adicionar gráfico de como os modelos se comportam com o aumento e diminuição do intervalo de fluxo 
 
 Este capítulo tem como objetivo apresentar uma discussão acerca dos resultados dos experimentos. Primeiramente, serão discutidos como os modelos reagem à variação dos principais parâmetros, quantidade de divisões, passado visível e tamanho do intervalo do fluxo. Subsequentemente, serão apresentados os resultados de como os modelos reagem para a escolha dos hiper-parâmetros selecionados. Por fim, serão analisados os resultados das previsões de fluxo de cada modelo nos curtos prazos de 15, 30, 45 e 60 minutos.
 
@@ -191,7 +183,6 @@ Por último, pode-se notar na Figura \ref{figure:res_flow} que o tamanho do inte
 
 \section{Comparação dos Resultados Otimizados}
 
-%TODO: adicionar ref para imagem das predicoes sem tuning
  Por fim, foram realizados testes para otimizar os hiper-parâmetros de cada modelo e garantir as melhores predições. Para alcançar tal objetivo, foi utilizada a técnica de \textit{Grid Search} durante as comparações dos resultados das predições de curto prazo. Abaixo, na figura \ref{figure:pred_no_tuning} podem ser vistos os resultados sem \textit{Tuning} dos hiper-parâmetros e, na figura \ref{figure:pred_tuning}, com \textit{Tuning} dos hiper-parâmetros. Os valores exatos dos resultados podem ser vistos nas tabelas  \ref{table:curto_prazo_no_tuning} e \ref{table:curto_prazo_tuning}, para as predições sem e com \textit{Tuning}, respectivamente.
  
  Os valores de parâmetros utilizados para a realização deste teste foram os valores mais recorrentes encontrados nos experimentos da seção acima (\textit{Resultado das Escolhas de Parâmetros})
@@ -208,24 +199,27 @@ Por último, pode-se notar na Figura \ref{figure:res_flow} que o tamanho do inte
 \textbf{\acrshort{SVM}}:
 \begin{itemize}
     \item C: 1, 10, 100 e 1000;
-    \item Lambda: 4 valores espaçados, do espaço logarítmico de -2 a 2, e o padrão da biblioteca.
+    \item \textbf{\(\gamma\)}: 4 valores espaçados, do espaço logarítmico de -2 a 2, e o padrão da biblioteca.
 \end{itemize}
 
 \textbf{\acshort{LSTM} e \acrshort{GRU}}:
 \begin{itemize}
-    \item Taxa de Aprendizado: 0.001, 0.004, 0.016 e 0.064;
+    \item Taxa de Aprendizado: 0.001, 0.002, 0.004, 0.008 e 0.016.
     \item Número de Células da Rede: 50, 75, 100, 125 células.
 \end{itemize}
 
 Observando a tabela \ref{table:curto_prazo_no_tuning}, é possível constatar que todos os modelos propostos pelo trabalho tiveram performance superior que os modelos utilizados como base de comparação. Dentre esses modelos propostos, o \acrlong{RF} foi o que obteve os resultados mais promissores, se mostrando o melhor modelo em todas as predições de curto prazo, seguido pelo \acrshort{SVM}. Os modelos de aprendizagem profunda apresentaram os resultados menos satisfatórios. Porém, este cenário poderia mudar caso o conjunto de dados disponível para o trabalho fosse maior, visto que modelos como \acrshort{GRU} e \acrshort{LSTM} tendem a generalizar melhor à medida que são expostos a um maior volume de dados de treinamento. 
 
 %TODO: mostrar quais hiperparametros foram melhores para cada modelo
-Como dito anteriormente, o modelo que apresentou os melhores resultados foi o \acrshort{RF}. Entretanto, este cenário muda após o \textit{Tuning} dos hiper-parâmetros. Como pode ser observado na tabela \ref{table:curto_prazo_tuning}, após a otimização dos resultados, a \acrshort{SVM} passou a obter as melhores predições em todos os casos. É válido notar que todos os outros modelos também obtiveram um aumento de performance. Isso mostra que determinados hiper-parâmetros afetam de maneira significativa a forma como os modelos realizam suas generalizações. Para os modelos de aprendizagem profunda...
+Como dito anteriormente, o modelo que apresentou os melhores resultados foi o \acrshort{RF}. Entretanto, este cenário muda após o \textit{Tuning} dos hiper-parâmetros. Como pode ser observado na tabela \ref{table:curto_prazo_tuning}, após a otimização dos resultados, a \acrshort{SVM} passou a obter as melhores predições em todos os casos. É válido notar que todos os outros modelos também obtiveram um aumento de performance. Isso mostra que determinados hiper-parâmetros afetam de maneira significativa a forma como os modelos realizam suas generalizações.
 
+
+
+Nos métodos de Aprendizagem profunda, ao observar a tabela \ref{table:best_hiper_deep}, pode-se notar que para os modelos que utilizam o conjunto de dados A, são necessárias menos células na rede, o que é coerente com a teoria, visto que o conjunto de dados A possui menos atributos e, consequentemente, menos informações para processar.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.8]{monography/img/comparisons/comparacao_da_previsao_de_curto_prazo_sem_tuning.png}
+    \includegraphics[scale=0.8]{monography/img/comparisons/comparacao_da_previsao_de_curto_prazo_rmse.png}
     \label{figure:pred_no_tuning}
     \caption{Comparação da previsão de curto prazo sem \textit{Tuning}}
 \end{figure}
@@ -285,7 +279,7 @@ Como dito anteriormente, o modelo que apresentou os melhores resultados foi o \a
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.8]{monography/img/comparisons/comparacao_da_previsao_de_curto_prazo_rmse.png}
+    \includegraphics[scale=0.8]{monography/img/comparisons/comparacao_da_previsao_de_curto_prazo_com_tuning_rmse.png}
     \label{figure:pred_tuning}
     \caption{Comparação da previsão de curto prazo com \textit{Tuning}}
 \end{figure}
@@ -334,4 +328,56 @@ Como dito anteriormente, o modelo que apresentou os melhores resultados foi o \a
     \end{tabular*}
     \label{table:curto_prazo_tuning}
     \caption{Resultados das predições de curto prazo dos modelos com Tuning.}
+\end{table}
+
+\begin{table}[H]
+    \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lll}
+    \toprule
+     & 
+    \multicolumn{1}{l}{\textbf{Taxa de Aprendizagem}} & 
+    \multicolumn{1}{l}{\textbf{Células}} 
+    \\
+\midrule
+\textbf{LSTM A} & 0.004 & 50\\ \midrule
+\textbf{LSTM B} & 0.004 & 125 \\ \midrule
+\textbf{GRU A} & 0.016 &  75 \\ \midrule
+\textbf{GRU B} & 0.008 &  125 \\
+    \bottomrule
+    \end{tabular*}
+    \label{table:best_hiper_deep}
+    \caption{Valores de hiper-parâmetros mais recorrentes no Grid Search para os modelos de aprendizagem profunda.}
+\end{table}
+
+\begin{table}[H]
+    \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lll}
+    \toprule
+     & 
+    \multicolumn{1}{l}{\textbf{C}} & 
+    \multicolumn{1}{l}{\textbf{Gamma Scale}} 
+    \\
+\midrule
+\textbf{SVM A} & 100 & 50\\ \midrule
+\textbf{SVM B} & 100 & 125 \\ \midrule
+
+    \bottomrule
+    \end{tabular*}
+    \label{table:best_hiper_deep}
+    \caption{Valores de hiper-parâmetros mais recorrentes no Grid Search para o SVM}
+\end{table}
+
+\begin{table}[H]
+    \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lll}
+    \toprule
+     & 
+    \multicolumn{1}{l}{\textbf{Altura Max. Arvore}} & 
+    \multicolumn{1}{l}{\textbf{Nr. Estimadores}} 
+    \\
+\midrule
+\textbf{RF A} & 32 & 800\\ \midrule
+\textbf{RF B} & 32 & 800 \\ \midrule
+
+    \bottomrule
+    \end{tabular*}
+    \label{table:best_hiper_deep}
+    \caption{Valores de hiper-parâmetros mais recorrentes no Grid Search para o Random Forest.}
 \end{table}

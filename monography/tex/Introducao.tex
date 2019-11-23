@@ -1,4 +1,4 @@
-A frota  de  veículos no Brasil tem aumentado ao longo  dos últimos anos \cite{mapa_moto2019v2}. De acordo com a \acrfull{ANS}, em 2018, o Brasil já apresentava 1 carro para cada 4 habitantes. Isso equivale, aproximadamente, a 50 milhões de automóveis em circulação \cite{G1}. As vias públicas não tem conseguido acompanhar este crescimento e acomodar todo este volume. Brasília, por exemplo, que é uma cidade planejada, já começa a sentir os efeitos causados por uma grande frota de veículos. Como pode ser visto no Portal Brasileiro de Dados Abertos \cite{detran_2018}, a capital do país já se vê obrigada a comportar 3.5 milhões de automóveis e, por conta disso, tem sofrido com congestionamentos. Brasília não é uma exceção, todos os grandes centros urbanos do país estão sendo afetados pelas mazelas do crescimento do setor automobilístico, e pensar em soluções para esses problemas é mais que necessário.
+A frota  de  veículos no Brasil tem aumentado ao longo  dos últimos anos \cite{mapa_moto2019v2}. De acordo com a \acrfull{ANS}, em 2018, o Brasil já apresentava 1 carro para cada 4 habitantes. Isso equivale, aproximadamente, a 50 milhões de automóveis em circulação \cite{G1}. As vias públicas não tem conseguido acompanhar este crescimento e acomodar todo este volume. Brasília, por exemplo, que é uma cidade planejada, já começa a sentir os efeitos causados por uma grande frota de veículos. Como pode ser visto no Portal Brasileiro de Dados Abertos \cite{detran_2018}, a capital do país já se vê obrigada a comportar 3.5 milhões de automóveis e, por conta disso, tem sofrido com congestionamentos. Brasília não é uma exceção, os outros grandes centros urbanos do país também estão sendo afetados pelas mazelas do crescimento do setor automobilístico, e pensar em soluções para esses problemas é mais que necessário.
 
 Em resposta a essa tendência, as metrópoles tem utilizado da tecnologia para gerenciar melhor o trânsito em suas vias, ao passo que os motoristas têm feito uso cada vez mais intenso de aplicativos para escapar de congestionamentos e descobrir os caminhos mais rápidos até seus destinos. Porém, se essas tecnologias e aplicações não se preocuparem em como o fluxo da via estará nos próximos minutos, erros de cálculo podem ser cometidos.
 
@@ -14,7 +14,9 @@ A literatura está repleta de artigos que tentam prever a quantidade de veículo
 
 \section{Hipótese}
 
-Tendo em mente todas as informações citadas anteriormente, este trabalho tem como hipótese que os modelos utilizados para predição de fluxo de veículos em vias livres serão capazes de prever, também a curto prazo, o fluxo de veículos em cruzamentos. Mais especificamente, são capazes de prever 15, 30, 45 e 60 minutos no futuro. Sobretudo, eles serão capazes também de prever o fluxo mais precisamente do que as bases de comparação, os modelos \acrfull{MM} e \textit{Naive}.
+Tendo em mente as informações citadas anteriormente, este trabalho tem como hipótese que o emprego das técnicas de aprendizagem de máquina conseguirão prever o fluxo de veículos em um cruzamento em curto prazo\footnote{TODO: explicar o que é curto prazo}. 
+
+Além disso, tais técnicas serão capazes de prever o fluxo de veículos mais precisamente quando comparado a técnicas mais simples como \acrfull{MM} e \textit{Naive}.
 
 \section{Objetivo}
 
@@ -46,14 +48,14 @@ Ao fim deste trabalho, espera-se que os seguintes resultados tenham sido atingid
 \end{itemize}
 
 \section{Escopo}
-
-Este trabalho tem como foco apenas dois cruzamentos de Brasília, mais especificamente, dois cruzamentos localizados na Avenida Hélio Prates. Além disso, o conjunto de dados se limita a apenas alguns meses. Dessa forma, os resultados podem ser distintos se os modelos forem utilizados em meses diferentes dos propostos no trabalho
+%TODO: verificar os meses e o ano dos dados
+Este trabalho tem como foco dois cruzamentos de Brasília conforme dados disponíveis, mais especificamente, dois cruzamentos localizados na Avenida Hélio Prates. Além disso, o conjunto de dados é referente aos meses de Junho, Julho e Agosto de Setembro de 2016. Dessa forma, os resultados podem ser distintos se os modelos forem utilizados em meses diferentes dos propostos no trabalho
 
 Para o trabalho serão desconsiderados certos cenários em que a captura e o relacionamentos dos dados obtidos são muito imprecisos e/ou pontuais. Tais cenários podem influenciar nos resultados obtidos, causando uma disparidade significante entre a predição e a realidade. Para exemplificar, um possível cenário que será desconsiderado é a possibilidade de acontecer um acidente, ou uma obra nas rodovias, algo que pode modificar bastante o fluxo de veículos.
 
 \section{Metodologia}
 
-Será realizada a comparação dos modelos  \textit{\acrshort{LSTM}}, \textit{\acrshort{GRU}}, \textit{\acrshort{RF}} e \textit{\acrshort{SVM}}. Para tal, serão utilizados dados da infraestrutura urbana local, mais especificamente dados da fiscalização eletrônica coletada diretamente pelo \acrfull{DETRAN} do \acrfull{DF}. A comparação proposta consistirá de 4 etapas:
+Será realizada a comparação dos modelos  \textit{\acrfull{LSTM}}, \textit{\acrfull{GRU}}, \textit{\acrfull{RF}} e \textit{\acrfull{SVM}}. Para tal, serão utilizados dados da infraestrutura urbana local, mais especificamente dados da fiscalização eletrônica coletada diretamente pelo \acrfull{DETRAN} do \acrfull{DF}. A comparação proposta consistirá de 4 etapas:
 
 \begin{enumerate}
     \item Implementação dos Modelos: construção das arquiteturas;

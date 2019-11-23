@@ -1,4 +1,4 @@
-Esse capítulo tem como objetivo mostrar a metodologia utilizada para atingir o objetivo do trabalho. A Figura \ref{figure:metodologia} mostra, de maneira geral, o esquema da metodologia proposta. Primeiramente, será discutido o ambiente de experimento. Em seguida, será explicitado como os dados foram pré-processados. Por último, será discutido a escolha e implementação dos modelos e as métricas de avaliação utilizadas, assim como qual foi o ambiente de teste utilizado.
+Este capítulo tem como objetivo mostrar a metodologia utilizada para atingir o objetivo do trabalho. A Figura \ref{figure:metodologia} mostra, de maneira geral, o esquema da metodologia proposta. Primeiramente, será discutido o ambiente de experimento. Em seguida, será explicitado como a base de dados, mostrado no capítulo anterior, foram pré-processados. Por último, será discutido a escolha e implementação dos modelos e as métricas de avaliação utilizadas, assim como qual foi o ambiente de teste utilizado.
 
 \begin{figure}
     \centering
@@ -34,7 +34,7 @@ A transformação dos dados se torna útil quando um tipo de dado pode ser repre
 
 Sendo assim, a coluna \texttt{Data} será simplificada para o dia da semana, dado que o fluxo aparenta apresentar comportamentos similares nos mesmos dias da semana. Para evitar falsas suposições do modelo, será utilizado a técnica \textit{one hot encoding} para transformar essa coluna \texttt{Data} e 7 colunas diferentes (uma para cada dia da semana). Cada uma dessas colunas terá valores 1 ou 0 para representar se é ou não um certo dia da semana. Isso é necessário, pois caso fosse uma coluna quantitativa (0 representando domingo e 1 representando segunda, por exemplo) o modelo poderia realizar inferências, como ``segunda'' é maior que ``quarta'', ou analogias similares.
 
-\subsection{Acumulação dos registros}
+\subsection{Acumulação dos Registros}
 
 Como visto na literatura, existem algumas maneiras diferentes de se fazer a predição de veículos em uma via. Seja pelo fluxo, pela densidade, ou pela velocidade média dos veículos. Neste trabalho, optou-se por utilizar o fluxo como método de predição, seguindo o padrão visto em \cite{lana_2018}. Para o cálculo do fluxo deste trabalho, foi utilizado o sensor \textbf{RSI128} disponível no conjunto de registros iniciais.
 
@@ -95,16 +95,9 @@ Na área de aprendizagem de máquina, é comum vermos modelos de predições par
 
 Em um dos tipos da normalização, utiliza-se o maior e o menor valor que o seu conjunto de dados atinge para ajustar os valores intermediários, como pode ser visto em \cite{Dorian_1999}. Por exemplo, o maior fluxo calculado foi 94 veículos para o sensor \textbf{RSI128} com acumulação de 2,5 minutos e o menor foi 0. Assim, foram ajustados os valores do conjunto de dados dentro de um intervalo entre 0 e 1, com 0 representando o menor valor e 94, o maior valor. Porém, os testes realizados mostraram que a normalização não trouxe melhorias significativas para as predições deste trabalho, apresentando, inclusive, resultados levemente piores em alguns modelos. Por este motivo, optou-se por continuar os experimentos sem normalização.
 
-\subsection{Criação dos Conjunto de Treino e Teste}
-
-Será utilizado o conjunto dos dados pré-processados (\(D\)) para gerar o conjunto de dados de treino (\(X\)) e teste (\(Y\)). Cada elemento (\(x_i\)) do conjunto de treino  será uma série temporal dos atributos. Essa série temporal representa uma visão contínua do passado em relação ao presente momento. Ou seja, cada elemento de treino será uma subsequência de \(D\) de tamanho \(m\), onde cada instância (\(x_{i, j}\)) é uma das linhas da Tabela \ref{table:data_pre}. Para o conjunto de testes, cada elemento (\(y_i\)) será o fluxo no futuro (\(x_{i + k, m_{fluxo}}\)). Para fins de análise, será utilizado o conjunto de treino para gerar um outro conjunto mais simples. Este novo conjunto possuirá apenas o fluxo. Desta forma, será possível comparar os resultados dos modelos utilizando apenas o fluxo com os resultados dos modelos utilizando a densidade e a velocidade média também. Com isso, será possível dizer se as colunas de \texttt{Velocidade Média}, \texttt{Densidade} e as de dias da semana melhoram a performance das predições, ou não. 
-
-No entanto, os modelos não possuem o mesmo formato de entrada de dados. Logo, é necessário adaptar o conjunto de testes aos modelos e seus formatos. Uma versão será para os modelos de aprendizagem profunda (\textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}}) com três dimensões (amostras por sequência por atributos), assim como mostrado acima. A outra versão será para os modelos tradicionais (\textit{\acrshort{RF}} e \textit{\acrshort{SVM}}), que terá somente duas dimensões (amostras por atributos). Ou seja, \(x'_i\), nesse caso, não é uma lista de tupla e sim somente uma tupla com todos os elementos da lista de tupla.
-
 \subsection{Sazonalidade dos dados}
 
 Na Figura \ref{figure:flow_discution} é mostrado o resultado da agregação dos registros de veículos em um intervalo de 7.5 minutos. É possível observar que existem flutuações na quantidade de fluxo de veículo de acordo com o dia. Este fato fica mais evidente se observarmos o primeiro pico do gráfico, referente ao Domingo, pois este apresenta um menor fluxo de veículos, o que é esperado que aconteça em um dia não comercial. Isso mostra que os dados apresentam certa sazonalidade. Esta sazonalidade se manifesta em várias escalas, no gráfico mostrado é possível ver apenas a sazonalidade referente aos dias da semana, mas ela também se aplica, por exemplo, a semana do mês, ao mês do ano, etc. 
-
 
 \begin{figure}[H]
     \centering
@@ -113,7 +106,14 @@ Na Figura \ref{figure:flow_discution} é mostrado o resultado da agregação dos
     \caption[Fluxo da Primeira Semana]{Fluxo da Primeira Semana}
 \end{figure}
 
-\section{Avaliação Final}
+
+\subsection{Criação dos Conjunto de Treino e Teste}
+
+Será utilizado o conjunto dos dados pré-processados (\(D\)) para gerar o conjunto de dados de treino (\(X\)) e teste (\(Y\)). Cada elemento (\(x_i\)) do conjunto de treino  será uma série temporal dos atributos. Essa série temporal representa uma visão contínua do passado em relação ao presente momento. Ou seja, cada elemento de treino será uma subsequência de \(D\) de tamanho \(m\), onde cada instância (\(x_{i, j}\)) é uma das linhas da Tabela \ref{table:data_pre}. Para o conjunto de testes, cada elemento (\(y_i\)) será o fluxo no futuro (\(x_{i + k, m_{fluxo}}\)). Para fins de análise, será utilizado o conjunto de treino para gerar um outro conjunto mais simples. Este novo conjunto possuirá apenas o fluxo. Desta forma, será possível comparar os resultados dos modelos utilizando apenas o fluxo com os resultados dos modelos utilizando a densidade e a velocidade média também. Com isso, será possível dizer se as colunas de \texttt{Velocidade Média}, \texttt{Densidade} e as de dias da semana melhoram a performance das predições, ou não. 
+
+No entanto, os modelos não possuem o mesmo formato de entrada de dados. Logo, é necessário adaptar o conjunto de testes aos modelos e seus formatos. Uma versão será para os modelos de aprendizagem profunda (\textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}}) com três dimensões (amostras por sequência por atributos), assim como mostrado acima. A outra versão será para os modelos tradicionais (\textit{\acrshort{RF}} e \textit{\acrshort{SVM}}), que terá somente duas dimensões (amostras por atributos). Ou seja, \(x'_i\), nesse caso, não é uma lista de tupla e sim somente uma tupla com todos os elementos da lista de tupla.
+
+\section{Métricas de Avaliação}
 
 Na literatura é comum serem utilizados as métricas \textit{\acrfull{RMSE}} e \textit{\acrfull{MAPE}} \cite{lana_2018}. Porém, como pode ser visto na Equação \ref{eq:mape}, \textit{\acrshort{MAPE}} possui divisão pelo \({y_i}\) e este pode ser zero para nosso conjunto de dados. Logo, \textit{\acrshort{MAPE}} foi descartado. 
 
@@ -148,7 +148,7 @@ f(a, b, k) =
 \alpha = \frac{100\%}{n} \times \sum_{i=1}^{n} f(y_i, \hat{y_i}, x_{i, m_{fluxo}})
 \end{equation}
 
-\section{Out Of Sample Testing}
+\section{\textit{Out of Sample Testing}}
 
 Para validar a performance de um modelo, é necessário fazer a utilização de métodos que comprovem a capacidade do mesmo de generalizar. Isto é, é preciso mostrar que o modelo é eficaz de maneira geral, ou para mais de um conjunto de dados. Uma das técnicas mais utilizadas é a \textit{Cross Validation}, que consiste em separar o conjunto de dados em conjuntos de dados menores para que se tenha mais blocos de dados para teste, treinamento e validação. Ao realizar esta divisão, utilizando-se \textit{Cross Validation}, a ordem dos dados não é necessariamente respeitada. Porém, o conjunto de dados deste trabalho é uma série temporal e a ordem dos registros importa, o que impossibilita a utilização deste método para este conjunto de dados. 
 
@@ -178,9 +178,6 @@ Todos os modelos não-paramétricos citados foram implementados para este trabal
 
 Um ponto interessante a se notar é que os modelos considerados tradicionais possuem um viés diferente dos modelos de aprendizagem profunda. Isto é, com o \acrshort{RF}, por exemplo, temos um representante dos algoritmos que utilizam árvores de decisão para realizar suas predições. Esta abordagem é completamente diferente da abordagem dos algoritmos de aprendizagem profunda, que utilizam do conceito de tentativa e erro e aprendizagem supervisionada. Essa variedade garante que os modelos não estejam todos enviesados da mesma forma.
 
-
-% TODO: A gente selecionou uma quantidade de algoritmos que tem vies diferente, RF particiona como arvore (corta o espaço), SVM particiona o espaço (carta o espaço de forma linear) e é iterativo. LSTM é iterativo (Bias tried and error approach no free lunch)
-
 \subsection{Modelos de Comparação}
 
 Serão utilizados também dois modelos com o único propósito de estabelecer uma base de comparação inicial para os outros modelos. Serão eles o \textit{Naive} e o \acrfull{MM}. O primeiro faz suas predições apenas escolhendo o valor de fluxo mais recente (\(x_{i, m_{fluxo}}\)) dentre os valores de fluxo recebidos como entrada. Já o segundo faz a média dos valores de fluxo recebidos na entrada. Dessa forma, é possível colocar em perspectiva o desempenho dos modelos escolhidos e avaliá-los de maneira mais consistente.
@@ -207,10 +204,9 @@ Para o número de divisões e passado visível é utilizado uma escala exponenci
 
 \subsection{Escolha de Hiper-Parâmetros}
 
-% TODO: melhorar a escrita deste parágrafo
-A escolha de hiper-parâmetros, diferente da escolha de parâmetros, é mais sensível. Isto é, os melhores hiper-parâmetros são mais sensível a mudança dependendo dos dados. Sendo assim, é uma tarefa complexa recomendar um conjunto de hiper-parâmetros que resolve o problema de previsão de fluxo a curto prazo. Com isso em mente, os modelos foram alterados para que a escolha de hiper-parâmetros fizesse parte do treino assim como mostrado no Pseudo-Código \ref{algo:tuned_training}. Como essa escolha agora faz parte do treino e são realizadas diversos treinos devido ao \textit{Out-of-Sample-Testing}, teremos várias escolhas de hiper-parâmetros e podemos verficar quais foram as mais comuns.
+A escolha de hiper-parâmetros, diferente da escolha de parâmetros, é mais sensível. Isto é, os melhores hiper-parâmetros são mais sensível a mudança dependendo dos dados. Sendo assim, é uma tarefa complexa recomendar um conjunto de hiper-parâmetros que resolve o problema de previsão de fluxo a curto prazo. Com isso em mente, os modelos foram alterados para que a escolha de hiper-parâmetros fizesse parte do treino assim como mostrado no Pseudo-Código \ref{algo:tuned_training}. Como essa escolha agora faz parte do treino e são realizadas diversos treinos devido ao \textit{Out-of-Sample-Testing}, teremos várias escolhas de hiper-parâmetros e podemos verificar quais foram as mais comuns.
 
-Como escolha de hiper-parâmetros (\textit{tuning}) será utilizada para verificar a sensibilidade dos modelos com os hiper-parâmetros antes escolhidos. Para essa fase, o conjunto de testes é novamente divido em dois(treino e teste \textit{tuning}). Esta etapa é necessária para evitar o sobre-ajuste (\textit{overfitting}) e para garantir que os resultados finais sejam genéricos o suficiente para casos nunca visto antes (outro conjunto de dados, por exemplo). Os testes realizados serão feitos de forma que todos os hiper-parâmetros sejam testados uns com os outros, ou seja, todas as combinações e instâncias possíveis serão verificadas. 
+Essa escolha será utilizada para verificar a sensibilidade dos modelos com os hiper-parâmetros antes escolhidos. Para essa fase, o conjunto de testes é novamente divido em dois(treino e teste \textit{tuning}). Esta etapa é necessária para evitar o sobre-ajuste (\textit{overfitting}) e para garantir que os resultados finais sejam genéricos o suficiente para casos nunca visto antes (outro conjunto de dados, por exemplo). Os testes realizados serão feitos de forma que todos os hiper-parâmetros sejam testados uns com os outros, ou seja, todas as combinações e instâncias possíveis serão verificadas. 
 
 Para os modelos de aprendizagem profunda (\textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}}) os hiper-parâmetros são os mesmos. Segundo Greff et. al. \cite{Greff_2015}, que realizou extensos testes nesses dois modelos, os dois fatores que mais afetam a previsão dos modelos citados são a taxa de aprendizado e o tamanho da rede. Sendo assim, esses dois foram escolhidos como os hiper-parâmetros, com as opções sendo:
 
@@ -228,15 +224,14 @@ Para \textit{\acrshort{RF}} os hiper-parâmetros foram escolhidos para evitar o 
     \item \textbf{Altura Máxima}: 8, 16, 32, 64 e sem limitações no tamanho;
 \end{itemize}
 
-Para \textit{\acrshort{SVM}}, segundo Vladimir Cherkassky et. al. \cite{CHERKASSKY2004113}, a literatura não entra em consenso quanto a uma recomendação de hiper-parâmetros, com até algumas se contradizendo. Sendo assim, foram escolhidos os hiper-parâmetros C que indica quanto os erros serão penalizados e o parâmetro Os valores escolhidos foram:
+Para \textit{\acrshort{SVM}}, segundo Vladimir Cherkassky et. al. \cite{CHERKASSKY2004113}, a literatura não entra em consenso quanto a uma recomendação de hiper-parâmetros, havendo até certas contradiçẽos. Sendo assim, foram escolhidos os hiper-parâmetros C que indica quanto os erros serão penalizados e o parâmetro \textit{Gamma Scale} .Os valores escolhidos foram:
 
 \begin{itemize}
     \item \textbf{C}: 1, 10, 100 e 1000;
     \item \textbf{\(\gamma\)}: 4 valores espaçados, do espaço logarítmico de -2 a 2, e o padrão da biblioteca; 
 \end{itemize}
 
-% TODO: terminar SVM
-O hiper-parâmetro C representa ... Já o hiper-parâmetro \(\gamma\) representa ...
+O hiper-parâmetro C representa quanto que os erros do ajuste vão influênciar na proxima iteração, funcionando parecido como uma taxa de aprendizado. Já o hiper-parâmetro \(\gamma\) representa a flexibilidade do \textit{Kernel} de se ajustar aos dados, quanto mais flexível, maior a change de sobre-ajuste.
 
 \begin{algorithm}
 \label{algo:training}
