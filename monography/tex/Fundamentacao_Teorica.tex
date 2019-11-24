@@ -128,25 +128,17 @@ Porém, diferentemente de uma \textit{\acrshort{RNN}} comum, o \textit{\acrshort
 \textit{\acrshort{LSTM}} acaba por resolver o problema de \textit{Vanishing Gradient} para uma classe de problemas \cite{doi:10.1162/neco.1997.9.8.1735}. Porém, mesmo com esses avanços, \textit{\acrshort{LSTM}} ainda tem dificuldades com sequências muito longas \cite{alex2012}. E além disso aumenta o custo computacional, em comparação com uma \textit{\acrshort{RNN}} simples, em uma escala de até 9 vezes \cite{doi:10.1162/neco.1997.9.8.1735}.
 
 \section{\textit{\acrfull{GRU}}}
-
-% TODO: da onde ta vindo essa explicação
-
-
-%TODO: explicar diferenca entre porta da reinicializacao e porta da atualizacao, adicionando as fórmulas de cada uma
-
 % TODO: falhas do GRU
 
-\textit{\acrshort{GRU}} é um tipo de \textit{\acrshort{RNN}} semelhante ao \textit{\acrshort{LSTM}} proposto recentemente por Cho et. al. \cite{cho2014}.
+\textit{\acrshort{GRU}} é um tipo de \textit{\acrshort{RNN}} semelhante ao \textit{\acrshort{LSTM}} proposto recentemente por Cho et. al. \cite{cho2014}. Essa técnica é foi motivada pela \textit{\acrshort{LSTM}}, porém possui uma implementação mais simples e tem uma menor exigência computacional \cite{cho2014}. E apesar de ser uma técnica nova, é capaz de superar a \textit{\acrshort{LSTM}} tanto em termos de convergência (em tempo de CPU) quanto em atualização dos parâmetros e generalização da solução \cite{chung2014empirical}
 
-
- e, assim como ele, também faz uso de mecanismos chamados de Portas que possibilitam que a informação seja atualizada ou esquecida ao ser transferida de uma célula para outra. Ou seja, \textit{\acrshort{GRU}} também é capaz de guardar informações importantes na rede de maneira mais eficaz que uma \textit{\acrshort{RNN}} comum. Apesar de parecidos, \textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}} possuem algumas diferenças, como pode ser visto abaixo, o \textit{\acrshort{GRU}} possui apenas a \textit{Hidden Layer} e duas Portas para fazer o tratamento da informação para simular o efeito de memória:
+Assim como o \textit{\acrshort{LSTM}}, também faz uso de mecanismos chamados de Portas que possibilitam que a informação seja atualizada ou esquecida ao ser transferida de uma célula para outra. Ou seja, \textit{\acrshort{GRU}} também é capaz de guardar informações importantes na rede de maneira mais eficaz que uma \textit{\acrshort{RNN}} comum. Apesar de parecidos, \textit{\acrshort{GRU}} possui apenas a \textit{Hidden Layer} e duas Portas. Sendo elas as Portas de Atualização e a Porta de Reinicialização. Essas são usadas para fazer o tratamento da informação para simular o efeito de memória, de forma mais específica:
 
 \begin{itemize}
+    \item Porta da reinicialização: Já o portão de reinicialização decide quanto da informação vinda das células passadas será esquecido. E da mesmo forma, caso o valor se aproxime de 0, a informação será esquecida e conforme se aproxima de 1 o valor se mantém.
+    
     \item Porta da atualização: A porta de atualização tem um papel semelhante às Portas de Entrada e Porta de Esquecimento do \textit{\acrshort{LSTM}}. Nela, é decidido quais dos valores provindos das células passadas serão adicionados a rede.
-    \item Porta da reinicialização: Já o portão de reinicialização decide quanto da informação vinda das células passadas será esquecido.
 \end{itemize}
-
-Por ter uma arquitetura mais simples que uma \textit{\acrshort{LSTM}}, o \textit{\acrshort{GRU}} precisa de menos tempo para ser treinado e, geralmente, de menos dados também.
 
 \begin{figure}[htbp]
     \centering
@@ -154,3 +146,5 @@ Por ter uma arquitetura mais simples que uma \textit{\acrshort{LSTM}}, o \textit
     \label{figure:gru}
     \caption[Representação da arquitetura de uma GRU]{Representação da arquitetura de uma GRU\footnotemark}
 \end{figure}
+
+Sendo assim, nós que aprendem a captura informações de curto-prazo vão ter a Porta de Reinicialização mais ativa e nós que aprendem a captura de informações a longo-prazo vão ter a Porta de Atualização mais ativa \cite{cho2014}. Além disso, vale nora que por ter uma arquitetura mais simples que uma \textit{\acrshort{LSTM}}, o \textit{\acrshort{GRU}} precisa de menos tempo para ser treinado e, geralmente, de menos dados também.
