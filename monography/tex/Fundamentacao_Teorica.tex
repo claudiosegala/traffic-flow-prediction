@@ -50,28 +50,39 @@ Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizage
 
 \section{\textit{\acrfull{SVM}}}
 
-\textit{\acrshort{SVM}} foi criado originalmente por Vladimir Vapnik nos anos 60 e foi evoluindo até se tornar o que é hoje  \cite{Smola03atutorial}. Essa técnica é não-paramétrica e supervisionada, sendo que a ideia básica por trás pode ser usada tanto para classificação quanto para regressão.
-
-% TODO: falar de onde o nome veio (o que são os support vector machines)
+\textit{\acrshort{SVM}} foi criado originalmente por Vladimir Vapnik nos anos 60 e foi evoluindo até se tornar o que é hoje  \cite{Smola03atutorial}. Essa técnica é não-paramétrica e supervisionada, sendo que a ideia básica por trás pode ser usada tanto para classificação quanto para regressão. Quando é classificação é chamado de \textit{\acrfull{SVC}} e quando é regressão é chamado de \textit{\acrfull{SVR}}. 
 
 % TODO: falar como ela é e da insensibilidade epsilon
-%No caso da regressão, tenta-se criar uma função \(f(x)\) de forma que se \(g(x)\) é a função que perfeitamente descreve o conjunto de dados e \(\epsilon\) seja a dimensão do erro, para todo \(f(x)\)  \(\abs{g(x) - f(x)} \leq \epsilon \).
+No caso da \textit{\acrshort{SVR}}, tenta-se criar uma função \(f(x)\) de forma que se \(g(x)\) é a função que perfeitamente descreve o conjunto de dados e \(\epsilon\) seja a dimensão do erro, para todo \(f(x)\)  \(\abs{g(x) - f(x)} \leq \epsilon \). Para o \textit{support vectors} que não foram inclusos dentro do ``tubo'' gerado por \(\epsilon\), a distância para o ``tubo'' é utilizada como erro.
 
-% TODO: falar sobre as caracteristicas iterativas
-%A aprendizagem do modelo é iterativa.
+\textit{\acrshort{SVM}} é a combinação de um truque chamado \textit{Kernel Trick} e 
 
+
+
+% TODO: falar de onde o nome veio (o que são os support vector machines)
 % TODO: falar do mapeamento para outra dimensão pode auxiliar na SVM
 %Só que nem todo o problema pode ser resolvido com qualquer coisa, porem pode ser resolvido em outra dimensão.
 
-Mapear todo um conjunto de dados para outra representação do espaço é computacionalmente intenso. Porém uma função \textit{Kernel} consegue mapear dois pontos que pertencem a algum certo espaço para a distância deles em alguma outra representação desse espaço. Esse mapeamento é menos exigente computacionalmente, tornando então desnecessário mapear todo o conjunto de dados para a outra representação. Porém, mesmo com o \textit{Kernels}, \textit{\acrshort{SVM}} não escala muito bem para conjunto de dados muito grandes \cite{chollet2018deep}.
+
+\textit{\acrshort{SVR}} tenta traçar um hyper plano no conjunto de dados. Porém nem sempre o conjunto de dados pode ser bem planejado com um hyperplano, então é realizado a troca do espaço para outro que seja possível traçar o hyperplano. É algo assim, mas essa explicação
+
+% TODO: colocar a formula com C
+
+
+Vale notar que tanto para \textit{\acrshort{SVC}} quanto \textit{\acrshort{SVR}} exigem que sejam determinados um \textit{Kernel} e uma constante de regulação (\(C\)) \cite{murphy2012machine}. Essa constante de regulação indica quanto os erros serão penalizados. Se for baixo, erros não serão muito penalizados e se for alto os erros serão muito penalizados.
 
 % TODO: just mention that you can do this and on methodology you say the variable that does it
-Para ajustar a \textit{\acrshort{SVR}} podemos controlar o tamanho do tubo (\(\epsilon\)) e, entre outros, quão influentes são os pontos que não localizados no tubo (C). A variável C dessa técnica indica quanto os erros serão penalizados. Se for baixo, erros não serão muito penalizados e se for alto os erros serão muito penalizados. Além disso, alguns \textit{Kernels} possuem variáveis (\(\gamma\)), por exemplo) que ajudam no ajuste da função aos dados. \(\gamma\) determina a influência dos \textit{support vectors} no treinamento. Quanto maior o valor, menor a influência do \textit{support vectors}, quanto menor o valor, maior a influência. Valores baixos podem levar a uma função que não se ajusta muito ao conjunto de dados, prono a sub-ajuste. Já valores altos podem levar a uma função que se ajusta muito ao conjunto de dados, prono a sobre-ajuste.
+% Para ajustar a \textit{\acrshort{SVR}} podemos controlar o tamanho do tubo (\(\epsilon\)) e, entre outros, quão influentes são os pontos que não localizados no tubo (C). A variável C dessa técnica 
 
 % TODO: Mostrar exemplo simples de 1 dimensão
 
 
+Porém, mapear todo um conjunto de dados para outra representação do espaço é computacionalmente intenso. Mas, uma função \textit{Kernel} consegue mapear dois pontos que pertencem a algum certo espaço para a distância deles em alguma outra representação desse espaço. Esse mapeamento é menos exigente computacionalmente, tornando então desnecessário mapear todo o conjunto de dados para a outra representação. Porém, mesmo com o \textit{Kernel}, \textit{\acrshort{SVM}} não escala muito bem para conjunto de dados muito grandes. \cite{chollet2018deep}
 
+Mais especificamente esse truque é conhecido como \textit{Kernel Trick}, onde se substitui todas as multiplicações dos vetores de características (\(\langle x_i, x_j \rangle\)) por uma chamada do \textit{Kernel} (\(\kappa(x_i, x_j)\)) \cite{murphy2012machine}. Vale notar que alguns \textit{Kernels} possuem uma possibilidade de ajuste, permitindo ajustar o \textit{Kernel} ao conjunto de dados. \textit{Kernels} como o \textit{\acrfull{RBF}} podem ajustar a precisão (\(\gamma\)) que acaba determinando a influência dos \textit{support vectors}s \cite{murphy2012machine}. Quanto menor o valor, maior a influência e vice versa. Valores baixos podem levar a uma função que não se ajusta muito ao conjunto de dados, prono a sub-ajuste. Já valores altos podem levar a uma função que se ajusta muito ao conjunto de dados, prono a sobre-ajuste.
+
+% TODO: falar sobre as caracteristicas iterativas
+%A aprendizagem do modelo é iterativa.
 
 \begin{figure}[htbp]
     \centering
@@ -128,7 +139,6 @@ Porém, diferentemente de uma \textit{\acrshort{RNN}} comum, o \textit{\acrshort
 \textit{\acrshort{LSTM}} acaba por resolver o problema de \textit{Vanishing Gradient} para uma classe de problemas \cite{doi:10.1162/neco.1997.9.8.1735}. Porém, mesmo com esses avanços, \textit{\acrshort{LSTM}} ainda tem dificuldades com sequências muito longas \cite{alex2012}. E além disso aumenta o custo computacional, em comparação com uma \textit{\acrshort{RNN}} simples, em uma escala de até 9 vezes \cite{doi:10.1162/neco.1997.9.8.1735}.
 
 \section{\textit{\acrfull{GRU}}}
-% TODO: falhas do GRU
 
 \textit{\acrshort{GRU}} é um tipo de \textit{\acrshort{RNN}} semelhante ao \textit{\acrshort{LSTM}} proposto recentemente por Cho et. al. \cite{cho2014}. Essa técnica é foi motivada pela \textit{\acrshort{LSTM}}, porém possui uma implementação mais simples e tem uma menor exigência computacional \cite{cho2014}. E apesar de ser uma técnica nova, é capaz de superar a \textit{\acrshort{LSTM}} tanto em termos de convergência (em tempo de CPU) quanto em atualização dos parâmetros e generalização da solução \cite{chung2014empirical}. Porém a classe de problemas que o \textit{\acrshort{GRU}} consegue resolver é menor que a classe que o \textit{\acrshort{LSTM}} consegue resolver \cite{weiss2018}.
 
@@ -137,8 +147,10 @@ Assim como o \textit{\acrshort{LSTM}}, também faz uso de mecanismos chamados de
 \begin{itemize}
     \item Porta da reinicialização: Já o portão de reinicialização decide quanto da informação vinda das células passadas será esquecido. E da mesmo forma, caso o valor se aproxime de 0, a informação será esquecida e conforme se aproxima de 1 o valor se mantém.
     
-    \item Porta da atualização: A porta de atualização tem um papel semelhante às Portas de Entrada e Porta de Esquecimento do \textit{\acrshort{LSTM}}. Nela, é decidido quais dos valores provindos das células passadas serão adicionados a rede.
+    \item Porta da atualização: A porta de atualização tem um papel semelhante às Portas de Entrada e Porta de Esquecimento do \textit{\acrshort{LSTM}} . Nela, é decidido quais dos valores provindos das células passadas serão adicionados a rede.
 \end{itemize}
+
+Sendo assim, nós que aprendem a captura informações de curto-prazo vão ter a Porta de Reinicialização mais ativa e nós que aprendem a captura de informações a longo-prazo vão ter a Porta de Atualização mais ativa \cite{cho2014}. Além disso, vale nora que por ter uma arquitetura mais simples que uma \textit{\acrshort{LSTM}}, o \textit{\acrshort{GRU}} precisa de menos tempo para ser treinado e, geralmente, de menos dados também.
 
 \begin{figure}[htbp]
     \centering
@@ -146,5 +158,3 @@ Assim como o \textit{\acrshort{LSTM}}, também faz uso de mecanismos chamados de
     \label{figure:gru}
     \caption[Representação da arquitetura de uma GRU]{Representação da arquitetura de uma GRU\footnotemark}
 \end{figure}
-
-Sendo assim, nós que aprendem a captura informações de curto-prazo vão ter a Porta de Reinicialização mais ativa e nós que aprendem a captura de informações a longo-prazo vão ter a Porta de Atualização mais ativa \cite{cho2014}. Além disso, vale nora que por ter uma arquitetura mais simples que uma \textit{\acrshort{LSTM}}, o \textit{\acrshort{GRU}} precisa de menos tempo para ser treinado e, geralmente, de menos dados também.
