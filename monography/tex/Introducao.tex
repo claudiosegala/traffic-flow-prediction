@@ -12,11 +12,19 @@ Neste contexto, surgiram várias pesquisas na área de mobilidade urbana e trans
 
 A literatura está repleta de artigos que tentam prever a quantidade de veículos que irão passar em uma via em um determinado intervalo de tempo (predição de fluxo) utilizando aprendizagem de máquina \cite{doi:10.1080/01441647.2014.992496, fu2016using, hamed_prediction_1995, lv_6894591, Seoul, wang_2018, Xiaolei_2015, Zainab_2018}. Porém, a maioria desses artigos coletam dados e fazem suas análises em rodovias expressas, isto é, poucos trabalhos focam em tráfego urbano \cite{lana_2018}. Em rodovias expressas não há intersecções, ou barreiras semafóricas. Este estudo tem como desafio realizar a predição de fluxo em cenários que se assemelhem mais a centros urbanos, onde as vias possuem semáforos e cruzamentos que podem impactar de maneira significativa no comportamento do fluxo de veículos.
 
-\section{Hipótese}
+\section{Hipóteses}
 
-Tendo em mente as informações citadas anteriormente, este trabalho tem como hipótese que o emprego das técnicas de aprendizagem de máquina conseguirão prever o fluxo de veículos em um cruzamento em curto prazo (no máximo uma hora no futuro).
+Tendo em mente as informações citadas anteriormente, este trabalho tem como hipótese que o emprego das técnicas de aprendizagem de máquina, comumente utilizadas em problemas envolvendo vias expressas, serão capazes de prever o fluxo de veículos a curto prazo (no máximo uma hora no futuro) em vias com cruzamentos. Dada a hipótese principal, também espera-se provar as seguintes hipóteses ao longo do desenvolvimento dos experimentos:
 
-Além disso, tais técnicas serão capazes de prever o fluxo de veículos mais precisamente quando comparado a técnicas mais simples como \acrfull{MM} e \textit{Naive}.
+\begin{itemize}
+    \item Tais técnicas serão capazes de prever o fluxo de veículos de forma mais precisa quando comparadas a técnicas mais simples, como \acrfull{MM} e \textit{Naive}.
+    \item Os modelos utilizados apresentem melhor desempenho para as predições mais próximas do presente (que os resultados das predições de 15 minutos no futuro sejam melhores que os resultados de 30 minutos no futuro, por exemplo).
+    \item Os modelos utilizados tenham melhor desempenho quanto mais tempo do passado puderem receberem como entrada.
+    \item Os modelos de aprendizagem profunda tenham um tempo de treinamento maior que os modelos tradicionais.
+    \item Os modelos utilizados tenham um desempenho melhor quando recebem mais do que apenas o fluxo como entrada.
+    \item Os modelos apresentados sejam capazes de prever, com mais precisão que as bases de comparação, se o fluxo de veículos vai aumentar, ou diminuir.
+\end{itemize}
+
 
 \section{Objetivo}
 
@@ -32,26 +40,6 @@ Para alcançar o objetivo geral, os seguintes objetivos específicos foram defin
     \item Automatizar a comparação dos modelos;
     \item Analisar o comportamento dos modelos quanto a distância no futuro da predição;
 \end{itemize}
-
-\section{Resultados Esperados} 
-
-Ao fim deste trabalho, espera-se que os seguintes resultados tenham sido atingidos com sucesso:
-
-\begin{itemize}
-    \item  Os modelos implementados tenham melhor desempenho que os modelos de base de comparação;
-    \item Os modelos utilizados apresentem pior desempenho à medida que as predições fiquem mais distantes no futuro;
-    \item Os modelos utilizados tenham melhor desempenho quanto mais tempo do passado puderem receberem como entrada;
-    \item Os modelos de aprendizagem profunda tenham um tempo de treinamento maior que os modelos tradicionais;
-    \item Os modelos utilizados tenham um desempenho melhor quando recebem mais do que só o fluxo como entrada;
-    \item Os modelos propostos sejam capazes de prever se o fluxo vai aumentar, ou diminuir de maneira mais precisa que os modelos de base.
-    \item Os modelos utilizados são capazes de prever melhor que os modelos de base inferindo a partir de apenas algumas horas.
-\end{itemize}
-
-\section{Escopo}
-%TODO: verificar os meses e o ano dos dados
-Este trabalho tem como foco dois cruzamentos de Brasília conforme dados disponíveis, mais especificamente, dois cruzamentos localizados na Avenida Hélio Prates. Além disso, o conjunto de dados é referente aos meses de Junho, Julho e Agosto de Setembro de 2016. Dessa forma, os resultados podem ser distintos se os modelos forem utilizados em meses diferentes dos propostos no trabalho
-
-Para o trabalho serão desconsiderados certos cenários em que a captura e o relacionamentos dos dados obtidos são muito imprecisos e/ou pontuais. Tais cenários podem influenciar nos resultados obtidos, causando uma disparidade significante entre a predição e a realidade. Para exemplificar, um possível cenário que será desconsiderado é a possibilidade de acontecer um acidente, ou uma obra nas rodovias, algo que pode modificar bastante o fluxo de veículos.
 
 \section{Metodologia}
 

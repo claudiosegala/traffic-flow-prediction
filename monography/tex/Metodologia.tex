@@ -1,4 +1,5 @@
-Este capítulo tem como objetivo mostrar a metodologia utilizada para atingir o objetivo do trabalho. A Figura \ref{figure:metodologia} mostra, de maneira geral, o esquema da metodologia proposta. Primeiramente, será discutido o ambiente de experimento. Em seguida, será explicitado como a base de dados, mostrado no capítulo anterior, foram pré-processados. Por último, será discutido a escolha e implementação dos modelos e as métricas de avaliação utilizadas, assim como qual foi o ambiente de teste utilizado.
+\label{chapter:methodology}
+Este capítulo tem como objetivo mostrar a metodologia utilizada para atingir o objetivo do trabalho. A Figura \ref{figure:metodologia} mostra, de maneira geral, o esquema da metodologia proposta. Primeiramente, será discutido o escopo do trabalho. Em seguida, será explicitado como a base de dados, caracterizada no capítulo \ref{chapter:data} , foi pré-processada. Por último, será discutido a escolha e implementação dos modelos, assim como as métricas de avaliação utilizadas.
 
 \begin{figure}
     \centering
@@ -6,6 +7,11 @@ Este capítulo tem como objetivo mostrar a metodologia utilizada para atingir o 
     \label{figure:metodologia}
     \caption[Fluxograma da metodologia]{Fluxograma da metodologia}
 \end{figure}
+
+\section{Definição de Cenário}
+Este trabalho tem como foco dois cruzamentos de Brasília. Tais cruzamentos estão localizados na Avenida Hélio Prates, em Taguatinga. Os dados coletados pelos fiscalizadores presentes nesses cruzamentos são referentes aos meses de Junho, Julho e Agosto de 2016. Dessa forma, os resultados apresentados aqui nesta monografia podem ser distintos se os modelos forem utilizados em meses diferentes dos propostos no trabalho.
+
+Para os experimentos serão desconsiderados certos cenários em que a captura e o relacionamentos dos dados obtidos são muito imprecisos e/ou pontuais. Tais cenários podem influenciar nos resultados obtidos, causando uma disparidade significante entre a predição e a realidade. Para exemplificar, um possível cenário que será desconsiderado é a possibilidade de acontecer um acidente, ou a realização de obras nas rodovias, algo que pode impactar o fluxo de veículos de maneira perceptível.
 
 \section{Pré-Processamento dos Dados}
 
@@ -87,9 +93,9 @@ Vale notar que, como o período é o mesmo para qualquer um dos sensores, ao se 
 
 \subsection{Normalização dos Dados}
 
-Na área de aprendizagem de máquina, é comum vermos modelos de predições para diferentes tipo de variáveis. Por vezes, os valores assumidos por essas variáveis podem apresentar um domínio grande demais, como no caso da predição de valores de ações da bolsa de valores. Com valores em um intervalo tão grande, o treinamento dos modelos tende a piorar. Para contornar este problema, é comum utilizar técnicas que visam diminuir o intervalo de valores que as variáveis podem assumir. Uma destas técnicas é a normalização. 
+Na área de aprendizagem de máquina, é comum vermos modelos de predições para diferentes tipo de variáveis. Por vezes, os valores assumidos por essas variáveis podem apresentar um domínio grande demais, como no caso da predição de valores de ações do mercado financeiro. Com valores em um intervalo tão grande, o treinamento dos modelos tende a piorar. Para contornar este problema, é comum utilizar técnicas que visam diminuir o intervalo de valores que as variáveis podem assumir. Uma destas técnicas é a normalização. 
 
-Em um dos tipos da normalização, utiliza-se o maior e o menor valor que o seu conjunto de dados atinge para ajustar os valores intermediários, como pode ser visto em \cite{Dorian_1999}. Por exemplo, o maior fluxo calculado foi 94 veículos para o sensor \textbf{RSI128} com acumulação de 2,5 minutos e o menor foi 0. Assim, foram ajustados os valores do conjunto de dados dentro de um intervalo entre 0 e 1, com 0 representando o menor valor e 94, o maior valor. Porém, os testes realizados mostraram que a normalização não trouxe melhorias significativas para as predições deste trabalho, apresentando, inclusive, resultados levemente piores em alguns modelos. Por este motivo, optou-se por continuar os experimentos sem normalização.
+Em um dos tipos da normalização, utiliza-se o maior e o menor valor que o seu conjunto de dados atinge para ajustar os valores intermediários, como pode ser visto em \cite{Dorian_1999}. Por exemplo, o maior fluxo calculado foi 94 veículos para o sensor \textbf{RSI128} com acumulação de 2,5 minutos e o menor foi 0. Assim, foram ajustados os valores do conjunto de dados dentro de um intervalo entre 0 e 1, com 0 representando o menor valor e 94, o maior valor. Porém, os testes realizados mostraram que a normalização não trouxe melhorias significativas para as predições deste trabalho, apresentando, inclusive, resultados levemente inferiores em alguns modelos. Por este motivo, optou-se por continuar os experimentos sem normalização.
 
 \subsection{Sazonalidade dos dados}
 
@@ -182,7 +188,9 @@ Serão utilizados também dois modelos com o único propósito de estabelecer um
 
 As arquiteturas utilizadas neste trabalho foram implementados na linguagem \textit{Python} utilizando bibliotecas como \textit{Keras} com \textit{TensorFlow} e \textit{SKLearn}. Decidiu-se por utilizar essas bibliotecas, pois suas implementações já são robustas, otimizadas e bem testadas. Implementar todos os modelos sem o auxílio de nenhuma biblioteca seria ineficiente para objetivo dos experimentos e prono a erros. Além disso, o uso das bibliotecas facilita a reprodução dos experimentos para os interessados em avançar ou verificar este projeto.
 
-\textit{Keras} foi utilizado para implementar os modelos de \textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}} e optou-se por usar como base dessa biblioteca o \textit{TensorFlow}, visto que este é o \textit{framework} com suporte para aprendizado de máquina mais utilizado dentre os desenvolvedores, segundo um questionário feito em 2018 pelo \textit{Stack Overflow} \cite{stack_2018}. Já \textit{SKLearn} foi utilizado para implementar os modelos \textit{\acrshort{RF}} e \textit{\acrshort{SVM}}. Também utilizou-se a biblioteca \textit {SKLearn} para realizar uma pesquisa dos melhores parâmetros de cada modelo.
+\textit{Keras} foi utilizado para implementar os modelos de \textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}} e optou-se por usar como base dessa biblioteca o \textit{TensorFlow}, visto que este é o \textit{framework} com suporte para aprendizado de máquina mais utilizado dentre os desenvolvedores, segundo um questionário feito em 2018 pelo \textit{Stack Overflow} \cite{stack_2018}. Já \textit{SKLearn} foi utilizado para implementar os modelos \textit{\acrshort{RF}} e \textit{\acrshort{SVM}}. Também utilizou-se a biblioteca \textit {SKLearn} para realizar uma pesquisa dos melhores parâmetros de cada modelo. O código implementado está disponível na plataforma \textit{Github} \footnotemark.
+
+\footnotetext{\url{https://github.com/claudiosegala/Monografia/tree/master/code}}
 
 \subsection{Escolha de Parâmetros}
 

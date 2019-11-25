@@ -1,5 +1,5 @@
-Neste capítulo é apresentado uma análise do tráfego e do conjunto de dados utilizado nesse trabalho, além de uma descrição do problema. Primeiramente, é explicado as características do tráfego e como ele pode ser modelo. Subsequentemente é explicitado como os dados foram adquiridos e suas características. Por fim, são unidos os conceitos para descrever o problema desse trabalho.
-
+\label{chapter:data}
+Neste capítulo é apresentado uma análise do tráfego e do conjunto de dados utilizado nesse trabalho. Primeiramente, são explicadas as características do tráfego e como ele pode ser modelado. Subsequentemente é explicitado como os dados que serão utilizados no capítulo \ref{chapter:methodology} foram adquiridos, assim como suas características. 
 \section{Tráfego}
 
 É importante salientar que o tráfego é afetado por diversos fatores, entre eles: temporais, espaciais e exógenos. Os fatores temporais são, por exemplo, o horário do expediente dos trabalhadores que possuem veículos. Os fatores espaciais são, por exemplo, como a malha rodoviário se distribui em uma localização, ou a quantidade de empresas em uma área. Já fatores exógenos são externos as características do tráfego, por exemplo, acidentes que possam vir a ocorrer, ou meteorologia do dia. Sendo assim, modelos de previsões podem ter desempenhos diferentes dependendo de onde e quando os dados forem coletados.
@@ -10,9 +10,11 @@ Além disso, segundo Zainab Abbas et. al. \cite{Zainab_2018}, o tráfego pode se
 
 \section{Análise do Conjunto de Dados}
 
+Esta seção almeja demonstrar o formato dos dados, assim como a maneira na qual eles foram adquiridos. São apresentadas tabelas que mostram as colunas exatas e imagens aéreas dos cruzamentos, onde estão instalados os fiscalizadores responsáveis pela captura de informações.
+
 \subsection{Aquisição dos Dados}
 
-Os dados\footnote{http://bit.ly/processed-data-2l5MaAG} provêm de dois cruzamentos na avenida Hélio Prates que pode ser vista na Figura \ref{figure:helio}. Esta cruza Taguatinga e Ceilândia, que são duas cidades satélites do \acrfull{DF}. Estes dados foram coletados por fiscalizadores eletrônicos localizados nos cruzamentos e foram fornecidos pelo \acrfull{DETRAN}\footnote{http://www.detran.df.gov.br/} do \acrshort{DF}. Neste conjunto de dados estão inclusos registros de todos os veículos que passaram pelo local nos meses de maio a julho de 2016 em forma de uma série temporal. Mais especificamente, do primeiro dia de maio ao último de julho de 2016, totalizando 13 semanas e 1 dia, 92 dias. 
+Os dados\footnote{http://bit.ly/processed-data-2l5MaAG} provêm de dois cruzamentos na avenida Hélio Prates que pode ser vista na Figura \ref{figure:helio}. Esta cruza Taguatinga e Ceilândia, que são duas cidades satélites do \acrfull{DF}. Estes dados foram coletados por fiscalizadores eletrônicos localizados nos cruzamentos e foram fornecidos pelo \acrfull{DETRAN}\footnote{http://www.detran.df.gov.br/} do \acrshort{DF}. Neste conjunto de dados estão inclusos registros de todos os veículos que passaram pelo local nos meses de maio a julho de 2016 em forma de uma série temporal. Mais especificamente, do primeiro dia de maio ao último de julho de 2016, totalizando 13 semanas e 1 dia, 92 dias. Vale notar que esses dados foram escolhidos devido a sua disponibilidade.
 
 \begin{table}[htbp]
     \begin{tabular}{ccccccc}
@@ -94,7 +96,7 @@ Vale salientar que não foram encontrados atributos incompletos ou nulos. Porém
     \caption[Visão Espacial do Cruzamento referente aos sensores \textbf{RSI131}, \textbf{RSI132}, \textbf{RSI032} e \textbf{RSI033}]{Visão Espacial do Cruzamento referente aos sensores \textbf{RSI131}, \textbf{RSI132}, \textbf{RSI032} e \textbf{RSI033}}
 \end{figure}
 
-\subsection{Limitações dos Dados}
+\subsection{Escopo dos Dados}
 
 O conjunto de dados provém de uma só cidade, recolhidos de sensores instalados em locais específicos e por apenas 3 meses. Logo, os resultados podem não ser os mesmos quando a metodologia for utilizada em outras localidades ou outros meses. O modo como os motoristas dirigem e como as vias são feitas também vão influenciar. Para a previsão perfeita seriam necessárias muitas variáveis, as quais não estão disponíveis.
 
