@@ -35,10 +35,6 @@ Criado por Leo Breiman em \textit{Random Forest} \cite{Breiman:2001:RF:570181.57
 
 A construção das árvores é feita utilizando o método \textit{Bagging} (\textit{\textbf{B}ootstrap \textbf{Agg}regation}), também criado por Leo Breiman em \textit{Bagging Predictors} \cite{Breiman:1996:BP:231986.231989}. Este método gera várias versões de um mesmo modelo e agrega os resultados dos mesmos. As versões do modelo utilizam amostras do conjunto de dados selecionadas aleatoriamente, mas com a mesma distribuição.
 
-Porém, diferente de \textit{Bagging}, \textit{\acrshort{RF}} utiliza mais uma técnica para diminuir o sobre-ajuste (\textit{overfitting}). Há uma modificação no algoritmo de criação das árvores de decisão limitando a quantidade de características (\textit{features}) do conjunto de dados que vai ser utilizada. O autor sugere limitar a quantidade de características (\textit{q}) para $ \sqrt{q} $, no caso de classificação, ou $ \frac{q}{3} $, no caso de regressão \cite{hastie2005elements}. Além disso, o autor também sugere, no artigo original, que, para selecionar a quantidade ideal de características deve-se utilizar de estimativas \textit{out-of-bag}, explicadas também no artigo.
-
-Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizagem de máquina, ela pode ser classificada como um Comitê de Máquinas (\textit{Ensemble Learning}). A forma como as respostas de cada uma das máquinas são combinadas depende do problema. Para classificação pode ser usado uma votação (voto da maioria) e para um problema de regressão pode ser usado uma média dos valores, assim como mostrado na Figura \ref{figure:random_forest}.
-
 \begin{figure}[htbp]
     \centering
     \includegraphics[scale=1.0]{monography/img/models/random_forest.png}
@@ -46,62 +42,38 @@ Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizage
     \caption[Representação do funcionamento de uma \textit{\acrshort{RF}}]{Representação do funcionamento de uma \textit{\acrshort{RF}}\footnotemark}
 \end{figure}
 
+Porém, diferente de \textit{Bagging}, \textit{\acrshort{RF}} utiliza mais uma técnica para diminuir o sobre-ajuste (\textit{overfitting}). Há uma modificação no algoritmo de criação das árvores de decisão limitando a quantidade de características (\textit{features}) do conjunto de dados que vai ser utilizada. O autor sugere limitar a quantidade de características (\textit{q}) para $ \sqrt{q} $, no caso de classificação, ou $ \frac{q}{3} $, no caso de regressão \cite{hastie2005elements}. Além disso, o autor também sugere, no artigo original, que, para selecionar a quantidade ideal de características deve-se utilizar de estimativas \textit{out-of-bag}, explicadas também no artigo.
+
+Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizagem de máquina, ela pode ser classificada como um Comitê de Máquinas (\textit{Ensemble Learning}). A forma como as respostas de cada uma das máquinas são combinadas depende do problema. Para classificação pode ser usado uma votação (voto da maioria) e para um problema de regressão pode ser usado uma média dos valores, assim como mostrado na Figura \ref{figure:random_forest}.
+
 \footnotetext{\url{https://dsc-spidal.github.io/harp/img/4-5-1.png}}
 
 \section{\textit{\acrfull{SVM}}}
 
-\textit{\acrshort{SVM}} foi criado originalmente por Vladimir Vapnik nos anos 60 e foi evoluindo até se tornar o que é hoje  \cite{Smola03atutorial}. Essa técnica é não-paramétrica e supervisionada, sendo que a ideia básica por trás pode ser usada tanto para classificação quanto para regressão. Quando é classificação é chamado de \textit{\acrfull{SVC}} e quando é regressão é chamado de \textit{\acrfull{SVR}}. O nome deriva da técnica enxergar as entradas (\(x_i\)) como vetores de atributos e que somente alguns servem para a solução final, servindo de suporte.
-
-% TODO: falar como ela é e da insensibilidade epsilon
-No caso da \textit{\acrshort{SVR}}, tenta-se criar uma função \(f(x)\) de forma que se \(g(x)\) é a função que perfeitamente descreve o conjunto de dados e \(\epsilon\) seja a dimensão do erro, para todo \(f(x)\)  \(\abs{g(x) - f(x)} \leq \epsilon \). Os vetores de atributos que não estão servindo de suporte nem estão dentro do ``tubo'' são utilizados para ajustar o função coo erros.
-
-%Para o \textit{support vectors} que não foram inclusos dentro do ``tubo'' gerado por \(\epsilon\), a distância para o ``tubo'' é utilizada como erro.
-
-\textit{\acrshort{SVM}} é a combinação de um truque chamado \textit{Kernel Trick} e 
-
-
-
-% TODO: falar de onde o nome veio (o que são os support vector machines)
-% TODO: falar do mapeamento para outra dimensão pode auxiliar na SVM
-%Só que nem todo o problema pode ser resolvido com qualquer coisa, porem pode ser resolvido em outra dimensão.
-
-
-\textit{\acrshort{SVR}} tenta traçar um hyper plano no conjunto de dados. Porém nem sempre o conjunto de dados pode ser bem planejado com um hyperplano, então é realizado a troca do espaço para outro que seja possível traçar o hyperplano. É algo assim, mas essa explicação
-
-% TODO: colocar a formula com C
-
-
-Vale notar que tanto para \textit{\acrshort{SVC}} quanto \textit{\acrshort{SVR}} exigem que sejam determinados um \textit{Kernel} e uma constante de regulação (\(C\)) \cite{murphy2012machine}. Essa constante de regulação indica quanto os erros serão penalizados. Se for baixo, erros não serão muito penalizados e se for alto os erros serão muito penalizados.
-
-% TODO: just mention that you can do this and on methodology you say the variable that does it
-% Para ajustar a \textit{\acrshort{SVR}} podemos controlar o tamanho do tubo (\(\epsilon\)) e, entre outros, quão influentes são os pontos que não localizados no tubo (C). A variável C dessa técnica 
-
-% TODO: Mostrar exemplo simples de 1 dimensão
-
-
-Porém, mapear todo um conjunto de dados para outra representação do espaço é computacionalmente intenso. Mas, uma função \textit{Kernel} consegue mapear dois pontos que pertencem a algum certo espaço para a distância deles em alguma outra representação desse espaço. Esse mapeamento é menos exigente computacionalmente, tornando então desnecessário mapear todo o conjunto de dados para a outra representação. Porém, mesmo com o \textit{Kernel}, \textit{\acrshort{SVM}} não escala muito bem para conjunto de dados muito grandes. \cite{chollet2018deep}
-
-Mais especificamente esse truque é conhecido como \textit{Kernel Trick}, onde se substitui todas as multiplicações dos vetores de características (\(\langle x_i, x_j \rangle\)) por uma chamada do \textit{Kernel} (\(\kappa(x_i, x_j)\)) \cite{murphy2012machine}. Vale notar que alguns \textit{Kernels} possuem uma possibilidade de ajuste, permitindo ajustar o \textit{Kernel} ao conjunto de dados. \textit{Kernels} como o \textit{\acrfull{RBF}} podem ajustar a precisão (\(\gamma\)) que acaba determinando a influência dos \textit{support vectors} \cite{murphy2012machine}. Quanto menor o valor, maior a influência e vice versa. Valores baixos podem levar a uma função que não se ajusta muito ao conjunto de dados, prono a sub-ajuste. Já valores altos podem levar a uma função que se ajusta muito ao conjunto de dados, prono a sobre-ajuste.
-
-% TODO: falar sobre as caracteristicas iterativas
-%A aprendizagem do modelo é iterativa.
+\textit{\acrshort{SVM}} foi criado originalmente por Vladimir Vapnik nos anos 60 e foi evoluindo até se tornar o que é hoje  \cite{Smola03atutorial}. Essa técnica é não-paramétrica e supervisionada, sendo que a ideia básica por trás de seu funcionamento pode ser usada tanto para classificação quanto para regressão. Quando for utilizada para classificação, é chamado de \textit{\acrfull{SVC}} e quando é utilizado para regressão, é chamado de \textit{\acrfull{SVR}}. O nome deriva da técnica de enxergar as entradas (\(x_i\)) como vetores de atributos, onde somente alguns destes vetores servem para a solução final do problema, servindo de suporte.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[scale=1.0]{monography/img/models/svr_example.png}
+    \includegraphics[scale=0.6]{monography/img/models/svr_example.png}
     \label{figure:support_vector_machine}
-    \caption[Representação do funcionamento de uma \textit{\acrshort{SVM}}]{Representação do funcionamento de uma \textit{\acrshort{SVM}}\footnotemark}
+    \caption[Representação do funcionamento de uma \textit{\acrshort{SVM}}]{Representação do funcionamento de uma \textit{\acrshort{SVR}}\footnotemark}
 \end{figure}
 
-\footnotetext{\url{https://www.researchgate.net/figure/Schematic-of-the-one-dimensional-support-vector-regression-SVR-model-Only-the-points_fig5_320916953}}
+\footnotetext{\url{https://www.researchgate.net/figure/A-schematic-diagram-of-SVR-using-an-e-sensitive-loss-function_fig1_270902334}}
+
+No caso da \textit{\acrshort{SVR}}, tenta-se criar uma função \(f(x)\) de forma que se \(g(x)\) é a função que perfeitamente descreve o conjunto de dados e \(\epsilon\) seja a dimensão do erro, para todo \(f(x)\)  \(\abs{g(x) - f(x)} \leq \epsilon \). Sendo assim, todos os pontos que estão dentro do ``tubo'' representam um erro esperado, assim como mostra a Figura \ref{figure:support_vector_machine}. Já os vetores de atributos que não estão dentro do tubo, nem estão servindo de suporte são utilizados para ajustar a função como erros. Vale notar que tanto para \textit{\acrshort{SVC}} quanto \textit{\acrshort{SVR}} é necessário que sejam determinados um \textit{Kernel} e uma constante de regulação (\(C\)) \cite{murphy2012machine}. Essa constante de regulação indica em quanto os erros serão penalizados. Se for baixo, erros não serão muito penalizados e se for alto os erros serão muito penalizados.
+
+É importante notar que nem sempre é possível criar uma função que consiga se ajustar bem ao conjunto de dados. Para consertar esse problema, é feito uma mudança da dimensão dos vetores de atributos para outra dimensão que seja possível criar uma função que se ajuste melhor. Porém, mapear todo um conjunto de dados para outra representação do espaço é computacionalmente intenso. Nisso, entram as funções \textit{Kernel} que mapeiam dois pontos que pertencem a algum certo espaço para a distância deles em alguma outra representação desse espaço. Esse mapeamento é menos exigente computacionalmente, tornando então desnecessário mapear todo o conjunto de dados para a outra representação. Porém, mesmo com o \textit{Kernel}, \textit{\acrshort{SVM}} não escala muito bem para conjunto de dados muito grandes. \cite{chollet2018deep}
+
+Mais especificamente esse truque é conhecido como \textit{Kernel Trick}, onde se substitui todas as multiplicações dos vetores de características (\(\langle x_i, x_j \rangle\)) por uma chamada do \textit{Kernel} (\(\kappa(x_i, x_j)\)) \cite{murphy2012machine}. Vale notar que alguns \textit{Kernels} possuem uma possibilidade de ajuste, permitindo ajustar o \textit{Kernel} ao conjunto de dados. \textit{Kernels} como o \textit{\acrfull{RBF}} podem ajustar a precisão (\(\gamma\)) que acaba determinando a influência dos \textit{support vectors} \cite{murphy2012machine}. Quanto menor o valor, maior a influência e vice versa. Valores baixos podem levar a uma função que não se ajusta muito ao conjunto de dados, prono a sub-ajuste. Já valores altos podem levar a uma função que se ajusta muito ao conjunto de dados, prono a sobre-ajuste.
 
 \section{\textit{\acrfull{RNN}}}
 
-\textit{\acrshort{RNN}} é uma classe de redes neurais artificiais que a arquitetura foi baseada nas conexões cíclicas do cérebro. Ou seja, diferente das redes neurais comuns, essas possuem ciclos. Além disso, em sua arquitetura, essas técnicas utilizam de laços iterativos para guardar informação. \cite{alex2012} 
+\textit{\acrshort{RNN}} é uma classe de redes neurais artificiais na qual a arquitetura foi baseada nas conexões cíclicas do cérebro. Ou seja, diferente das redes neurais comuns, essas possuem ciclos e laços iterativos que permitem guardar informação. \cite{alex2012} 
 
-Ao se permitir guardar informações, é possível resolver uma outra classe de problemas, já que agora resultados passados podem influenciar o resultado atual \cite{alex2012}. Redes neurais comuns, ou do tipo \textit{feedforward}, utilizam apenas o seu estado atual para gerar o resultado. Estas conseguem resolver, por exemplo, problemas de classificação de imagens e até regressões. Porém não lidam bem com problemas que a resposta atual tem correlação com algo no passado. Um exemplo de problema que exige essa correlação seria a de tentar prever a próxima palavra de uma frase, ou tentar extrair um contexto deit{\acrshort{RNN}} são mais adequadas, segundo Mitchell et. al. \cite{Mitchell_1997}. Mais especificamente, problemas onde dados isolados não tem tanto significado quanto o conjunto, é exigido um conceito de memória.
+Ao se permitir guardar informações, é possível resolver uma outra classe de problemas, já que agora resultados passados podem influenciar o resultado atual \cite{alex2012}. Redes neurais comuns, ou do tipo \textit{feedforward}, utilizam apenas o seu estado atual para gerar o resultado. Estas conseguem resolver, por exemplo, problemas de classificação de imagens e até regressões. Porém, não lidam bem com problemas nos quais a resposta atual tem correlação com informações do passado. Um exemplo de problema que exige essa correlação seria a de tentar prever a próxima palavra de uma frase, ou tentar extrair um contexto de um documento.  Segundo Mitchell et. al. \cite{Mitchell_1997}, para esse tipo de situação, {\acrshort{RNN}} são mais adequadas. Ou seja,  problemas onde os dados isolados não tem tanto significado quanto o conjunto inteiro exigem um conceito de memória, onde a utilização de \acrshort{RNN} é mais adequada.
 
-Para simular este efeito de memória, \textit{\acrshort{RNN}} dispõe de uma arquitetura onde a saída do nó anterior é utilizada como entrada no nó seguinte, juntamente com a entrada nova atual da rede (\(y_t = f(y_{t-1}, x_t)\)). Para passar estes valores de um nó para o outro, a \textit{\acrshort{RNN}} dispõe de um mecanismo chamado \textit{Hidden Layer}. Na Figura \ref{figure:rnn} é exemplificada a sua arquitetura quando desdobrada, onde o último resultado utiliza como entrada valores resultantes das execuções anteriores.
+Para simular esse efeito de memória, \textit{\acrshort{RNN}} dispõe de uma arquitetura onde a saída do nó anterior é utilizada como entrada no nó seguinte, juntamente com a entrada nova atual da rede (\(y_t = f(y_{t-1}, x_t)\)). Para passar estes valores de um nó para o outro, a \textit{\acrshort{RNN}} dispõe de um mecanismo chamado \textit{Hidden Layer}. Na Figura \ref{figure:rnn} é exemplificada a sua arquitetura quando desdobrada, onde o último resultado utiliza como entrada valores resultantes das execuções anteriores.
 
 \begin{figure}[htbp]
     \centering
@@ -110,9 +82,9 @@ Para simular este efeito de memória, \textit{\acrshort{RNN}} dispõe de uma arq
     \caption[Representação simples do conceito de um RNN]{Representação simples do conceito de uma RNN \footnotemark}
 \end{figure}
 
-É importante notar que essa técnica possui limitações como só acessar informações em uma direção, ou seja, em um contexto temporal, só acessa o passado. O que encaixa com problemas que envolvam séries temporais, mas pode não encaixar em outros tipos de problema que podem exigir acesso de informações bidirecional \cite{alex2012}. Outra falha é a incapacidade de armazenar informações por um longo período de tempo \cite{hochreiter2001gradient}. 
+É importante notar que essa técnica possui limitações, como ser possível acessar apenas informações em uma direção. Ou seja, em um contexto temporal, é possível apenas acessar o passado. Esta característica vai ao encontro com as características de problemas que envolvam séries temporais, mas podem não encaixar muito bem em outros tipos de problemas que possam exigir acesso de informações de maneira bidirecional \cite{alex2012}. Outra falha é a incapacidade de armazenar informações por um longo período de tempo \cite{hochreiter2001gradient}. 
 
-Além disso, \textit{\acrshort{RNN}s} são muito difíceis de treinar por causa de um problema chamado \textit{Vanishing Gradient}. Esse problema se refere a decaimento do erro, utilizado para ajustar a rede, em escala exponencial. Isso fazia com que o o erro desaparecesse tornando difícil a convergência. \cite{doi:10.1162/neco.1997.9.8.1735}
+Além das características já citadas, também é válido dizer que \textit{\acrshort{RNN}s} são muito difíceis de treinar, devido a um problema chamado \textit{Vanishing Gradient}. Esse problema se refere ao decaimento do erro, utilizado para ajustar os pesos da rede, em escala exponencial. O \textit{Vanishing Gradient} faz com que o o erro desapareça, tornando difícil a convergência da rede. \cite{doi:10.1162/neco.1997.9.8.1735}
 
 \section{\textit{\acrfull{LSTM}}}
 
@@ -126,37 +98,37 @@ Além disso, \textit{\acrshort{RNN}s} são muito difíceis de treinar por causa 
 \end{figure}
 \footnotetext{\url{https://colah.github.io/posts/2015-08-Understanding-LSTMs/}}
 
-Esta técnica é derivada da \textit{\acrshort{RNN}}. Sendo assim, também utiliza de estados anteriores e do estado atual para gerar sua saída, assim como pode ser visto na Figura \ref{figure:lstm}. Sendo assim, possui também a capacidade de simular uma memória guardando informações do passado. Sua estrutura é uma variação da \textit{\acrshort{RNN}} que gira em torno de células de memórias para fluir o erro de forma constante \cite{doi:10.1162/neco.1997.9.8.1735}. A técnica é utilizado para predição de informações que derivam de dados sequenciais e séries temporais, sendo possível encontrar diversos trabalhos na literatura que mostram sua eficiência quando comparado a outros métodos \cite{alex2012}.
+Esta técnica é derivada da \textit{\acrshort{RNN}}. Portanto, também utiliza de estados anteriores e do estado atual para gerar sua saída, assim como pode ser visto na Figura \ref{figure:lstm}. Desta forma, a \acrshort{LSTM} possui também a capacidade de simular uma memória, armazenando informações do passado. Sua estrutura é uma variação da \textit{\acrshort{RNN}} que gira em torno de células de memórias para fluir o erro de forma constante pela rede \cite{doi:10.1162/neco.1997.9.8.1735}. A técnica é utilizada para predição de informações que derivam de dados sequenciais e séries temporais, sendo possível encontrar diversos trabalhos na literatura que mostram sua eficiência quando comparada a outros métodos \cite{alex2012}.
 
-Porém, diferentemente de uma \textit{\acrshort{RNN}} comum, o \textit{\acrshort{LSTM}} possui uma camada a mais (além da \textit{Hidden Layer}) chamada de \textit{memory blocks}. Cada \textit{memory block} possui uma ou mais \textit{memory cells} e três portas (unidades multiplicativas). Essas portas servem para ajudar as \textit{memory cells} gravar e acessar informações por um longo período de tempo \cite{alex2012}. As portas são chamadas de Porta de Entrada, Porta do Esquecimento e Porta de Saída:
+Entretanto, diferentemente de uma \textit{\acrshort{RNN}} comum, o \textit{\acrshort{LSTM}} possui uma camada a mais (além da \textit{Hidden Layer}) chamada de \textit{memory blocks}. Cada \textit{memory block} possui uma ou mais \textit{memory cells} e três portas (unidades multiplicativas). Essas portas servem para ajudar as \textit{memory cells} a gravar e acessar informações por um longo período de tempo \cite{alex2012}. As portas são chamadas de Porta de Entrada, Porta do Esquecimento e Porta de Saída:
 
 \begin{itemize}
   \item Porta de Esquecimento: decide qual informação provinda da célula anterior vai ser descartada. Isso é feito por meio de uma função de ativação sigmoide que retorna um número entre 0 e 1 para cada valor da célula passada, onde 0 representa total esquecimento daquela informação e 1 total preservação.
   
-  \item Porta do Entrada: protege os dados guardados na célula de entradas irrelevantes. Para tal, são utilizadas duas funções. Para tal, primeiro é aplicada uma função sigmoide nos valores que serão atualizados. Seguida de uma função de tangente hiperbólica cria novos valores candidatos a serem utilizados na atualização.
+  \item Porta de Entrada: protege os dados guardados na célula de novas entradas irrelevantes. Para tal, são utilizadas duas funções. Primeiro, é aplicada uma função sigmoide nos valores que serão atualizados. Em seguida, é utilizada uma função de tangente hiperbólica que cria novos valores candidatos a serem utilizados na atualização da célula.
   
   \item Porta de Saída: protege as próximas células das informações irrelevantes guardadas na célula atual. Essa porta efetivamente faz as alterações nos valores da célula de memória atual. Os valores candidatos decididos na Porta de Entrada são colocados no lugar dos valores que devem ser atualizados.
 \end{itemize}
 
-\textit{\acrshort{LSTM}} acaba por resolver o problema de \textit{Vanishing Gradient} para uma classe de problemas \cite{doi:10.1162/neco.1997.9.8.1735}. Porém, mesmo com esses avanços, \textit{\acrshort{LSTM}} ainda tem dificuldades com sequências muito longas \cite{alex2012}. E além disso aumenta o custo computacional, em comparação com uma \textit{\acrshort{RNN}} simples, em uma escala de até 9 vezes \cite{doi:10.1162/neco.1997.9.8.1735}.
+\textit{\acrshort{LSTM}} acaba por resolver o problema de \textit{Vanishing Gradient} para uma classe de problemas \cite{doi:10.1162/neco.1997.9.8.1735}. Porém, mesmo com esses avanços, o \textit{\acrshort{LSTM}} ainda tem dificuldades com sequências muito longas \cite{alex2012}. Além disso, o custo computacional para se treinar uma rede neural utilizando \acrhsort{LSTM}, em comparação com uma \textit{\acrshort{RNN}} simples, pode ser até 9 vezes maior \cite{doi:10.1162/neco.1997.9.8.1735}.
 
 \section{\textit{\acrfull{GRU}}}
 
-\textit{\acrshort{GRU}} é um tipo de \textit{\acrshort{RNN}} semelhante ao \textit{\acrshort{LSTM}} proposto recentemente por Cho et. al. \cite{cho2014}. Essa técnica é foi motivada pela \textit{\acrshort{LSTM}}, porém possui uma implementação mais simples e tem uma menor exigência computacional \cite{cho2014}, como pode ser visto na Figura \ref{figure:gru}. E apesar de ser uma técnica nova, é capaz de superar a \textit{\acrshort{LSTM}} tanto em termos de convergência (em tempo de CPU) quanto em atualização dos parâmetros e generalização da solução \cite{chung2014empirical}. Porém a classe de problemas que o \textit{\acrshort{GRU}} consegue resolver é menor que a classe que o \textit{\acrshort{LSTM}} consegue resolver \cite{weiss2018}.
+\textit{\acrshort{GRU}} é um tipo de \textit{\acrshort{RNN}} semelhante ao \textit{\acrshort{LSTM}}, proposto recentemente por Cho et. al. \cite{cho2014}. Essa técnica foi motivada pela \textit{\acrshort{LSTM}}, porém possui uma implementação mais simples e tem uma menor exigência computacional \cite{cho2014}, como pode ser visto na Figura \ref{figure:gru}. E apesar de ser uma técnica nova, é capaz de superar a \textit{\acrshort{LSTM}} tanto em termos de convergência (em tempo de CPU) quanto em atualização dos parâmetros e generalização da solução \cite{chung2014empirical}. Porém, o escopo de problemas que o \textit{\acrshort{GRU}} consegue resolver é menor que o escopo de problemas que o \textit{\acrshort{LSTM}} consegue resolver \cite{weiss2018}.
 
-Assim como o \textit{\acrshort{LSTM}}, também faz uso de mecanismos chamados de Portas que possibilitam que a informação seja atualizada ou esquecida ao ser transferida de uma célula para outra. Ou seja, \textit{\acrshort{GRU}} também é capaz de guardar informações importantes na rede de maneira mais eficaz que uma \textit{\acrshort{RNN}} comum. Apesar de parecidos, \textit{\acrshort{GRU}} possui apenas a \textit{Hidden Layer} e duas Portas. Sendo elas as Portas de Atualização e a Porta de Reinicialização. Essas são usadas para fazer o tratamento da informação para simular o efeito de memória, de forma mais específica:
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[scale=0.8]{monography/img/models/GRU.png}
+    \label{figure:gru}
+    \caption[Representação da arquitetura de uma GRU]{Representação da arquitetura de uma GRU\footnotemark}
+\end{figure}
+
+Assim como o \textit{\acrshort{LSTM}}, o \acrshort{GRU} também faz uso de mecanismos chamados de Portas que possibilitam que a informação seja atualizada, ou esquecida ao ser transferida de uma célula para outra. Ou seja, \textit{\acrshort{GRU}} também é capaz de guardar informações importantes na rede de maneira mais eficaz que uma \textit{\acrshort{RNN}} comum. Apesar de parecidos, \textit{\acrshort{GRU}} possui apenas a \textit{Hidden Layer} e duas Portas. Sendo elas as Portas de Atualização e a Porta de Reinicialização. Essas são usadas para fazer o tratamento da informação para simular o efeito de memória, de forma mais específica:
 
 \begin{itemize}
-    \item Porta da reinicialização: Já o portão de reinicialização decide quanto da informação vinda das células passadas será esquecido. E da mesmo forma, caso o valor se aproxime de 0, a informação será esquecida e conforme se aproxima de 1 o valor se mantém.
+    \item Porta da reinicialização:A porta de reinicialização decide quanto da informação vinda das células passadas será esquecido. E da mesmo forma, caso o valor se aproxime de 0, a informação será esquecida e conforme se aproxima de 1 o valor se mantém.
     
     \item Porta da atualização: A porta de atualização tem um papel semelhante às Portas de Entrada e Porta de Esquecimento do \textit{\acrshort{LSTM}} . Nela, é decidido quais dos valores provindos das células passadas serão adicionados a rede.
 \end{itemize}
 
-Sendo assim, nós que aprendem a captura informações de curto-prazo vão ter a Porta de Reinicialização mais ativa e nós que aprendem a captura de informações a longo-prazo vão ter a Porta de Atualização mais ativa \cite{cho2014}. Além disso, vale nora que por ter uma arquitetura mais simples que uma \textit{\acrshort{LSTM}}, o \textit{\acrshort{GRU}} precisa de menos tempo para ser treinado e, geralmente, de menos dados também.
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[scale=1.0]{monography/img/models/GRU.png}
-    \label{figure:gru}
-    \caption[Representação da arquitetura de uma GRU]{Representação da arquitetura de uma GRU\footnotemark}
-\end{figure}
+Desta forma, nós que aprendem a captura informações de curto-prazo vão ter a Porta de Reinicialização mais ativa e nós que aprendem a captura de informações a longo-prazo vão ter a Porta de Atualização mais ativa \cite{cho2014}. Também vale notar que por ter uma arquitetura mais simples que uma \textit{\acrshort{LSTM}}, o \textit{\acrshort{GRU}} precisa de menos tempo para ser treinado e, geralmente, de menos dados também.
