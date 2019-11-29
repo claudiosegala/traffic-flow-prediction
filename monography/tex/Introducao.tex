@@ -1,8 +1,8 @@
-A frota  de  veículos no Brasil tem aumentado ao longo  dos últimos anos \cite{mapa_moto2019v2}. De acordo com a \acrfull{ANS}, em 2018, o Brasil já apresentava 1 carro para cada 4 habitantes. Isso equivale, aproximadamente, a 50 milhões de automóveis em circulação \cite{G1}. As vias públicas não tem conseguido acompanhar este crescimento e acomodar todo este volume. Brasília, por exemplo, que é uma cidade planejada, já começa a sentir os efeitos causados por uma grande frota de veículos. Como pode ser visto no Portal Brasileiro de Dados Abertos \cite{detran_2018}, a capital do país já se vê obrigada a comportar 3.5 milhões de automóveis e, por conta disso, tem sofrido com congestionamentos. Brasília não é uma exceção, os outros grandes centros urbanos do país também estão sendo afetados pelas mazelas do crescimento do setor automobilístico, e pensar em soluções para esses problemas é mais que necessário.
+A frota  de  veículos no Brasil tem aumentado ao longo  dos últimos anos \cite{mapa_moto2019v2}. De acordo com a \acrfull{ANS}, em 2018, o Brasil já apresentava 1 carro para cada 4 habitantes. Isso equivale, aproximadamente, a 50 milhões de automóveis em circulação \cite{G1}. As vias públicas não tem conseguido acompanhar este crescimento e acomodar todo este volume. Brasília, por exemplo, que é uma cidade planejada, já começa a sentir os efeitos causados por uma grande frota de veículos. Como pode ser visto no Portal Brasileiro de Dados Abertos \cite{detran_2018}, a capital do país já se vê obrigada a comportar 3.5 milhões de automóveis e, por conta disso, tem sofrido com congestionamentos. Assim como outros grandes centros urbanos do país também estão sendo afetados pelas mazelas do crescimento do setor automobilístico, e pensar em soluções para esses problemas é mais que necessário.
 
 Em resposta a essa tendência, as metrópoles tem utilizado da tecnologia para gerenciar melhor o trânsito em suas vias, ao passo que os motoristas têm feito uso cada vez mais intenso de aplicativos para escapar de congestionamentos e descobrir os caminhos mais rápidos até seus destinos. Porém, se essas tecnologias e aplicações não se preocuparem em como o fluxo da via estará nos próximos minutos, erros de cálculo podem ser cometidos.
 
-Mas se não há como prever o futuro, como planejar-se melhor? Uma das soluções promissoras é empregar o uso de técnicas de aprendizagem de máquina para aprender como uma via tende a se comportar, tornando possível estimar como o seu fluxo de veículos estará em alguns minutos.
+Mas se não há como prever o futuro, como planejar-se melhor? Uma das soluções promissoras é empregar o uso de técnicas de aprendizagem de máquina para aprender como uma via tende a se comportar, tornando possível estimar como o seu fluxo de veículos estará em alguns minutos. E o que seria aprendizagem de máquina? Aprendizagem de máquina é um campo da computação que busca realizar o reconhecimento de padrões para a resolução de problemas, reconhecendo o padrão de uma via, o que torna possível controlá-la de maneira mais eficiente.
 
 \section{Motivação}
 
@@ -13,22 +13,20 @@ Neste contexto, surgiram várias pesquisas na área de mobilidade urbana e trans
 A literatura está repleta de artigos que tentam prever a quantidade de veículos que irão passar em uma via em um determinado intervalo de tempo (predição de fluxo) utilizando aprendizagem de máquina \cite{doi:10.1080/01441647.2014.992496, fu2016using, hamed_prediction_1995, lv_6894591, Seoul, wang_2018, Xiaolei_2015, Zainab_2018}. Porém, a maioria desses artigos coletam dados e fazem suas análises em rodovias expressas, isto é, poucos trabalhos focam em tráfego urbano \cite{lana_2018}. Em rodovias expressas não há intersecções, ou barreiras semafóricas. Este estudo tem como desafio realizar a predição de fluxo em cenários que se assemelhem mais a centros urbanos, onde as vias possuem semáforos e cruzamentos que podem impactar de maneira significativa no comportamento do fluxo de veículos.
 
 \section{Hipóteses}
-
-Tendo em mente as informações citadas anteriormente, este trabalho tem como hipótese que o emprego das técnicas de aprendizagem de máquina, comumente utilizadas em problemas envolvendo vias expressas, serão capazes de prever o fluxo de veículos a curto prazo (no máximo uma hora no futuro) em vias com cruzamentos. Dada a hipótese principal, também espera-se provar as seguintes hipóteses ao longo do desenvolvimento dos experimentos:
+\label{chapter:hipoteses}
+Tendo em mente as informações citadas anteriormente, este trabalho tem como hipótese que o emprego das técnicas de aprendizagem de máquina, comumente utilizadas em problemas envolvendo vias expressas, serão capazes de prever o fluxo de veículos a curto prazo (no máximo uma hora no futuro) em vias com cruzamentos. Dada a hipótese principal, também espera-se provar as seguintes hipóteses secundárias ao longo do desenvolvimento dos experimentos:
 
 \begin{itemize}
     \item Tais técnicas serão capazes de prever o fluxo de veículos de forma mais precisa quando comparadas a técnicas mais simples, como \acrfull{MM} e \textit{Naive}.
     \item Os modelos utilizados apresentem melhor desempenho para as predições mais próximas do presente (que os resultados das predições de 15 minutos no futuro sejam melhores que os resultados de 30 minutos no futuro, por exemplo).
     \item Os modelos utilizados tenham melhor desempenho quanto mais tempo do passado puderem receberem como entrada.
-    \item Os modelos de aprendizagem profunda tenham um tempo de treinamento maior que os modelos tradicionais.
-    \item Os modelos utilizados tenham um desempenho melhor quando recebem mais do que apenas o fluxo como entrada.
     \item Os modelos apresentados sejam capazes de prever, com mais precisão que as bases de comparação, se o fluxo de veículos vai aumentar, ou diminuir.
 \end{itemize}
 
 
 \section{Objetivo}
-
-Este trabalho busca realizar a predição de fluxo de veículos em vias urbanas a curto prazo, mais especificamente, para 15, 30, 45 e 60 minutos no futuro. Para tal fim, serão utilizados os modelos \textit{\acrfull{LSTM}}, \textit{\acrfull{GRU}}, \textit{\acrfull{RF}} e \textit{\acrfull{SVM}}. Como base de comparação, serão utilizados os modelos \acrfull{MM} e \textit{Naive}. Portanto, este trabalho tem como objetivo propor uma análise do comportamento destes mesmos métodos, utilizados na literatura para predições em vias livres, sob novas condições (vias urbanas com cruzamentos) e comparar a eficácia da predição de cada um deles.
+\label{section:objectives}
+Este trabalho busca realizar a predição de fluxo de veículos em vias urbanas a curto prazo, mais especificamente, para 15, 30, 45 e 60 minutos no futuro. Para tal fim, serão utilizados os modelos \textit{\acrfull{LSTM}}, \textit{\acrfull{GRU}}, \textit{\acrfull{RF}} e \textit{\acrfull{SVM}}. Como base de comparação, serão utilizados os modelos \acrshort{MM} e \textit{Naive}. Portanto, o objetivo é propor uma análise do comportamento destes mesmos métodos, utilizados na literatura para predições em vias livres, sob novas condições (vias urbanas com cruzamentos) e comparar a eficácia da predição de cada um deles.
 
 Para alcançar o objetivo geral, os seguintes objetivos específicos foram definidos:
 
@@ -43,13 +41,13 @@ Para alcançar o objetivo geral, os seguintes objetivos específicos foram defin
 
 \section{Metodologia}
 
-Será realizada a comparação dos modelos  \textit{\acrfull{LSTM}}, \textit{\acrfull{GRU}}, \textit{\acrfull{RF}} e \textit{\acrfull{SVM}}. Para tal, serão utilizados dados da infraestrutura urbana local, mais especificamente dados da fiscalização eletrônica coletada diretamente pelo \acrfull{DETRAN} do \acrfull{DF}. A comparação proposta consistirá de 4 etapas:
+Será realizada a comparação dos modelos  \textit{\acrshort{LSTM}}, \textit{\acrshort{GRU}}, \textit{\acrshort{RF}} e \textit{\acrshort{SVM}}. Para tal, serão utilizados dados da infraestrutura urbana local, mais especificamente dados da fiscalização eletrônica coletada diretamente pelo \acrfull{DETRAN} do \acrfull{DF}. A comparação proposta consistirá de 5 etapas:
 
 \begin{enumerate}
     \item Implementação dos Modelos: construção das arquiteturas;
     \item Pré-Processamento dos Dados: verificar, limpar e transformar os dados para serem utilizados de entrada nas arquiteturas propostas.
     \item Treinamento dos Modelos: implementação do espaço de treinamento dos modelos, considerando as propriedades de séries temporais;
-    \item Escolha de Parâmetros: adaptação dos modelos para melhora dos resultados;
+    \item Escolha de Parâmetros e Hiper-Parâmetros: adaptação dos modelos para melhora dos resultados;
     \item Avaliação: análise das predições por meio do uso de métricas, para que seja possível comparar a eficácia dos diversos modelos.
 \end{enumerate}
 
@@ -60,8 +58,8 @@ Esta monografia está estruturado em 7 capítulos. Retirando o capítulo corrent
 \begin{itemize}
     \item \textbf{Capítulo 2 - Fundamentação Teórica:} teoria necessária para o entendimento do trabalho, com foco no funcionamento e nos conceitos por trás dos modelos escolhidos;
     \item \textbf{Capítulo 3 - Trabalhos Relacionados:} exposição e avaliação dos trabalhos similares e relacionados ao tema de previsão de fluxo;
-    \item \textbf{Capítulo 4 - Análise de Dados:} exposição e análise do conjunto de registros de veículos, capturados por equipamentos de fiscalização eletrônica, utilizados no trabalho;
-    \item \textbf{Capítulo 5 - Metodologia:} exposição detalhada da comparação dos modelos, das escolhas feitas nesse trabalho e de como os modelos reagem com diferentes valores de parâmetros;
-    \item \textbf{Capítulo 6 - Resultados:} discussão dos resultados obtidos da comparação dos modelos;
-    \item \textbf{Capítulo 7 - Conclusão:} conclusão do nosso trabalho e trabalhos futuros;
+    \item \textbf{Capítulo 4 - Modelagem dos Dados:} exposição e caracterização do conjunto de registros de veículos, capturados por equipamentos de fiscalização eletrônica, utilizados no trabalho;
+    \item \textbf{Capítulo 5 - Metodologia:} exposição detalhada da comparação dos modelos, das escolhas feitas nesse trabalho e de características do fluxo de veículos.
+    \item \textbf{Capítulo 6 - Resultados e Análise:} discussão dos resultados obtidos da comparação dos modelos;
+    \item \textbf{Capítulo 7 - Conclusão e Trabalhos Futuros:} conclusão do trabalho e definição dos trabalhos futuros;
 \end{itemize}

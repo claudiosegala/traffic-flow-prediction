@@ -1,18 +1,14 @@
-% TODO: Falar que utilizamos o hit rate para ver se nossos modelos eram capazes de pelo menos prever quando que vai diminuir e quando que vai aumentar
-
-% TODO?: Adicionar gráfico que mostra o tempo de predição
-
-Este capítulo tem como objetivo apresentar uma discussão acerca dos resultados dos experimentos. Primeiramente, será exposto o ambiente de experimento. Posteriormente serão discutidos como os modelos reagem à variação dos principais parâmetros, quantidade de divisões, passado visível e tamanho do intervalo do fluxo. Subsequentemente, serão apresentados os resultados de como os modelos reagem para a escolha dos hiper-parâmetros selecionados. Por fim, serão analisados os resultados das previsões de fluxo de cada modelo nos curtos prazos de 15, 30, 45 e 60 minutos.
+Este capítulo tem como objetivo apresentar uma discussão acerca dos resultados dos experimentos. Serão expostos o ambiente de experimento, discutido como os modelos reagem à variação dos principais parâmetros, quantidade de divisões, passado visível e tamanho do intervalo do fluxo. Posteriormente, serão apresentados os resultados de como os modelos reagem para a escolha dos hiper-parâmetros selecionados. Além disso, é analisado os resultados das previsões de fluxo de cada modelo nos curtos prazos de 15, 30, 45 e 60 minutos.
 
 
 \section{Ambiente de Experimento}
 
-O ambiente de experimento foi um servidor equipado com Ubuntu 64 bits. O servidor possui dois CPUs \textit{Intel(R) Xeon(R) Platinum 8160 CPU @ 2.10GHz} e 251 GiB de memória principal. Cada CPU dessas possui 24 núcleos e executa até 48 \textit{threads} em paralelo. No total então são 96 \textit{threads}, que foram usados paralelamente para acelerar a execução do experimento. Porém, em algumas partes da execução, menos \textit{threads} tiveram que ser usadas, pois não havia memória principal o suficiente para todas as instâncias em paralelo.
+O ambiente de experimento foi um servidor equipado com Debian 9, 64 bits. O servidor possui dois CPUs \textit{Intel(R) Xeon(R) Platinum 8160 CPU @ 2.10GHz} e 251 GiB de memória principal. Cada CPU dessas possui 24 núcleos e executa até 48 \textit{threads} em paralelo. Somados são 96 \textit{threads}, que foram usados paralelamente para acelerar a execução do experimento. Porém, em algumas partes da execução, menos \textit{threads} tiveram que ser usadas, pois não havia memória principal o suficiente para todas as instâncias em paralelo.
 
 \section{Resultados das Escolhas de Parâmetros}
 \label{section:resultados_parametros}
 
-Após o tratamento dos dados, foram realizados diversos testes para definir os melhores parâmetros de cada modelo. Devido a limitações de hardware os parâmetros foram considerados independentes. Ou seja, cada um deles possui um valor padrão e será analisado como esse parâmetro se comporta dado a fixação dos outros. Além disso, as otimizações estão sendo feitas no pior caso da predição, isto é, na predição de 1h no futuro. Na lista abaixo podem ser vistos os parâmetro que foram levados em consideração nos estudos de caso deste trabalho.
+Após o tratamento dos dados, foram realizados diversos testes para definir os melhores parâmetros de cada modelo. Devido a limitações de hardware os parâmetros foram considerados independentes. Portanto, cada um deles possui um valor padrão e será analisado como esse parâmetro se comporta dado a fixação dos outros. Além disso, as otimizações estão sendo feitas no pior caso da predição, isto é, na predição de 1h no futuro. Na lista abaixo podem ser vistos os parâmetro que foram levados em consideração nos estudos de caso deste trabalho.
 
 \begin{enumerate}
 	\item \textbf{Número de divisões do conjunto de dados} (\textit{Blocking}): Número de divisões utilizadas no blocking para criar mais subconjuntos de dados. Os valores testados foram: 1,2,4,8. Para cada subconjunto, a porcentagem utilizada para treinamento e teste foi a mesma: 80\% para treinamento e 20\% para testes. O valor padrão utilizado foi de 4 divisões.
@@ -30,7 +26,7 @@ Porém, mesmo estes modelos tiveram diferenças pouco significativas se comparad
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[scale=0.8]{monography/img/comparisons/comparacao_do_numero_de_divisoes_do_conjunto_de_dados_rmse.png}
+    \includegraphics[scale=0.9]{monography/img/comparisons/comparacao_do_numero_de_divisoes_do_conjunto_de_dados_rmse.png}
     \label{figure:res_split}
     \caption[Resposta dos modelos à variação do número de divisões do conjunto de dados]{Resposta dos modelos à variação do número de divisões do conjunto de dados}
 \end{figure} 
@@ -81,19 +77,15 @@ Porém, mesmo estes modelos tiveram diferenças pouco significativas se comparad
 
 \subsection{Passado Visível}
 
-A respeito da variação no quanto do passado o modelo tem acesso, é perceptível na Figura \ref{figure:res_past} que quanto mais acesso ao passado o modelo tiver, melhor será sua predição. Percebe-se também que o melhor valor para a quantidade de acesso do passado, dentre os testados, são 480 minutos (ou 8 horas). Porém, é importante ressaltar que mais acesso ao passado também implica em uma quantidade de treino maior, ou seja, maior custo computacional, especialmente para modelos de aprendizagem profunda, como pode ser visto na Figura \ref{figure:passado_visivel_time}. 
-
-Dito isso, e considerando que a escala do eixo X é exponencial (Passado visível: 60, 120, 240, 480), pode-se que concluir que para conseguir resultados ainda melhores, seria necessário aumentar de maneira significativa a quantidade de passado visível, o que, talvez, não valesse o aumento do custo computacional, já que, para cada aumento exponencial do eixo X, a qualidade da predição melhora apenas de maneira linear. 
-
-A respeito das bases de comparação, também é claro que o modelo \textit{Naive} não é afetado pela quantidade de tempo de passado visível, mas ainda assim há uma leve mudança no conjunto de dados, pois ao se mudar este parâmetro, o último valor recebido pelo modelo \textit{Naive} é alterado, afetando suas predições e gerando as diferenças vistas na Tabela \ref{table:res_past}. Já o modelo \acrshort{MM} é o único que piora com o tempo. 
+A respeito da variação no quanto do passado o modelo tem acesso, é perceptível na Figura \ref{figure:res_past} que quanto mais acesso ao passado o modelo tiver, melhor será sua predição. Percebe-se também que o melhor valor para a quantidade de acesso do passado, dentre os testados, são 480 minutos (ou 8 horas). 
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[scale=0.8]{monography/img/comparisons/comparacao_do_passado_visivel_rmse.png}
+    \includegraphics[scale=0.9]{monography/img/comparisons/comparacao_do_passado_visivel_rmse.png}
     \label{figure:res_past}
     \caption[Resposta dos modelos à variação dos valores de passado visível]{Resposta dos modelos à variação dos valores de passado visível}
 \end{figure}
- 
+
 \begin{table}[htbp]
     \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lllll}
     \toprule
@@ -138,6 +130,10 @@ A respeito das bases de comparação, também é claro que o modelo \textit{Naiv
     \caption{Resultados da Comparação entre as quantidade de passados visíveis. Melhores resultados de cada modelo em negrito.}
 \end{table}
  
+
+Porém, é importante ressaltar que mais acesso ao passado também implica em uma quantidade de treino maior, isto é, maior custo computacional, especialmente para modelos de aprendizagem profunda, conforme Figura \ref{figure:passado_visivel_time}. Dito isso, e considerando que a escala do eixo X é exponencial (Passado visível: 60, 120, 240, 480), pode-se que concluir que para conseguir resultados ainda melhores, seria necessário aumentar de maneira significativa a quantidade de passado visível, o que, talvez, não valesse o aumento do custo computacional, já que, para cada aumento exponencial do eixo X, a qualidade da predição melhora apenas de maneira linear. 
+
+A respeito das bases de comparação, também é claro que o modelo \textit{Naive} não é afetado pela quantidade de tempo de passado visível, mas ainda assim há uma leve mudança no conjunto de dados, pois ao se mudar este parâmetro, o último valor recebido pelo modelo \textit{Naive} é alterado, afetando suas predições e gerando as diferenças vistas na Tabela \ref{table:res_past}. Já o modelo \acrshort{MM} é o único que piora com o tempo. 
 \subsection{Tamanho do Intervalo do Fluxo}
 
 Por último, pode-se notar na Figura \ref{figure:res_flow} que o tamanho do intervalo do fluxo adotado impacta de maneira significativa a qualidade das predições dos modelos. Esse efeito pode ser justificado pela quantidade de dados resultantes de cada tamanho do intervalo de fluxo, visto que quanto maior o intervalo, menor a quantidade de dados. 
@@ -146,7 +142,7 @@ Por exemplo, são 52.992 dados para 2,5 minutos (150 segundos) e 17.664 para 7.5
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.8]{monography/img/comparisons/comparacao_do_tamanho_do_intervalo_do_fluxo_rmse.png}
+    \includegraphics[scale=0.9]{monography/img/comparisons/comparacao_do_tamanho_do_intervalo_do_fluxo_rmse.png}
     \label{figure:res_flow}
     \caption{Resposta dos modelos à variação dos valores de intervalo de fluxo}
 \end{figure}
@@ -197,18 +193,14 @@ Por exemplo, são 52.992 dados para 2,5 minutos (150 segundos) e 17.664 para 7.5
 \section{Comparação dos Resultados Otimizados}
 
  Por fim, foram realizados testes para otimizar os hiper-parâmetros de cada modelo e garantir as melhores predições. Para alcançar tal objetivo, foi utilizada a técnica de \textit{Grid Search} durante as comparações dos resultados das predições de curto prazo. Abaixo, na figura \ref{figure:pred_no_tuning} podem ser vistos os resultados sem \textit{Tuning} dos hiper-parâmetros e, na figura \ref{figure:pred_tuning}, com \textit{Tuning} dos hiper-parâmetros. Os valores exatos dos resultados podem ser vistos nas tabelas  \ref{table:curto_prazo_no_tuning} e \ref{table:curto_prazo_tuning}, para as predições sem e com \textit{Tuning}, respectivamente. Os valores de parâmetros utilizados para a realização deste teste foram os melhores valores encontrados nos experimentos da seção \ref{section:resultados_parametros}.
+ 
+ Observando a tabela \ref{table:curto_prazo_no_tuning}, é possível constatar que todos os modelos propostos pelo trabalho tiveram performance superior que os modelos utilizados como base de comparação. Dentre esses modelos propostos, o \textit{\acrshort{RF}} foi o que obteve os resultados mais promissores antes do \textit{tuning}, se mostrando o melhor modelo em todas as predições de curto prazo, seguido pelo \textit{\acrshort{SVM}}. Os modelos de aprendizagem profunda apresentaram os resultados menos satisfatórios, com uma diferença significativa. Porém, este cenário poderia mudar caso o conjunto de dados disponível para o trabalho fosse maior, visto que modelos de aprendizagem profunda, como \textit{\acrshort{GRU}} e \textit{\acrshort{LSTM}}, tendem a generalizar melhor à medida que são expostos a um maior volume de dados de treinamento. 
 
-Observando a tabela \ref{table:curto_prazo_no_tuning}, é possível constatar que todos os modelos propostos pelo trabalho tiveram performance superior que os modelos utilizados como base de comparação. Dentre esses modelos propostos, o \acrlong{RF} foi o que obteve os resultados mais promissores, se mostrando o melhor modelo em todas as predições de curto prazo, seguido pelo \acrshort{SVM}. Os modelos de aprendizagem profunda apresentaram os resultados menos satisfatórios. Porém, este cenário poderia mudar caso o conjunto de dados disponível para o trabalho fosse maior, visto que modelos de aprendizagem profunda, como \acrshort{GRU} e \acrshort{LSTM}, tendem a generalizar melhor à medida que são expostos a um maior volume de dados de treinamento. 
-
-Como dito anteriormente, o modelo que apresentou os melhores resultados foi o \acrshort{RF}. Entretanto, este cenário muda após o \textit{Tuning} dos hiper-parâmetros. Como pode ser observado na tabela \ref{table:curto_prazo_tuning}, após a otimização dos resultados, a \acrshort{SVM} passou a obter as melhores predições em todos os casos, com uma melhora de cerca de 5\% em relação aos seus resultados antes do \textit{Tuning}. Também é válido notar que todos os outros modelos também obtiveram um aumento de performance, mas não na mesma intensidade. O \acrshort{RF}, por exemplo, teve o aumento de performance menos significativo dentre todos os modelos propostos. Isso mostra que os modelos propostos possuem sensibilidades diferentes à variação de hiper-parâmetros.
-
-\subsection{Análise dos hiper-parâmetros escolhidos}
-
-Nos métodos de aprendizagem profunda, ao observar a tabela \ref{table:best_hiper_deep}, pode-se notar que para os modelos que utilizam o conjunto de dados A, são necessárias menos células na rede, o que é coerente com a teoria, visto que o conjunto de dados A possui menos atributos e, consequentemente, menos informações para processar.
-
-\begin{figure}[H]
+Como dito anteriormente, o modelo que apresentou os melhores resultados foi o \textit{\acrshort{RF}}. Entretanto, este cenário muda após o \textit{tuning} dos hiper-parâmetros. Como pode ser observado na tabela \ref{table:curto_prazo_tuning}, após a otimização dos resultados, a \textit{\acrshort{SVM}} passou a obter as melhores predições em todos os casos, com uma melhora de cerca de 5\% em relação aos seus resultados antes do \textit{tuning}. Os modelos de aprendizagem profunda continuaram com resultados menos satisfatórios, porém com uma distância menos significativa. Também é válido notar que todos os outros modelos também obtiveram um aumento de performance, mas não na mesma intensidade. O \textit{\acrshort{RF}}, por exemplo, teve o aumento de performance menos significativo dentre todos os modelos propostos. Isso mostra que os modelos propostos possuem sensibilidades diferentes à variação de hiper-parâmetros.
+ 
+ \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.8]{monography/img/comparisons/comparacao_da_previsao_de_curto_prazo_rmse.png}
+    \includegraphics[scale=0.9]{monography/img/comparisons/comparacao_da_previsao_de_curto_prazo_rmse.png}
     \label{figure:pred_no_tuning}
     \caption{Comparação da previsão de curto prazo sem \textit{Tuning}}
 \end{figure}
@@ -268,12 +260,10 @@ Nos métodos de aprendizagem profunda, ao observar a tabela \ref{table:best_hipe
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.8]{monography/img/comparisons/comparacao_da_previsao_de_curto_prazo_com_tuning_rmse.png}
+    \includegraphics[scale=0.9]{monography/img/comparisons/comparacao_da_previsao_de_curto_prazo_com_tuning_rmse.png}
     \label{figure:pred_tuning}
     \caption{Comparação da previsão de curto prazo com \textit{Tuning}}
 \end{figure}
-
-
 
 \begin{table}[H]
     \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lllll}
@@ -319,6 +309,12 @@ Nos métodos de aprendizagem profunda, ao observar a tabela \ref{table:best_hipe
     \caption{Resultados das predições de curto prazo dos modelos com Tuning.}
 \end{table}
 
+\subsection{Análise dos hiper-parâmetros escolhidos}
+
+Nos métodos de aprendizagem profunda, ao observar a tabela \ref{table:best_hiper_deep}, pode-se notar que para os modelos que utilizam o conjunto de dados A, são necessárias menos células na rede, o que é coerente com a teoria, visto que o conjunto de dados A possui menos atributos e, consequentemente, menos informações para processar.
+
+Observando os resultados da escolha de hiper-parâmetros, como observado na Tabela \ref{table:best_hiper_deep}, é perceptível que os modelos de aprendizagem profunda não precisaram de uma taxa de aprendizagem tão alta para aprender a distribuição dos dados. Porém, há uma diferença para os resultados quando os modelos utilizam o conjunto de dados A, ou B. O \textit{\acrshort{LSTM}}, por exemplo, possui a mesma taxa de aprendizagem para os dois conjuntos de dados, mas a quantidade de células necessárias do conjunto B é maior, o que mostra que mesmo com uma taxa de aprendizagem igual, o conjunto de dados com maior número de informações também necessita de mais processamento para generalizar. Este padrão também se mantém com o \textit{\acrshort{GRU}}, onde a taxa de aprendizagem para o modelo que utiliza o conjunto de dados B chegou a ser menor que o utilizado pelo modelo A, mas, da mesma forma que acontece com o \textit{\acrshort{LSTM}}, a quantidade de células necessárias na rede foi o dobro que o utilizado pelo modelo A.
+
 \begin{table}[H]
     \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lll}
     \toprule
@@ -334,9 +330,12 @@ Nos métodos de aprendizagem profunda, ao observar a tabela \ref{table:best_hipe
     \bottomrule
     \end{tabular*}
     \label{table:best_hiper_deep}
-    \caption{Valores de hiper-parâmetros mais recorrentes no Grid Search para os modelos de aprendizagem profunda.}
+    \caption{Valores de hiper-parâmetros mais recorrentes no \textit{Grid Search} para os modelos de aprendizagem profunda.}
 \end{table}
 
+Como pode ser observado na Tabela \ref{table:best_hiper_svm}, o erro escolhido foi mais alto para o banco de dados B, indicando uma dificuldade maior do modelo de se ajustar quando está usando um conjunto de dados com mais atributos. Nos testes realizados, a escolha do Gamma (\(\gamma\)) foi unânime. Mas vale notar que o \(\gamma\) não é o mesmo para o \textit{\acrshort{SVM}} que usa o banco de dados A e para o que usa o banco de dados B. Isso acontece, pois o valor \textit{scale} da biblioteca calcula o valor do \(\gamma\) baseado na variância do conjunto de testes, mais especificamente \(\frac{1}{n * var_X}\), com \(n\) sendo o número de atributos e \(var_X\) a variância do conjunto de testes.
+
+% TODO: cite this table
 \begin{table}[H]
     \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lll}
     \toprule
@@ -345,14 +344,17 @@ Nos métodos de aprendizagem profunda, ao observar a tabela \ref{table:best_hipe
     \multicolumn{1}{l}{\textbf{Gamma}} 
     \\
 \midrule
-\textbf{SVM A} & 100 & 50\\ \midrule
-\textbf{SVM B} & 100 & 125 \\ \midrule
+\textbf{SVM A} & 10 & scale\\ \midrule
+\textbf{SVM B} & 100 & scale \\ \midrule
 
     \bottomrule
     \end{tabular*}
-    \label{table:best_hiper_deep}
-    \caption{Valores de hiper-parâmetros mais recorrentes no Grid Search para o SVM}
+    \label{table:best_hiper_svm}
+    \caption{Valores de hiper-parâmetros mais recorrentes no \textit{Grid Search} para o \textit{\acrshort{SVM}}}
 \end{table}
+
+Para o \textit{\acrshort{RF}}, como visto anteriormente, não houve uma melhora significativa em suas predições mesmo dobrando o número de árvores e tornando o modelo menos prono a sobre-ajuste ao limitar a altura máxima, como pode ser visto na Tabela \ref{table:best_hiper_rf}. Nota-se também que o tempo necessário para treiná-lo com o conjunto de dados B aumentou consideravelmente ao se realizar o \textit{Tuning}, tornando o modelo o mais custoso computacionalmente, conforme pode ser visto na Figura
+\ref{figure:previsao_de_curto_prazo_com_tuning_time}.
 
 \begin{table}[H]
     \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lll}
@@ -367,12 +369,15 @@ Nos métodos de aprendizagem profunda, ao observar a tabela \ref{table:best_hipe
 
     \bottomrule
     \end{tabular*}
-    \label{table:best_hiper_deep}
-    \caption{Valores de hiper-parâmetros mais recorrentes no Grid Search para o Random Forest.}
+    \label{table:best_hiper_rf}
+    \caption{Valores de hiper-parâmetros mais recorrentes no \textit{Grid Search} para o \textit{\acrshort{RF}}.}
 \end{table}
 
-Observando os resultados da escolha de hiper-parâmetros, é perceptível que os modelos de aprendizagem profunda não precisaram de uma taxa de aprendizagem tão alta para aprender a distribuição dos dados. Porém, há uma diferença para os resultados quando os modelos utilizam o conjunto de dados A, ou B. O \acrshort{LSTM}, por exemplo, possui a mesma taxa de aprendizagem para os dois conjuntos de dados, mas a quantidade de células necessárias do conjunto B é maior, o que mostra que mesmo com uma taxa de aprendizagem igual, o conjunto de dados com maior número de informações também necessita de mais processamento para generalizar. Este padrão também se mantém com o \acrshort{GRU}, onde a taxa de aprendizagem para o modelo que utiliza o conjunto de dados B chegou a ser menor que o utilizado pelo modelo A, mas, da mesma forma que acontece com o \textit{\acrshort{LSTM}}, a quantidade de células necessárias na rede foi o dobro que o utilizado pelo modelo A.
+\section{Observações}
 
-
-
-
+Quanto ao \textit{\acrshort{MAE}}, os resultados foram muito similares aos do \textit{\acrshort{RMSE}} no quesito ordem, porém, o erro médio dos modelos foi em torno de 3. Nesse trabalho, as predições também foram avaliadas como se, em vez de um problema de regressão, houvesse um problema de classificação. Para isto, avaliou-se se os modelos, mesmo errando as predições, seriam capazes de acertar se o fluxo vai aumentar ou diminuir. Entretanto, utilizando essa métrica, os modelos não alcançaram uma performance satisfatória, ficando com acurácia por volta de 60\%. Com \textit{\acrshort{SVM}} e \textit{\acrshort{RF}} atingindo, às vezes, a casa dos 70\% de acurácia. A grande variância dessa métrica dos modelos pode ter sido causada devido ao grande ruído existente nos dados ao se utilizar o agrupamento de fluxo de 150 segundos, onde em um minuto tem-se s 30 veículos passando e, no minuto seguinte, 0 veículos passando. Os resultados sem \textit{tuning} podem ser observados nas Figuras \ref{figure:comparacao_previsao_precisao_15_sem_tuning}, \ref{figure:comparacao_previsao_precisao_30_sem_tuning}, \ref{figure:comparacao_previsao_precisao_45_sem_tuning}e
+\ref{figure:comparacao_previsao_precisao_60_sem_tuning}. Já os resultado com \textit{tuning} podem ser observados nas Figuras 
+\ref{figure:comparacao_previsao_precisao_15_com_tuning},
+\ref{figure:comparacao_previsao_precisao_30_com_tuning},
+\ref{figure:comparacao_previsao_precisao_45_com_tuning} e
+\ref{figure:comparacao_previsao_precisao_60_com_tuning}. Além disso, percebesse que os modelos que usaram o conjunto de dados B tiveram uma performance muito similar aos que usaram o conjunto de dados A. 
