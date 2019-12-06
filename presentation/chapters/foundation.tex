@@ -36,17 +36,33 @@
 \slide{Random Forest}{
     \begin{itemize}
         \item Não Paramétrico \& Supervisionado
-        \item Comitê de Máquinas
+        \item Comitê de Máquinas com Árvores
         \item Baseado em \textit{Bagging}
         \item Corre risco de sobre-ajuste
     \end{itemize}
 }
 
+\slide{Random Forest}{
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[scale=0.55]{monography/img/models/random_forest.png}
+    \end{figure}
+}
+
 \slide{Support Vector Machine}{
     \begin{itemize}
         \item Não Paramétrico \& Supervisionado
-        \item 
+        \item \(\epsilon\)-SVR 
+        \item \(\abs{g(x) - f(x)} \leq \epsilon \)
+        \item \textit{Kernel Trick}
     \end{itemize}
+}
+
+\slide{Support Vector Machine}{
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[scale=0.55]{monography/img/models/svr_exemple.png}
+    \end{figure}
 }
 
 \slide{Long Short-Term Memory}{
@@ -58,6 +74,13 @@
     \end{itemize}
 }
 
+\slide{Long Short-Term Memory}{
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[scale=0.55]{monography/img/models/lstm3.png}
+    \end{figure}
+}
+
 \slide{Gated Recurrent Unit}{
     \begin{itemize}
         \item Não Paramétrico \& Supervisionado
@@ -65,4 +88,11 @@
         \item Similar a \textit{LSTM}, porém mais simples
         \item Utiliza de \textit{Gates} (entrada e atualização) para controlar a informação que flui na rede
     \end{itemize}
+}
+
+\slide{Gated Recurrent Unit}{
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[scale=0.55]{monography/img/models/GRU.png}
+    \end{figure}
 }
