@@ -1,33 +1,44 @@
 \documentclass{beamer}
+
 \setbeamertemplate{caption}[numbered]
+
 \usepackage[brazilian]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{booktabs}
+
 \input{lecture-defs.tex}
 \usepackage{graphicx}
 
-\lecturetitle{Predição de Curto Prazo do Fluxo de Veículos em Cruzamentos: Comparando os Algoritmos Tradicionais com Aprendizagem Profunda}
+\lecturetitle{Predição de Fluxo de Veículos em Cruzamentos: Comparando os Algoritmos Tradicionais com Aprendizagem Profunda}
 
-\seminardate{dd/mm/aaaa}{20 de Outubro de 2019}
+\seminardate{dd/mm/aaaa}{9 de Dezembro de 2019}
 
 \begin{document}
 
-%%%%%%%%%%%%%%% Folha de titulo %%%%%%%%%%%%%%%
-\unbframe
-
-%%%%%%%%%%%%%%% Agenda de apresentacao %%%%%%%%%%%%%%%
-\frame{\frametitle{Agenda}\scriptsize \tableofcontents}
-
-\seminarsection{Introdução}{introduction.tex}
-
-\seminarsection{Metodologia}{methodology.tex}
-
-\seminarsection{Resultados}{results.tex}
-
-\seminarsection{Conclusão e Trabalhos Futuros}{conclusion.tex}
-
-%%%%% FIM %%%%%
-\sectionframe{Obrigado!}
+    %%%%%%%%%%%%%%% Folha de titulo %%%%%%%%%%%%%%%
+    \unbframe
+    
+    %%%%%%%%%%%%%%% Agenda de apresentação %%%%%%%%%%%%%%%
+    \frame{\frametitle{Agenda}\scriptsize \tableofcontents}
+    
+    %%%%%%%%%%%%%%% Conteúdo %%%%%%%%%%%%%%%
+    \seminarsection{Introdução}{introduction.tex}
+    
+    \seminarsection{Fundamentação Teórica}{foundation.tex}
+    
+    \seminarsection{Modelagem dos Dados}{modelagem.tex}
+    
+    \seminarsection{Metodologia}{methodology.tex}
+    
+    \seminarsection{Resultados}{results.tex}
+    
+    \seminarsection{Conclusão e Trabalhos Futuros}{conclusion.tex}
+    
+    \seminarsection{Referências}{references.tex}
+    
+    %%%%% FIM %%%%%
+    \sectionframe{Obrigado!}
 
 \end{document}
 
