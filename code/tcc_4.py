@@ -524,7 +524,7 @@ def get_rf_tuned(X, Y, useB):
   model = sklearn.ensemble.RandomForestRegressor(max_features='auto', random_state=0)
   scoring = 'neg_mean_squared_error'
   cv = WalkingForwardTimeSeriesSplit(n_splits=1)
-  n_jobs = 15
+  n_jobs = 3
 
   grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
@@ -590,7 +590,7 @@ def get_svm_tuned(X, Y, useB):
   model = svm.SVR(epsilon=0.2)
   scoring = 'neg_mean_squared_error'
   cv = WalkingForwardTimeSeriesSplit(n_splits=1)
-  n_jobs = 15
+  n_jobs = 3
 
   grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
@@ -669,7 +669,7 @@ def get_lstm_tuned(X, Y, useB):
   model = KerasRegressor(build_fn=create_lstm((X.shape[1], X.shape[2])), validation_split=0.2, batch_size=64, epochs=15, verbose=0)
   scoring = 'neg_mean_squared_error'
   cv = WalkingForwardTimeSeriesSplit(n_splits=1)
-  n_jobs = 15
+  n_jobs = 3
 
   grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
@@ -751,7 +751,7 @@ def get_gru_tuned(X, Y, useB):
   model = KerasRegressor(build_fn=create_gru((X.shape[1], X.shape[2])), validation_split=0.2, batch_size=64, epochs=15, verbose=0)
   scoring = 'neg_mean_squared_error'
   cv = WalkingForwardTimeSeriesSplit(n_splits=1)
-  n_jobs = 15
+  n_jobs = 3
 
   grid_search = GridSearchCV(estimator=model, param_grid=param_grid, scoring=scoring, cv=cv, n_jobs=n_jobs, verbose=2)
 
@@ -952,7 +952,7 @@ def compare_results_by_predict_in_future(values, tune=False):
 # Model Parameters
 SEEABLE_PAST = 480 # in minutes
 PREDICT_IN_FUTURE = 60 # in minutes
-FLOW_INTERVAL = 150 # the interval size for each flow
+FLOW_INTERVAL = 450 # the interval size for each flow
 N_SPLITS = 8
 
 # Derivated Model Parameters
