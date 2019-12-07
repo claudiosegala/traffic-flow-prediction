@@ -25,26 +25,21 @@ A coluna \textit{Data} teve o seu formato alterado para melhorar o treinamento d
 }
 
 \slide{Transformação dos Dados}{
-Com todas as colunas no formato adequado, o conjunto de registro de veículos foi transformado em um conjunto de acumulação de fluxo de veículos
+Com todas as colunas no formato adequado, o conjunto de registro de veículos foi transformado em um conjunto de acumulação de fluxo de veículos.
 
     \begin{itemize}
-      
+      \item Acumulo de 2.5, 5 e 7.5 minutos;
+      \item Cáculo da densidade;
+      \item Cáculo da velocidade média
     \end{itemize}
 }
 
-\slide{Modelos Clássicos Escolhidos}{
-    \begin{itemize}
-        \item Random Forest (RF)
-        \item Support Vector Machine (SVM)
-    \end{itemize}
-    \footnote{ARIMA não fora escolhido por questões de limitações de hardware}
-}
 
-\slide{Modelos de Aprendizagem Profunda Escolhidos}{
-    \begin{itemize}
-        \item Long Short-Term Memory (LSTM)
-        \item Gated Recurrent Unit (GRU)
-    \end{itemize}
+\slide{Dados após tratamento completo}{
+    \begin{figure}[htbp]
+        \centering
+        \includegraphics[scale=2,7]{presentation/img/acumuloFluxo.png}
+    \end{figure}
 }
 
 \slide{Treino}{
