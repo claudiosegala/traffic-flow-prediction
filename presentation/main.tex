@@ -3,14 +3,60 @@
 \setbeamertemplate{caption}[numbered]
 
 \usepackage[brazilian]{babel}
+\usepackage[fixlanguage]{babelbib}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{booktabs}
+\usepackage{float} 
+\usepackage{color}
+\usepackage{lmodern}
+\usepackage{listings}
+\usepackage{pdfpages}% incluir PDFs, usado no apêndice
+\usepackage{commath} % inclui expressões matemáticas
+\usepackage{amsmath}
+\usepackage{lmodern}
+\usepackage{relsize}
+\usepackage{boites}
+\usepackage{setspace}
+
+% break line on url --------------------------------
+\usepackage{url} 
+\makeatletter
+\g@addto@macro{\UrlBreaks}{\UrlOrds}
+\makeatother
+% --------------------------------------------------
+
+% add pseudo code in portuguese --------------------
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\floatname{algorithm}{Algoritmo}
+\renewcommand{\listalgorithmname}{Lista de Algoritmos}
+\renewcommand{\algorithmicrequire}{\textbf{Entrada:}}
+\renewcommand{\algorithmicensure}{\textbf{Saída:}}
+% \renewcommand{\algorithmicprocedure}{\textbf{procedimento}}
+\renewcommand{\algorithmicreturn}{\textbf{retorna}}
+\renewcommand{\algorithmiccomment}[1]{\{#1\}}
+% \renewcommand{\Not}{\textbf{não}\ }
+% \renewcommand{\And}{\textbf{e}\ }
+% \renewcommand{\Or}{\textbf{ou}\ }
+\renewcommand{\algorithmicend}{\textbf{fim}}
+\renewcommand{\algorithmicif}{\textbf{se}}
+\renewcommand{\algorithmicthen}{\textbf{então}}
+\renewcommand{\algorithmicelse}{\textbf{senão}}
+\renewcommand{\algorithmicelsif}{\algorithmicelse\ \algorithmicif}
+\renewcommand{\algorithmicendif}{\algorithmicend\ \algorithmicif}
+\renewcommand{\algorithmicfor}{\textbf{para}}
+\renewcommand{\algorithmicforall}{\textbf{para todo}}
+\renewcommand{\algorithmicdo}{\textbf{faça}}
+\renewcommand{\algorithmicendfor}{\algorithmicend\ \algorithmicfor}
+\renewcommand{\algorithmicwhile}{\textbf{enquanto}}
+% --------------------------------------------------
 
 \input{lecture-defs.tex}
 \usepackage{graphicx}
 
-\lecturetitle{Predição de Fluxo de Veículos em Cruzamentos: Comparando os Algoritmos Tradicionais com Aprendizagem Profunda}
+\lecturetitle{Predição de Fluxo de Veículos em Cruzamentos Utilizando Aprendizado de Máquina}
 
 \seminardate{dd/mm/aaaa}{9 de Dezembro de 2019}
 
@@ -35,10 +81,13 @@
     
     \seminarsection{Conclusão e Trabalhos Futuros}{conclusion.tex}
     
-    \seminarsection{Referências}{references.tex}
+    % \seminarsection{Referências}{references.tex}
     
     %%%%% FIM %%%%%
     \sectionframe{Obrigado!}
+    
+    %%%%% PERGUNTAS %%%%%
+    \seminarsection{Perguntas}{questions.tex}
 
 \end{document}
 
