@@ -1,0 +1,31 @@
+\slide{Como fora validado os modelos para a predição?}{
+    Os modelos se saíram melhores do que as bases de comparação tanto na regressão quanto na classificação e ambos tiveram resultados melhores que a chance. Mostrando uma capacidade de predição promissora.
+}
+
+\slide{Como foram escolhidos os modelos?}{
+    Na nossa revisão da literatura, LSTM e GRU se destacaram em seu uso nos artigos mais recentes. Já SVM e RF foram escolhidos pois possuíam estratégias diferentes e encontramos artigos colocando essas técnicas como tendo ótimos resultados na área.
+}
+
+\slide{Qual o estado da arte?}{
+    De acordo com a literatura, não há um consenso sobre o estado da arte para modelos não-paramétricos. Para paramétricos o consenso é uma variação do ARIMA, porém essa informação vem de um artigo de crítica relativamente antigo.
+}
+
+\slide{Porque usaram o sensor RSI128?}{
+    Devido a limitações de hardware decidimos utilizar somente um dos sensores. A escolha foi arbitrária, escolhendo o sensor que apresentava o menor fluxo de veículos.
+}
+
+\slide{Porque não foram usados modelos paramétricos?}{
+    \textit{ARIMA} e \textit{Logistic Regression} foram testados, porém o \textit{ARIMA} se mostrou muito custoso computacionalmente e, juntamente com a \textit{Logistic Regression}, apresentou resultados muito inferiores se comparados com os outros modelos propostos.
+}
+
+\slide{Porque a normalização não foi usada?}{
+    Nos testes feitos a normalização não trouxe resultados significativamente diferentes, tendo, inclusive, apresentado previsões piores para todos os modelos. Por este motivo, seguiu-se os experimentos com os dados não-normalizados.
+}
+
+\slide{Por que usaram \textit{Blocking} em vez do \textit{Walk-Forward}?}{
+    Inicialmente foi utilizado o \textit{Walk-Forward}, porém, os testes estavam muito demorados e custosos computacionalmente. Os mesmos experimentos com o \textit{Blocking} produziram resultados similares e com um custo computacional menor.
+}
+
+\slide{Como foi feita a seleção de atributos?}{
+    A seleção de atributos foi feita utilizando todas as informações relevantes disponíveis no conjunto de dados.
+}

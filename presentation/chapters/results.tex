@@ -1,10 +1,10 @@
 % TODO: falar das métricas e tipo "quanto menor melhor"
 
-\slide{Valores Padrões}{
+\slide{Escolha de Parâmetros}{
     \begin{itemize}
-        \item Passado Visível: ...
-        \item Tamanho do Intervalo de Fluxo: ...
-        \item Quantidade de Splits: ...
+        \item Passado Visível: 4 horas;
+        \item Tamanho do Intervalo de Fluxo: 2.5 minutos;
+        \item Quantidade de Divisões: 4;
     \end{itemize}
 }
 
@@ -281,4 +281,69 @@
         \end{table}
 
     }
+}
+
+\slide{Análise de Hiper-parâmetros}{
+\begin{table}[H]
+    \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lll}
+    \toprule
+     & 
+    \multicolumn{1}{l}{\textbf{Taxa de Aprendizagem}} & 
+    \multicolumn{1}{l}{\textbf{Células}} 
+    \\
+\midrule
+\textbf{LSTM A} & 0.004 & 50\\ \midrule
+\textbf{LSTM B} & 0.004 & 125 \\ \midrule
+\textbf{GRU A} & 0.016 &  75 \\ \midrule
+\textbf{GRU B} & 0.008 &  125 \\
+    \bottomrule
+    \end{tabular*}
+    \label{table:best_hiper_deep}
+    \caption{Valores de hiper-parâmetros mais recorrentes no \textit{Grid Search} para os modelos de aprendizagem profunda.}
+\end{table}
+}
+
+\slide{Análise de Hiper-parâmetros}{
+\begin{table}[H]
+    \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lll}
+    \toprule
+     & 
+    \multicolumn{1}{l}{\textbf{C}} & 
+    \multicolumn{1}{l}{\textbf{Gamma}} 
+    \\
+\midrule
+\textbf{SVM A} & 10 & scale\\ \midrule
+\textbf{SVM B} & 100 & scale \\ \midrule
+
+    \bottomrule
+    \end{tabular*}
+    \label{table:best_hiper_svm}
+    \caption{Valores de hiper-parâmetros mais recorrentes no \textit{Grid Search} para o \textit{\acrshort{SVM}}}
+\end{table}
+}
+
+\slide{Análise de Hiper-parâmetros}{
+\begin{table}[H]
+    \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lll}
+    \toprule
+     & 
+    \multicolumn{1}{l}{\textbf{Altura Máx. Arvore}} & 
+    \multicolumn{1}{l}{\textbf{Nr. Estimadores}} 
+    \\
+\midrule
+\textbf{RF A} & 32 & 800\\ \midrule
+\textbf{RF B} & 32 & 800 \\ \midrule
+
+    \bottomrule
+    \end{tabular*}
+    \label{table:best_hiper_rf}
+    \caption{Valores de hiper-parâmetros mais recorrentes no \textit{Grid Search} para o \textit{\acrshort{RF}}.}
+\end{table}
+}
+
+\slide{Observações}{
+     \begin{itemize}
+         \item Os resultados utilizando a métrica \textbf{MAE} foram muito similares ao resultados com \textbf{RMSE};
+         \item Com a métrica \(\alpha\), os modelos apresentaram uma acurácia próxima de 60\%, no qual o \textit{SVM} e \textit{RF} apresentaram uma acurácia de 70\% em alguns casos.
+     \end{itemize}
 }
