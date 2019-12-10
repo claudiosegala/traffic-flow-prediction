@@ -61,7 +61,7 @@
 \slide{Support Vector Machine}{
     \begin{figure}[htbp]
         \centering
-        \includegraphics[scale=0.55]{monography/img/models/svr_exemple.png}
+        \includegraphics[scale=0.4]{monography/img/models/svr_example.png}
     \end{figure}
 }
 
@@ -69,15 +69,16 @@
     \begin{itemize}
         \item Não Paramétrico \& Supervisionado
         \item Rede Neural Recorrente
-        \item Conserta o sumiço do gradiente
-        \item Utiliza de \textit{Gates} (entrada, saída e esquecimento) para controlar a informação que flui na rede
+        \item Criada para corrigir o Sumiço do Gradiente (\textit{Vanishing Gradient})
+        \item Utiliza de Portas (\textit{Gates}) (entrada, saída e esquecimento) para controlar a informação que flui na rede
+        \item Cada célula recebe 3 entradas, a saída da \textit{hidden layer} da célula anterior, um estado das células e a entrada da célula atual.
     \end{itemize}
 }
 
 \slide{Long Short-Term Memory}{
     \begin{figure}[htbp]
         \centering
-        \includegraphics[scale=0.55]{monography/img/models/lstm3.png}
+        \includegraphics[scale=0.4]{monography/img/models/lstm3.png}
     \end{figure}
 }
 
@@ -85,8 +86,9 @@
     \begin{itemize}
         \item Não Paramétrico \& Supervisionado
         \item Rede Neural Recorrente
-        \item Similar a \textit{LSTM}, porém mais simples
+        \item Baseada na \textit{LSTM}, porém mais simples
         \item Utiliza de \textit{Gates} (entrada e atualização) para controlar a informação que flui na rede
+        \item Não possui estado das células, logo só possui duas entradas, a saída da \textit{hidden layer anterior} e a entrada da célula atual.
     \end{itemize}
 }
 

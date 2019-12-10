@@ -10,7 +10,7 @@ This folder contains the code and the structure of folder used to organize the p
 1. Initiate Virtual Environment
 
 ```bash
-virtualenv --system-site-packages -p python3 ./venv
+virtualenv --system-site-packages --python=/usr/bin/python3.7 ./venv
 ```
 
 2. Activate Virtual Environment
