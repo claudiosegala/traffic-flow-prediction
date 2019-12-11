@@ -1,12 +1,5 @@
 \label{chapter:methodology}
-Este capítulo tem como objetivo mostrar a metodologia utilizada para atingir o objetivo do trabalho. A Figura \ref{figure:metodologia} mostra, de maneira geral, o esquema da metodologia proposta. Primeiramente, será discutido o escopo do trabalho. Em seguida, será explicitado como a base de dados, caracterizada no capítulo \ref{chapter:data} , foi pré-processada. Por último, será discutido a escolha e implementação dos modelos, assim como as métricas de avaliação utilizadas.
-
-\begin{figure}
-    \centering
-    \includegraphics[scale=0.4]{monography/img/tccFlux.png}
-    \label{figure:metodologia}
-    \caption[Fluxograma da metodologia]{Fluxograma da metodologia}
-\end{figure}
+Este capítulo tem como objetivo mostrar a metodologia utilizada para atingir o objetivo do trabalho. Primeiramente, será discutido o escopo do trabalho. Em seguida, será explicitado como a base de dados, caracterizada no capítulo \ref{chapter:data} , foi pré-processada. Por último, será discutido a escolha e implementação dos modelos, assim como as métricas de avaliação utilizadas.
 
 \section{Definição de Cenário}
 
@@ -94,7 +87,7 @@ Vale notar que, como o período é o mesmo para qualquer um dos sensores, ao se 
 
 \subsection{Normalização dos Dados}
 
-Na área de aprendizagem de máquina, é comum vermos modelos de predições para diferentes tipo de variáveis. Por vezes, os valores assumidos por essas variáveis podem apresentar um domínio grande demais, como no caso da predição de valores de ações do mercado financeiro. Com valores em um intervalo tão grande, o treinamento dos modelos tende a piorar. Para contornar este problema, é comum utilizar técnicas que visam diminuir o intervalo de valores que as variáveis podem assumir. Uma destas técnicas é a normalização. 
+Na área de aprendizado de máquina, é comum vermos modelos de predições para diferentes tipo de variáveis. Por vezes, os valores assumidos por essas variáveis podem apresentar um domínio grande demais, como no caso da predição de valores de ações do mercado financeiro. Com valores em um intervalo tão grande, o treinamento dos modelos tende a piorar. Para contornar este problema, é comum utilizar técnicas que visam diminuir o intervalo de valores que as variáveis podem assumir. Uma destas técnicas é a normalização. 
 
 Em um dos tipos da normalização, utiliza-se o maior e o menor valor que o seu conjunto de dados atinge para ajustar os valores intermediários, como pode ser visto em \cite{Dorian_1999}. Por exemplo, o maior fluxo calculado foi 94 veículos para o sensor \textbf{RSI128} com acumulação de 2,5 minutos e o menor foi 0. Assim, foram ajustados os valores do conjunto de dados dentro de um intervalo entre 0 e 1, com 0 representando o menor valor e 94, o maior valor. Porém, os testes realizados mostraram que a normalização não trouxe melhorias significativas para as predições deste trabalho, apresentando, inclusive, resultados levemente inferiores em alguns modelos. Por este motivo, optou-se por continuar os experimentos sem normalização.
 
@@ -173,7 +166,7 @@ Neste trabalho, utilizou-se um método de \textit{Out of Sample Testing} do tipo
 
 \section{Modelos Desenvolvidos}
 
-Visto que a predição do fluxo é o foco do trabalho, que tem-se um conjunto de pares entrada e saída e que o fluxo é quantitativo, serão utilizadas técnicas de aprendizagem de máquina supervisionadas de regressão para prever a curto prazo o fluxo da via. Quanto a essas técnicas, é possível dividi-las novamente em paramétricas e não paramétricas.
+Visto que a predição do fluxo é o foco do trabalho, que tem-se um conjunto de pares entrada e saída e que o fluxo é quantitativo, serão utilizadas técnicas de aprendizado de máquina supervisionadas de regressão para prever a curto prazo o fluxo da via. Quanto a essas técnicas, é possível dividi-las novamente em paramétricas e não paramétricas.
 
 Dos modelos não paramétricos, se destacaram, na revisão de literatura realizada, o \textit{\acrshort{LSTM}} e o \textit{\acrshort{GRU}}, sendo ambos \textit{\acrshort{RNN}}'s. Além de variações dos modelos tradicionais, \textit{\acrshort{RF}} e \textit{\acrshort{SVM}}. Quanto ao \textit{\acrshort{LSTM}}, vale ressaltar que existem diversas variações e implementações, porém, segundo Greff et. al. \cite{Greff_2015}, as variações da \textit{\acrshort{LSTM}} não possuem tantas diferenças quanto a qualidade de suas previsões. Por este motivo, este trabalho utilizou o \textit{\acrshort{LSTM}} comum. Dos modelos paramétricos, o mais utilizado na literatura para previsão de fluxo é o \textit{\acrshort{ARIMA}} e suas variações \cite{doi:10.1080/01441647.2014.992496}, além de modelos mais simples como \textit{\acrfull{LR}}.
 
@@ -216,7 +209,7 @@ Para o número de divisões e passado visível é utilizado uma escala exponenci
 
 A escolha de hiper-parâmetros, diferente da escolha de parâmetros, é mais sensível. Isto é, os melhores hiper-parâmetros são mais sensível a mudança dependendo dos dados. Sendo assim, é uma tarefa complexa recomendar um conjunto de hiper-parâmetros que resolve o problema de previsão de fluxo a curto prazo. Com isso em mente, os modelos foram alterados para que a escolha de hiper-parâmetros fizesse parte do treino assim como mostrado no Pseudo-Código \ref{algo:tuned_training}. Como essa escolha agora faz parte do treino e são realizadas diversos treinos devido ao \textit{Out of Sample Testing}, serão geradas várias escolhas de hiper-parâmetros e podemos verificar quais foram as mais comuns.
 
-Essa escolha será utilizada para verificar a sensibilidade dos modelos com os hiper-parâmetros antes selecionados. Para essa fase, o conjunto de testes é novamente divido em dois (treino e teste \textit{tuning}). Esta etapa é necessária para evitar o sobre-ajuste (\textit{overfitting}) e para garantir que os resultados finais sejam genéricos o suficiente para casos nunca vistos antes (outro conjunto de dados, por exemplo). Os testes realizados serão feitos de forma que todas as combinações de hiper-parâmetros sejam verificadas. Tendo seus valores escolhidos de forma empírica devido a falta de absolutismo de valores padrões.
+Essa escolha será utilizada para verificar a sensibilidade dos modelos com os hiper-parâmetros antes selecionados. Para essa fase, o conjunto de testes é novamente divido em dois (treino e teste \textit{tuning}). Esta etapa é necessária para evitar o sobre-ajuste e para garantir que os resultados finais sejam genéricos o suficiente para casos nunca vistos antes (outro conjunto de dados, por exemplo). Os testes realizados serão feitos de forma que todas as combinações de hiper-parâmetros sejam verificadas. Tendo seus valores escolhidos de forma empírica devido a falta de absolutismo de valores padrões.
 
 Para os modelos de aprendizagem profunda (\textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}}) os hiper-parâmetros são os mesmos. Segundo Greff et. al. \cite{Greff_2015}, que realizou extensos testes nesses dois modelos, os dois fatores que mais afetam a previsão dos modelos citados são a taxa de aprendizado e o tamanho da rede. Sendo assim, esses dois foram escolhidos como os hiper-parâmetros, com as opções sendo:
 

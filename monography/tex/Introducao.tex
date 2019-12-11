@@ -2,7 +2,7 @@ A frota  de  veículos no Brasil tem aumentado ao longo  dos últimos anos \cite
 
 Em resposta a essa tendência, as metrópoles tem utilizado da tecnologia para gerenciar melhor o trânsito em suas vias, ao passo que os motoristas têm feito uso cada vez mais intenso de aplicativos para escapar de congestionamentos e descobrir os caminhos mais rápidos até seus destinos. Porém, se essas tecnologias e aplicações não se preocuparem em como o fluxo da via estará nos próximos minutos, erros de cálculo podem ser cometidos.
 
-Mas se não há como prever o futuro, como planejar-se melhor? Uma das soluções promissoras é empregar o uso de técnicas de aprendizagem de máquina para aprender como uma via tende a se comportar, tornando possível estimar como o seu fluxo de veículos estará em alguns minutos. E o que seria aprendizagem de máquina? Aprendizagem de máquina é um campo da computação que busca realizar o reconhecimento de padrões para a resolução de problemas, reconhecendo o padrão de uma via, o que torna possível controlá-la de maneira mais eficiente.
+Mas se não há como prever o futuro, como planejar-se melhor? Uma das soluções promissoras é empregar o uso de técnicas de aprendizado de máquina para aprender como uma via tende a se comportar, tornando possível estimar como o seu fluxo de veículos estará em alguns minutos. E o que seria aprendizado de máquina? Aprendizado de máquina é um campo da computação que busca realizar o reconhecimento de padrões para a resolução de problemas, reconhecendo o padrão de uma via, o que torna possível controlá-la de maneira mais eficiente.
 
 \section{Motivação}
 
@@ -10,11 +10,11 @@ Os grandes centros urbanos não conseguem acompanhar a constante expansão do vo
 
 Neste contexto, surgiram várias pesquisas na área de mobilidade urbana e transporte que visam contornar estes problemas. Dentre essas pesquisas, um dos meios encontrados para amenizar o congestionamento é tentar prever quando ele irá acontecer. Uma vez que os motoristas saibam que um engarrafamento irá ocorrer, eles podem se planejar melhor e navegar por rotas alternativas, distribuindo de maneira mais eficiente os carros na malha viária. Já organizações governamentais poderiam utilizar os dados para obter uma noção em tempo real de como estará o fluxo pela cidade, possibilitando o redirecionamento das vias e reprogramação de semáforos. Além disso, a previsão do tráfego possibilitaria a implementação ou a evolução de sistemas mais complexos, como um sistema de controle semafórico dinâmico ou sistema de auxílio de decisão para controle da malha viária.
 
-A literatura está repleta de artigos que tentam prever a quantidade de veículos que irão passar em uma via em um determinado intervalo de tempo (predição de fluxo) utilizando aprendizagem de máquina \cite{doi:10.1080/01441647.2014.992496, fu2016using, hamed_prediction_1995, lv_6894591, Seoul, wang_2018, Xiaolei_2015, Zainab_2018}. Porém, a maioria desses artigos coletam dados e fazem suas análises em rodovias expressas, isto é, poucos trabalhos focam em tráfego urbano \cite{lana_2018}. Em rodovias expressas não há intersecções, ou barreiras semafóricas. Este estudo tem como desafio realizar a predição de fluxo em cenários que se assemelhem mais a centros urbanos, onde as vias possuem semáforos e cruzamentos que podem impactar de maneira significativa no comportamento do fluxo de veículos.
+A literatura está repleta de artigos que tentam prever a quantidade de veículos que irão passar em uma via em um determinado intervalo de tempo (predição de fluxo) utilizando aprendizado de máquina \cite{doi:10.1080/01441647.2014.992496, fu2016using, hamed_prediction_1995, lv_6894591, Seoul, wang_2018, Xiaolei_2015, Zainab_2018}. Porém, a maioria desses artigos coletam dados e fazem suas análises em rodovias expressas, isto é, poucos trabalhos focam em tráfego urbano \cite{lana_2018}. Em rodovias expressas não há intersecções, ou barreiras semafóricas. Este estudo tem como desafio realizar a predição de fluxo em cenários que se assemelhem mais a centros urbanos, onde as vias possuem semáforos e cruzamentos que podem impactar de maneira significativa no comportamento do fluxo de veículos.
 
 \section{Hipóteses}
 \label{chapter:hipoteses}
-Tendo em mente as informações citadas anteriormente, este trabalho tem como hipótese que o emprego das técnicas de aprendizagem de máquina, comumente utilizadas em problemas envolvendo vias expressas, serão capazes de prever o fluxo de veículos a curto prazo (no máximo uma hora no futuro) em vias com cruzamentos. Dada a hipótese principal, também espera-se provar as seguintes hipóteses secundárias ao longo do desenvolvimento dos experimentos:
+Tendo em mente as informações citadas anteriormente, este trabalho tem como hipótese que o emprego das técnicas de aprendizado de máquina, comumente utilizadas em problemas envolvendo vias expressas, serão capazes de prever o fluxo de veículos a curto prazo (no máximo uma hora no futuro) em vias com cruzamentos. Dada a hipótese principal, também espera-se provar as seguintes hipóteses secundárias ao longo do desenvolvimento dos experimentos:
 
 \begin{itemize}
     \item Tais técnicas serão capazes de prever o fluxo de veículos de forma mais precisa quando comparadas a técnicas mais simples, como \acrfull{MM} e \textit{Naive}.
@@ -32,7 +32,7 @@ Para alcançar o objetivo geral, os seguintes objetivos específicos foram defin
 
 \begin{itemize}
     \item Implementar a análise e transformação dos dados para facilitar a aprendizagem;
-    \item Implementar os modelos de aprendizagem de máquina escolhidos; 
+    \item Implementar os modelos de aprendizado de máquina escolhidos; 
     \item Realizar uma busca pelos melhores valores de parâmetros e hiper-parâmetros para cada modelo;
     \item Treinar os modelos com os dados processados;
     \item Automatizar a comparação dos modelos;
