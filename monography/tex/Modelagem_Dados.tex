@@ -16,7 +16,7 @@ Esta seção almeja demonstrar o formato dos dados, assim como a maneira na qual
 
 \subsection{Aquisição dos Dados}
 
-Os dados\footnote{http://bit.ly/processed-data-2l5MaAG} provêm de dois cruzamentos na avenida Hélio Prates que pode ser vista na Figura \ref{figure:helio}. Esta cruza Taguatinga e Ceilândia, que são duas cidades satélites do \acrshort{DF}. Estes dados foram coletados por fiscalizadores eletrônicos localizados nos cruzamentos e foram fornecidos pelo \acrshort{DETRAN}\footnote{http://www.detran.df.gov.br/} do \acrshort{DF}. Neste conjunto de dados estão inclusos registros de todos os veículos que passaram pelo local nos meses de maio a julho de 2016 em forma de uma série temporal. Mais especificamente, do primeiro dia de maio ao último de julho de 2016, totalizando 13 semanas e 1 dia, 92 dias. Vale notar que esses dados foram escolhidos devido a sua disponibilidade.
+Os dados\footnote{http://bit.ly/processed-data-2l5MaAG} utilizados provêm de dois cruzamentos na avenida Hélio Prates que pode ser vista na Figura \ref{figure:helio}. Esta cruza Taguatinga e Ceilândia, que são duas cidades satélites do \acrshort{DF}. Estes dados foram coletados por fiscalizadores eletrônicos localizados nos cruzamentos e foram fornecidos pelo \acrshort{DETRAN}\footnote{http://www.detran.df.gov.br/} do \acrshort{DF}. Neste conjunto de dados estão inclusos registros de todos os veículos que passaram pelo local nos meses de maio a julho de 2016 em forma de uma série temporal. Mais especificamente, do primeiro dia de maio ao último de julho de 2016, totalizando 13 semanas e 1 dia, 92 dias.
 
 \begin{table}[htbp]
     \begin{tabular}{ccccccc}
@@ -60,7 +60,7 @@ Os dados\footnote{http://bit.ly/processed-data-2l5MaAG} provêm de dois cruzamen
 
 \subsection{Características dos Dados}
 
-Quanto as características das colunas, o conjunto de dados possui tanto colunas quantitativas quanto qualitativas. Só existe uma coluna qualitativa, \texttt{Id Equipamento}, sendo ela ordinal, pois em seu nome ocorre uma numeração. Todas as outras colunas são quantitativas, sendo a de tamanho a única contínua e o resto discreto. Porém a coluna de \texttt{km/h Max} tem seu valor constante constante.  Os registros são de 8 sensores com um total de 10.801.781 registros de veículos. Vale notar que nem todos os sensores estão localizados na Avenida Hélio Prates, alguns estão localizados na avenidas que cruzam a mesma. Além disso, a quantidade de registros por sensor não distribuídos igualmente:
+Quanto as características das colunas, o conjunto de dados possui tanto colunas quantitativas quanto qualitativas. Só existe uma coluna qualitativa, \texttt{Id Equipamento}, sendo ela ordinal, pois em seu nome ocorre uma numeração. Todas as outras colunas são quantitativas, sendo a de tamanho a única contínua e o restante discreto. Porém a coluna de \texttt{km/h Max} tem seu valor constante. Os registros são de 8 sensores com um total de 10.801.781 registros de veículos. Vale notar que nem todos os sensores estão localizados na Avenida Hélio Prates, alguns estão localizados na avenidas que cruzam a mesma. Além disso, a quantidade de registros por sensor não distribuídos igualmente:
 
 \begin{itemize}
     \item \textbf{RSI033:} 2.382.754 registros de veículos
@@ -75,32 +75,9 @@ Quanto as características das colunas, o conjunto de dados possui tanto colunas
 
 Os sensores contém dados de um mesmo período, sendo assim, quanto maior a quantidade de veículos mais intenso foi o tráfego. Os quatro sensores com maior fluxo pertencem a via principal, assim como pode ser visto na Figura \ref{figure:helio_cruzamento_1} e \ref{figure:helio_cruzamento_2}. Vale salientar que não foram encontrados atributos incompletos ou nulos. Porém uma das colunas possui dados inconsistentes com a realidade. Isso acontece pois, como pode ser visto na Tabela \ref{table:data} existem veículos com tamanho 0, o que é impossível. Por último, mas não menos importante, também deve-se notar que os fiscalizadores eletrônicos utilizados ficam próximos de semáforos. Desta foram, existem momentos em que o fluxo diminui bastante, devido aos sinais vermelhos. 
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[scale=0.55,angle=90]{monography/img/maps/avenida_helio_prates.png}
-    \label{figure:helio}
-    \caption[Visão Espacial da Avenida Hélio Prates Provindos do Apple Maps]{Visão Espacial da Avenida Hélio Prates Provindos do Apple Maps}
-\end{figure}
-
-\begin{figure}[htpb]
-    \centering
-    \includegraphics[scale=0.3]{monography/img/maps/crossing_1.png}
-    \label{figure:helio_cruzamento_1}
-    \caption[Visão Espacial do Cruzamento referente aos sensores \textbf{RSI128}, \textbf{RSI129}, \textbf{RSI017} e \textbf{RSI018}]{Visão Espacial do Cruzamento referente aos sensores \textbf{RSI128}, \textbf{RSI129}, \textbf{RSI017} e \textbf{RSI018}}
-\end{figure}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[scale=0.4]{monography/img/maps/crossing_2.png}
-    \label{figure:helio_cruzamento_2}
-    \caption[Visão Espacial do Cruzamento referente aos sensores \textbf{RSI131}, \textbf{RSI132}, \textbf{RSI032} e \textbf{RSI033}]{Visão Espacial do Cruzamento referente aos sensores \textbf{RSI131}, \textbf{RSI132}, \textbf{RSI032} e \textbf{RSI033}}
-\end{figure}
-
 \subsection{Escopo dos Dados}
 
-O conjunto de dados provém de uma só cidade, recolhidos de sensores instalados em locais específicos e por apenas 3 meses. Logo, os resultados podem não ser os mesmos quando a metodologia for utilizada em outras localidades ou outros meses. O modo como os motoristas dirigem e como as vias são feitas também vão influenciar. Para a previsão perfeita seriam necessárias muitas variáveis, as quais não estão disponíveis.
-
-Além disso, existem casos e cenários que os fiscalizadores eletrônicos não são capazes de registrar. Entre eles estão:
+O conjunto de dados provém de uma só cidade, recolhidos de sensores instalados em locais específicos e por apenas 3 meses. Logo, os resultados podem não ser os mesmos quando a metodologia for utilizada em outras localidades ou outros meses. Para consertar isso, seria necessário mais dados os quais não estão disponíveis. Além disso, existem casos e cenários que os fiscalizadores eletrônicos não são capazes de registrar. Entre eles estão:
 
 \begin{itemize}
     \item Falhas no equipamento
@@ -110,3 +87,26 @@ Além disso, existem casos e cenários que os fiscalizadores eletrônicos não s
     \item Incapacidade de registrar uma velocidade média do veículo ao longo da via (visto que não há registro de placas)
     \item Carros transitando em velocidades ilegais na falta de presença de fiscalização eletrônica.
 \end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{monography/img/maps/avenida_helio_prates.png}
+    \label{figure:helio}
+    \caption[Visão Espacial da Avenida Hélio Prates Provindos do Apple Maps]{Visão Espacial da Avenida Hélio Prates Provindos do Apple Maps}
+\end{figure}
+
+\begin{figure}[htbp]
+    \begin{minipage}[b]{0.4875\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{monography/img/maps/crossing_1.png}
+        \label{figure:helio_cruzamento_1}
+        \caption[Visão Espacial do Cruzamento referente aos sensores \textbf{RSI128}, \textbf{RSI129}, \textbf{RSI017} e \textbf{RSI018}]{Visão Espacial do Cruzamento referente aos sensores \textbf{RSI128}, \textbf{RSI129}, \textbf{RSI017} e \textbf{RSI018}}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[b]{0.4875\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{monography/img/maps/crossing_2.png}
+        \label{figure:helio_cruzamento_2}
+        \caption[Visão Espacial do Cruzamento referente aos sensores \textbf{RSI131}, \textbf{RSI132}, \textbf{RSI032} e \textbf{RSI033}]{Visão Espacial do Cruzamento referente aos sensores \textbf{RSI131}, \textbf{RSI132}, \textbf{RSI032} e \textbf{RSI033}}
+    \end{minipage}
+\end{figure}

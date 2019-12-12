@@ -1,5 +1,5 @@
 \label{chapter:methodology}
-Este capítulo tem como objetivo mostrar a metodologia utilizada para atingir o objetivo do trabalho. Primeiramente, será discutido o escopo do trabalho. Em seguida, será explicitado como a base de dados, caracterizada no capítulo \ref{chapter:data} , foi pré-processada. Por último, será discutido a escolha e implementação dos modelos, assim como as métricas de avaliação utilizadas.
+Este capítulo tem como objetivo mostrar a metodologia utilizada para atingir o objetivo do trabalho. Primeiramente, será discutido o escopo do trabalho. Em seguida, será explicitado como a base de dados, caracterizada no capítulo \ref{chapter:data}, foi pré-processada. Por último, será discutido a escolha e implementação dos modelos, assim como as métricas de avaliação utilizadas.
 
 \section{Definição de Cenário}
 
@@ -36,7 +36,7 @@ Como visto na literatura, existem algumas maneiras diferentes de se fazer a pred
 
 Sendo assim, o conjunto de dados será transformado de uma série temporal de registros de veículos para uma série temporal de fluxos. Isto é, será calculado a quantidade de veículos que passaram por um local em um determinado intervalo de tempo. Além disso, também foram calculadas a velocidade média e a densidade no mesmo intervalo. Para definir o intervalo que foi utilizado, testou-se os valores de intervalo para 2.5, 5 e 7.5 minutos. Note que foram utilizados intervalos que sejam múltiplos de 15, visto que todos os tempos de predição no futuro serão múltiplos de 15.
 
-É preciso levar em consideração que quando se acumula os registros em um intervalo de tempo muito pequeno, o conjunto de dados apresenta muito ruído, dificultando a aprendizagem e afetando a qualidade da previsão. Em contrapartida, ao se aumentar o intervalo, o conjunto de dados pode se tornar muito pequeno, o que também pode dificultar a aprendizagem. Para se escolher qual dos intervalos seria o melhor para a predição, o tamanho do intervalo de fluxo será um dos parâmetros a serem escolhidos. Isto é, será realizado uma comparação entre os modelos para ver como que eles reagem. 
+É preciso levar em consideração que quando se acumula os registros em um intervalo de tempo muito pequeno, o conjunto de dados apresenta muita oscilação, dificultando a aprendizagem e afetando a qualidade da previsão. Em contrapartida, ao se aumentar o intervalo, o conjunto de dados pode se tornar muito pequeno, o que também pode dificultar a aprendizagem. Para se escolher qual dos intervalos seria o melhor para a predição, o tamanho do intervalo de fluxo será um dos parâmetros a serem escolhidos. Isto é, será realizado uma comparação entre os modelos para ver como que eles reagem. 
 
 \begin{table}[H]
     \begin{tabular}{cccccccccc}
@@ -87,7 +87,7 @@ Vale notar que, como o período é o mesmo para qualquer um dos sensores, ao se 
 
 \subsection{Normalização dos Dados}
 
-Na área de aprendizado de máquina, é comum vermos modelos de predições para diferentes tipo de variáveis. Por vezes, os valores assumidos por essas variáveis podem apresentar um domínio grande demais, como no caso da predição de valores de ações do mercado financeiro. Com valores em um intervalo tão grande, o treinamento dos modelos tende a piorar. Para contornar este problema, é comum utilizar técnicas que visam diminuir o intervalo de valores que as variáveis podem assumir. Uma destas técnicas é a normalização. 
+Na área de aprendizado de máquina, é comum vermos modelos de predições para diferentes tipo de variáveis. Por vezes, os valores assumidos por essas variáveis podem apresentar um domínio grande demais e em um intervalo tão grande, o treinamento dos modelos tende a piorar. Para contornar este problema, é comum utilizar técnicas que visam diminuir o intervalo de valores que as variáveis podem assumir. Uma destas técnicas é a normalização. 
 
 Em um dos tipos da normalização, utiliza-se o maior e o menor valor que o seu conjunto de dados atinge para ajustar os valores intermediários, como pode ser visto em \cite{Dorian_1999}. Por exemplo, o maior fluxo calculado foi 94 veículos para o sensor \textbf{RSI128} com acumulação de 2,5 minutos e o menor foi 0. Assim, foram ajustados os valores do conjunto de dados dentro de um intervalo entre 0 e 1, com 0 representando o menor valor e 94, o maior valor. Porém, os testes realizados mostraram que a normalização não trouxe melhorias significativas para as predições deste trabalho, apresentando, inclusive, resultados levemente inferiores em alguns modelos. Por este motivo, optou-se por continuar os experimentos sem normalização.
 
@@ -105,13 +105,13 @@ Na Figura \ref{figure:flow_discution} é mostrado o resultado da agregação dos
 
 \subsection{Criação dos Conjunto de Treino e Teste}
 
-Será utilizado o conjunto dos dados pré-processados (\(D\)) para gerar o conjunto de dados de treino (\(X\)) e teste (\(Y\)). Cada elemento (\(x_i\)) do conjunto de treino  será uma série temporal dos atributos. Essa série temporal representa uma visão contínua do passado em relação ao presente momento. Portanto, cada elemento de treino será uma subsequência de \(D\) de tamanho \(m\), onde cada instância (\(x_{i, j}\)) é uma das linhas da Tabela \ref{table:data_pre}. Para o conjunto de testes, cada elemento (\(y_i\)) será o fluxo no futuro (\(x_{i + k, m_{fluxo}}\)). Para fins de análise, será utilizado o conjunto de treino para gerar um outro conjunto mais simples. Este novo conjunto possuirá apenas o fluxo. Desta forma, será possível comparar os resultados dos modelos utilizando apenas o fluxo com os resultados dos modelos utilizando a densidade e a velocidade média também. Com isso, será possível dizer se as colunas de \texttt{Velocidade Média}, \texttt{Densidade} e as de dias da semana melhoram a performance das predições, ou não. O conjunto mais simples (que apresenta apenas o fluxo) será nomeado de Conjunto A, enquanto o Conjunto mais complexo será referenciado como Conjunto B.
+Será utilizado o conjunto dos dados pré-processados (\(D\)) para gerar o conjunto de dados de treino (\(X\)) e teste (\(Y\)). Cada elemento (\(x_i\)) do conjunto de treino será uma subsequência de \(D\) que representa uma visão finita e contínua do passado. Cada elemento terá tamanho \(m\), onde cada instância (\(x_{i, j}\), com \(1 \leq j \leq m \)) é uma das linhas da Tabela \ref{table:data_pre}. Para o conjunto de testes, cada elemento (\(y_i\)) será o fluxo no futuro (\(x_{i + k, m, fluxo}\), com \(k\) sendo o quantas posições no futuro é a predição e \(x_{i + k, m}\) a visão do passado mais recente). Para fins de análise, será utilizado o conjunto de treino para gerar um outro conjunto mais simples. Este novo conjunto possuirá apenas o fluxo. Desta forma, será possível comparar os resultados dos modelos utilizando apenas o fluxo com os resultados dos modelos utilizando a densidade e a velocidade média também. Com isso, será possível dizer se as colunas de \texttt{Velocidade Média}, \texttt{Densidade} e as de dias da semana melhoram a performance das predições, ou não. O conjunto mais simples (que apresenta apenas o fluxo) será nomeado de Conjunto A, enquanto o Conjunto mais complexo será referenciado como Conjunto B.
 
 No entanto, os modelos não possuem o mesmo formato de entrada de dados. Logo, é necessário adaptar o conjunto de testes aos modelos e seus formatos. Uma versão será para os modelos de aprendizado profundo (\textit{\acrshort{LSTM}} e \textit{\acrshort{GRU}}) com três dimensões (amostras por sequência por atributos), assim como mostrado acima. A outra versão será para os modelos tradicionais (\textit{\acrshort{RF}} e \textit{\acrshort{SVM}}), que terá somente duas dimensões (amostras por atributos). Portanto, \(x'_i\), nesse caso, não é uma lista de tupla e sim somente uma tupla com todos os elementos da lista de tupla.
 
 \section{Métricas de Avaliação}
 
-Na literatura é comum serem utilizados as métricas \textit{\acrshort{RMSE}} e \textit{\acrshort{MAPE}} \cite{lana_2018}. Porém, como pode ser visto na Equação \ref{eq:mape}, \textit{\acrshort{MAPE}} possui divisão pelo \({y_i}\) e este pode ser zero para nosso conjunto de dados. Logo, \textit{\acrshort{MAPE}} foi descartado. 
+Na literatura é comum serem utilizados as métricas \textit{\acrshort{RMSE}} e \textit{\acrshort{MAPE}} \cite{lana_2018}. Porém, como pode ser visto na Equação \ref{eq:mape}, \textit{\acrshort{MAPE}} possui divisão pelo \({y_i}\) e este pode ser zero para nosso conjunto de dados, isto é, tem momentos registrados onde não tem fluxo de veículos. Logo, \textit{\acrshort{MAPE}} foi descartado. 
 
 \begin{equation}
 \label{eq:mape}
@@ -193,7 +193,7 @@ As arquiteturas utilizadas neste trabalho foram implementados na linguagem \text
 
 \subsection{Escolha de Parâmetros}
 
-Tanto os modelos propostos por este trabalho, quanto o conjunto de dados utilizado, podem ser ajustados para melhorar a qualidade das previsões. Os dados, como visto anteriormente, já foram tratados e corrigidos. Agora, serão realizados testes para descobrir os valores de parâmetros que produzem as melhores predições. A forma de execução dos modelos de forma genérica pode ser vista no Pseudo-Código \ref{algo:training}.
+Tanto os modelos propostos por este trabalho, quanto o conjunto de dados utilizado, podem ser ajustados para melhorar a qualidade das previsões. Os dados, como visto anteriormente, já foram tratados e corrigidos. Agora, serão realizados testes para descobrir os valores de parâmetros que produzem as melhores predições. A forma de execução dos modelos de forma genérica pode ser vista no Algoritmo \ref{algo:training}.
 
 Os parâmetros definidos para os testes são: o passado visível, o número de divisões do conjunto de dados e o tamanho do intervalo do fluxo. O passado visível determina o tamanho da entrada e o quão no passado os modelos poderão enxergar do fluxo. O número de divisões afeta o tamanho das amostras de treino e teste e o tamanho do intervalo do fluxo altera o tamanho do conjunto de dados de uma forma geral. Na literatura, a escolha de parâmetros é empírica e baseada no problema, sendo assim, os valores que foram definidos para serem testados neste trabalho foram os seguintes:
 
@@ -203,11 +203,11 @@ Os parâmetros definidos para os testes são: o passado visível, o número de d
     \item \textbf{Tamanho do Intervalo para cálculo do fluxo}: 150, 300, 450 segundos;
 \end{itemize}
 
-Para o número de divisões e passado visível é utilizado uma escala exponencial para que seja possível observar como essas variáveis afetam os modelos à medida que crescem. O número de divisões tem seu valor máximo definido como 8, pois um número muito maior faria com que o conjunto de treinamento tivesse menos de 1 semana. Passado visível tem seu valor máximo definido como 480 minutos por limitações de hardware. Já o tamanho do intervalo acumulado é limitado a divisores de 15 minutos, visto que o trabalho tem como objetivo prever como o fluxo estará após 15, 30, 45 e 60 minutos. Além disso, tempos de acumulação inferiores tornam o conjunto de dados muito ruidosos, ao passo que valores de acumulação muito altos tornam o conjunto de dados muito pequeno.
+Para o número de divisões e passado visível é utilizado uma escala exponencial para que seja possível observar como essas variáveis afetam os modelos à medida que crescem. O número de divisões tem seu valor máximo definido como 8, pois um número muito maior faria com que o conjunto de treinamento tivesse menos de 1 semana. Passado visível tem seu valor máximo definido como 480 minutos por limitações de hardware. Já o tamanho do intervalo acumulado é limitado a divisores de 15 minutos, visto que o trabalho tem como objetivo prever como o fluxo estará após 15, 30, 45 e 60 minutos. Além disso, tempos de acumulação inferiores fazem com que o conjunto de dados oscile muito, ao passo que valores de acumulação muito altos tornam o conjunto de dados muito pequeno.
 
 \subsection{Escolha de Hiper-Parâmetros}
 
-A escolha de hiper-parâmetros, diferente da escolha de parâmetros, é mais sensível. Isto é, os melhores hiper-parâmetros são mais sensível a mudança dependendo dos dados. Sendo assim, é uma tarefa complexa recomendar um conjunto de hiper-parâmetros que resolve o problema de previsão de fluxo a curto prazo. Com isso em mente, os modelos foram alterados para que a escolha de hiper-parâmetros fizesse parte do treino assim como mostrado no Pseudo-Código \ref{algo:tuned_training}. Como essa escolha agora faz parte do treino e são realizadas diversos treinos devido ao \textit{Out of Sample Testing}, serão geradas várias escolhas de hiper-parâmetros e podemos verificar quais foram as mais comuns.
+A escolha de hiper-parâmetros, diferente da escolha de parâmetros, é mais sensível. Isto é, os melhores hiper-parâmetros são mais sensível a mudança dependendo dos dados. Sendo assim, é uma tarefa complexa recomendar um conjunto de hiper-parâmetros que resolve o problema de previsão de fluxo a curto prazo. Com isso em mente, os modelos foram alterados para que a escolha de hiper-parâmetros fizesse parte do treino assim como mostrado no Algoritmo \ref{algo:tuned_training}. Como essa escolha agora faz parte do treino e são realizadas diversos treinos devido ao \textit{Out of Sample Testing}, serão geradas várias escolhas de hiper-parâmetros e podemos verificar quais foram as mais comuns.
 
 Essa escolha será utilizada para verificar a sensibilidade dos modelos com os hiper-parâmetros antes selecionados. Para essa fase, o conjunto de testes é novamente divido em dois (treino e teste para ajuste de hiper-parâmetros). Esta etapa é necessária para evitar o sobre-ajuste e para garantir que os resultados finais sejam genéricos o suficiente para casos nunca vistos antes (outro conjunto de dados, por exemplo). Os testes realizados serão feitos de forma que todas as combinações de hiper-parâmetros sejam verificadas. Tendo seus valores escolhidos de forma empírica devido a falta de absolutismo de valores padrões.
 
@@ -237,7 +237,7 @@ Para \textit{\acrshort{SVM}}, segundo Vladimir Cherkassky et. al. \cite{CHERKASS
 O hiper-parâmetro C representa quanto que os erros do ajuste vão influenciar na próxima iteração, funcionando parecido como uma taxa de aprendizagem. Este variando em escala exponencial. Já o hiper-parâmetro \(\gamma\) representa a flexibilidade do \textit{Kernel} de se ajustar aos dados, quanto mais flexível, maior a tendência de sobre-ajustar. Este foi espaçado de forma igual no espaço logarítmico de \(10^{-2}\) a \(10^{2}\).
 
 \begin{algorithm}
-\caption{Pseudo-Código de Treinamento dos Modelos Sem Ajuste de Hiper-Parâmetros}
+\caption{Algoritmo de Treinamento dos Modelos Sem Ajuste de Hiper-Parâmetros}
 \begin{algorithmic}
 \label{algo:training}
 \REQUIRE $X$, $Y$, $k$ (número de divisões)
@@ -257,7 +257,7 @@ O hiper-parâmetro C representa quanto que os erros do ajuste vão influenciar n
 \end{algorithm}
 
 \begin{algorithm}
-\caption{Pseudo-Código de Treinamento dos Modelos Com Ajuste de Hiper-Parâmetros}
+\caption{Algoritmo de Treinamento dos Modelos Com Ajuste de Hiper-Parâmetros}
 \begin{algorithmic}
 \label{algo:tuned_training}
 \REQUIRE $X$, $Y$, $k$ (número de divisões)
