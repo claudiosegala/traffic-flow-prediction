@@ -58,6 +58,30 @@ Os dados\footnote{http://bit.ly/processed-data-2l5MaAG} utilizados provêm de do
     \caption{Exemplo dos dados recebidos coletados pelo \acrshort{DETRAN}}
 \end{table}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{monography/img/maps/avenida_helio_prates.png}
+    \label{figure:helio}
+    \caption[Visão Espacial da Avenida Hélio Prates Provindos do Apple Maps]{Visão Espacial da Avenida Hélio Prates Provindos do Apple Maps}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{minipage}[b]{0.4875\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{monography/img/maps/crossing_1.png}
+        \label{figure:helio_cruzamento_1}
+        \caption[Visão Espacial do Cruzamento referente aos sensores \textbf{RSI128}, \textbf{RSI129}, \textbf{RSI017} e \textbf{RSI018}]{Visão Espacial do Cruzamento referente aos sensores \textbf{RSI128}, \textbf{RSI129}, \textbf{RSI017} e \textbf{RSI018}}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[b]{0.4875\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{monography/img/maps/crossing_2.png}
+        \label{figure:helio_cruzamento_2}
+        \caption[Visão Espacial do Cruzamento referente aos sensores \textbf{RSI131}, \textbf{RSI132}, \textbf{RSI032} e \textbf{RSI033}]{Visão Espacial do Cruzamento referente aos sensores \textbf{RSI131}, \textbf{RSI132}, \textbf{RSI032} e \textbf{RSI033}}
+    \end{minipage}
+\end{figure}
+
+
 \subsection{Características dos Dados}
 
 Quanto as características das colunas, o conjunto de dados possui tanto colunas quantitativas quanto qualitativas. Só existe uma coluna qualitativa, \texttt{Id Equipamento}, sendo ela ordinal, pois em seu nome ocorre uma numeração. Todas as outras colunas são quantitativas, sendo a de tamanho a única contínua e o restante discreto. Porém a coluna de \texttt{km/h Max} tem seu valor constante. Os registros são de 8 sensores com um total de 10.801.781 registros de veículos. Vale notar que nem todos os sensores estão localizados na Avenida Hélio Prates, alguns estão localizados na avenidas que cruzam a mesma. Além disso, a quantidade de registros por sensor não distribuídos igualmente:
@@ -87,26 +111,3 @@ O conjunto de dados provém de uma só cidade, recolhidos de sensores instalados
     \item Incapacidade de registrar uma velocidade média do veículo ao longo da via (visto que não há registro de placas)
     \item Carros transitando em velocidades ilegais na falta de presença de fiscalização eletrônica.
 \end{itemize}
-
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=\linewidth]{monography/img/maps/avenida_helio_prates.png}
-    \label{figure:helio}
-    \caption[Visão Espacial da Avenida Hélio Prates Provindos do Apple Maps]{Visão Espacial da Avenida Hélio Prates Provindos do Apple Maps}
-\end{figure}
-
-\begin{figure}[htbp]
-    \begin{minipage}[b]{0.4875\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{monography/img/maps/crossing_1.png}
-        \label{figure:helio_cruzamento_1}
-        \caption[Visão Espacial do Cruzamento referente aos sensores \textbf{RSI128}, \textbf{RSI129}, \textbf{RSI017} e \textbf{RSI018}]{Visão Espacial do Cruzamento referente aos sensores \textbf{RSI128}, \textbf{RSI129}, \textbf{RSI017} e \textbf{RSI018}}
-    \end{minipage}
-    \hfill
-    \begin{minipage}[b]{0.4875\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{monography/img/maps/crossing_2.png}
-        \label{figure:helio_cruzamento_2}
-        \caption[Visão Espacial do Cruzamento referente aos sensores \textbf{RSI131}, \textbf{RSI132}, \textbf{RSI032} e \textbf{RSI033}]{Visão Espacial do Cruzamento referente aos sensores \textbf{RSI131}, \textbf{RSI132}, \textbf{RSI032} e \textbf{RSI033}}
-    \end{minipage}
-\end{figure}
