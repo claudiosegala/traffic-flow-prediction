@@ -31,7 +31,7 @@ Existem algumas formas de decidir qual o melhor par, característica e regra, pa
 
 \subsection{\textit{\acrfull{RF}}}
 
-Desenvolvido por Leo Breiman em \textit{Random Forest} \cite{Breiman:2001:RF:570181.570182}, \textit{\acrshort{RF}} é um método de aprendizado de máquina utilizado tanto para classificação quanto para regressão. Segundo o autor, o método é uma combinação de árvores, de decisões ou regressão, onde cada árvore depende de uma amostra aleatória, sendo esta amostra independente do conjunto de dados. Além disso, todas as árvores devem possuir a mesma distribuição. 
+Criado por Tim Kam Ho et. al. \cite{ho_1995} e desenvolvido por Leo Breiman em \textit{Random Forest} \cite{Breiman:2001:RF:570181.570182}, \textit{\acrshort{RF}} é um método de aprendizado de máquina utilizado tanto para classificação quanto para regressão. Segundo o autor, o método é uma combinação de árvores, de decisões ou regressão, onde cada árvore depende de uma amostra aleatória, sendo esta amostra independente do conjunto de dados. Além disso, todas as árvores devem possuir a mesma distribuição. 
 
 A construção das árvores é feita utilizando o método \textit{Bagging} (\textit{\textbf{B}ootstrap \textbf{Agg}regation}), também criado por Leo Breiman em \textit{Bagging Predictors} \cite{Breiman:1996:BP:231986.231989}. Este método gera várias versões de um mesmo modelo e agrega os resultados dos mesmos. As versões do modelo utilizam amostras do conjunto de dados selecionadas aleatoriamente, mas com a mesma distribuição.
 
@@ -46,7 +46,7 @@ A construção das árvores é feita utilizando o método \textit{Bagging} (\tex
 
 Porém, diferente de \textit{Bagging}, \textit{\acrshort{RF}} utiliza mais uma técnica para diminuir o sobre-ajuste. Há uma modificação no algoritmo de criação das árvores de decisão limitando a quantidade de características (\textit{features}) do conjunto de dados que vai ser utilizada. O autor sugere limitar a quantidade de características (\textit{q}) para $ \sqrt{q} $, no caso de classificação, ou $ \frac{q}{3} $, no caso de regressão \cite{hastie2005elements}. Além disso, o autor também sugere, no artigo original, que, para selecionar a quantidade ideal de características deve-se utilizar de estimativas \textit{out-of-bag}, explicadas também no artigo.
 
-Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizado de máquina, ela pode ser classificada como um Comitê de Máquinas (\textit{Ensemble Learning}). A forma como as respostas de cada uma das máquinas são combinadas depende do problema. Para classificação pode ser usado uma votação (voto da maioria) e para um problema de regressão pode ser usado uma média dos valores, assim como mostrado na Figura \ref{figure:random_forest}.
+Como \textit{\acrshort{RF}} é uma combinação de outros modelos de aprendizado de máquina, ela pode ser classificada como um comitê de máquinas (\textit{Ensemble Learning}). A forma como as respostas de cada uma das máquinas são combinadas depende do problema. Para classificação pode ser usado uma votação (voto da maioria) e para um problema de regressão pode ser usado uma média dos valores, assim como mostrado na Figura \ref{figure:random_forest}.
 
 \subsection{\textit{\acrfull{SVM}}}
 
@@ -75,7 +75,7 @@ Mais especificamente esse truque é conhecido como \textit{Kernel Trick}, onde s
 
 Ao se permitir guardar informações, é possível resolver uma outra classe de problemas, já que agora resultados passados podem influenciar o resultado atual \cite{alex2012}. Redes neurais comuns, ou do tipo \textit{feedforward}, utilizam apenas o seu estado atual para gerar o resultado. Estas conseguem resolver, por exemplo, problemas de classificação de imagens e até regressões. Porém, não lidam bem com problemas nos quais a resposta atual tem correlação com informações do passado, isto é, onde o conjunto de dados não é independente e identicamente distribuído. Um exemplo de problema que exige essa correlação seria a de tentar prever a próxima palavra de uma frase, ou tentar extrair um contexto de um documento. Segundo Mitchell et. al. \cite{Mitchell_1997}, para esse tipo de situação, {\acrshort{RNN}} são mais adequadas. Portanto, problemas onde os dados isolados não tem tanto significado quanto o conjunto inteiro exigem um conceito de memória, onde a utilização de \acrshort{RNN} é mais adequada.
 
-Para simular esse efeito de memória, \textit{\acrshort{RNN}} dispõe de uma arquitetura onde a saída do nó anterior é utilizada como entrada no nó seguinte, juntamente com a entrada nova atual da rede (\(y_t = f(y_{t-1}, x_t)\)). Para passar estes valores de um nó para o outro, a \textit{\acrshort{RNN}} dispõe de um mecanismo chamado \textit{Hidden Layer}. Na Figura \ref{figure:rnn} é exemplificada a sua arquitetura quando desdobrada, onde o último resultado utiliza como entrada valores resultantes das execuções anteriores.
+Para simular esse efeito de memória, \textit{\acrshort{RNN}} dispõe de uma arquitetura onde a saída do nó anterior é utilizada como entrada no nó seguinte, juntamente com a entrada nova atual da rede (\(y_t = f(y_{t-1}, x_t)\)). Para passar estes valores de um nó para o outro, a \textit{\acrshort{RNN}} dispõe de um mecanismo chamado \textit{Hidden Layer}. Na Figura \ref{figure:rnn} é exemplificada a sua arquitetura quando desdobrada, onde o último resultado utiliza como entrada valores resultantes das execuções anteriores. O
 
 \begin{figure}[htbp]
     \centering
@@ -84,7 +84,7 @@ Para simular esse efeito de memória, \textit{\acrshort{RNN}} dispõe de uma arq
     \caption[Representação simples do conceito de um RNN]{Representação simples do conceito de uma RNN \footnotemark}
 \end{figure}
 
-\footnotetext{Imagem vinda do artigo \textit{Understanding LSTM Networks} (\url{https://colah.github.io/posts/2015-08-Understanding-LSTMs/})}
+\footnotetext{Imagem extraída da postagem \textit{Understanding LSTM Networks} (\url{https://colah.github.io/posts/2015-08-Understanding-LSTMs/})}
 
 É importante notar que essa técnica possui limitações, como ser possível acessar apenas informações em uma direção. Por exemplo, em um contexto temporal, é possível apenas acessar o passado. Esta característica vai ao encontro com as características de problemas que envolvam séries temporais \cite{alex2012}. Outra falha é a incapacidade de armazenar informações por um longo período de tempo \cite{hochreiter2001gradient}. 
 
@@ -101,7 +101,7 @@ Além das características já citadas, também é válido dizer que \textit{\ac
     \caption[Representação de uma arquitetura LSTM]{Representação de uma arquitetura LSTM\footnotemark}
 \end{figure}
 
-\footnotetext{Imagem vinda do artigo \textit{Understanding LSTM Networks} (\url{https://colah.github.io/posts/2015-08-Understanding-LSTMs/})}
+\footnotetext{Imagem extraída da postagem \textit{Understanding LSTM Networks} (\url{https://colah.github.io/posts/2015-08-Understanding-LSTMs/})}
 
 Esta técnica é derivada da \textit{\acrshort{RNN}}. Desta forma, a \textit{\acrshort{LSTM}} possui também a capacidade de simular uma memória, armazenando informações do passado. Sua estrutura é uma variação da \textit{\acrshort{RNN}}, assim como pode ser visto na Figura \ref{figure:lstm}, e gira em torno de células de memórias para fluir o erro de forma constante pela rede \cite{doi:10.1162/neco.1997.9.8.1735}. A técnica é utilizada para predição de informações que derivam de dados sequenciais e séries temporais, sendo possível encontrar diversos trabalhos na literatura que mostram sua eficiência quando comparada a outros métodos \cite{alex2012}.
 
@@ -128,7 +128,7 @@ Entretanto, diferentemente de uma \textit{\acrshort{RNN}} comum, o \textit{\acrs
     \caption[Representação da arquitetura de uma GRU]{Representação da arquitetura de uma GRU\footnotemark}
 \end{figure}
 
-\footnotetext{Imagem vinda do artigo \textit{Understanding LSTM Networks} (\url{https://colah.github.io/posts/2015-08-Understanding-LSTMs/})}
+\footnotetext{Imagem extraída da postagem \textit{Understanding LSTM Networks} (\url{https://colah.github.io/posts/2015-08-Understanding-LSTMs/})}
 
 Assim como o \textit{\acrshort{LSTM}}, o \acrshort{GRU} também faz uso de mecanismos chamados de Portas que possibilitam que a informação seja atualizada, ou esquecida ao ser transferida de uma célula para outra. Consequentemente, \textit{\acrshort{GRU}} também é capaz de guardar informações importantes na rede de maneira mais eficaz que uma \textit{\acrshort{RNN}} comum. Apesar de parecidos, \textit{\acrshort{GRU}} possui apenas a \textit{Hidden Layer} e duas Portas. Sendo elas as Portas de Atualização e a Porta de Reinicialização. Essas são usadas para fazer o tratamento da informação para simular o efeito de memória, de forma mais específica:
 

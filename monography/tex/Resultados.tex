@@ -226,7 +226,7 @@ Como dito anteriormente, o modelo que apresentou os melhores médias foi o \text
 \\
 
 \midrule
-\textbf{RF A} & \textcolor{blue}{\textbf{3.919 $\pm$ 0.395}} & \textcolor{blue}{\textbf{4.092 $\pm$ 0.409}} & \textcolor{blue}{\textbf{4.227 $\pm$ 0.467}} & \textcolor{blue}{\textbf{4.439 $\pm$ 0.513}}
+\textbf{RF A} & \textbf{3.919 $\pm$ 0.395} & \textbf{4.092 $\pm$ 0.409} & \textbf{4.227 $\pm$ 0.467} & \textbf{4.439 $\pm$ 0.513}
 \\
 
 \midrule
@@ -290,7 +290,7 @@ Como dito anteriormente, o modelo que apresentou os melhores médias foi o \text
 \textbf{RF B} & 3.954 $\pm$ 0.397 & 4.125 $\pm$ 0.409 & 4.270 $\pm$ 0.474 & 4.484 $\pm$ 0.503
 \\
 \midrule
-\textbf{SVM A} &  \textcolor{blue}{\textbf{3.878} $\pm$}  \textcolor{blue}{\textbf{0.423}} & \textcolor{blue}{\textbf{4.058 $\pm$ 0.443}} & \textcolor{blue}{\textbf{4.166 $\pm$ 0.486}} & \textcolor{blue}{\textbf{4.315 $\pm$ 0.530}}
+\textbf{SVM A} & \textbf{3.878 $\pm$ 0.423} & \textbf{4.058 $\pm$ 0.443} & \textbf{4.166 $\pm$ 0.486} & \textbf{4.315 $\pm$ 0.530}
 \\
 \midrule
 \textbf{SVM B} & 4.126 $\pm$ 0.336 & 4.321 $\pm$ 0.384 & 4.466 $\pm$ 0.469 & 4.619 $\pm$ 0.523
@@ -317,13 +317,13 @@ Como dito anteriormente, o modelo que apresentou os melhores médias foi o \text
 
 Nos métodos de aprendizado profundo, ao observar a tabela \ref{table:best_hiper_deep}, pode-se notar que para os modelos que utilizam o conjunto de dados A, são necessárias menos células na rede, o que é coerente com a teoria, visto que o conjunto de dados A possui menos atributos e, consequentemente, menos informações para processar.
 
-Observando os resultados da escolha de hiper-parâmetros, como observado na Tabela \ref{table:best_hiper_deep}, é perceptível que os modelos de aprendizado profundo não precisaram de uma taxa de aprendizagem tão alta para aprender a distribuição dos dados. Porém, há uma diferença para os resultados quando os modelos utilizam o conjunto de dados A, ou B. O \textit{\acrshort{LSTM}}, por exemplo, possui a mesma taxa de aprendizagem para os dois conjuntos de dados, mas a quantidade de células necessárias do conjunto B é maior, o que mostra que mesmo com uma taxa de aprendizagem igual, o conjunto de dados com maior número de informações também necessita de mais processamento para generalizar. Este padrão também se mantém com o \textit{\acrshort{GRU}}, onde a taxa de aprendizagem para o modelo que utiliza o conjunto de dados B chegou a ser menor que o utilizado pelo modelo A, mas, da mesma forma que acontece com o \textit{\acrshort{LSTM}}, a quantidade de células necessárias na rede foi o dobro que o utilizado pelo modelo A.
+Observando os resultados da escolha de hiper-parâmetros, como observado na Tabela \ref{table:best_hiper_deep}, é perceptível que os modelos de aprendizado profundo não precisaram de uma taxa de aprendizado tão alta para aprender a distribuição dos dados. Porém, há uma diferença para os resultados quando os modelos utilizam o conjunto de dados A, ou B. O \textit{\acrshort{LSTM}}, por exemplo, possui a mesma taxa de aprendizado para os dois conjuntos de dados, mas a quantidade de células necessárias do conjunto B é maior, o que mostra que mesmo com uma taxa de aprendizado igual, o conjunto de dados com maior número de informações também necessita de mais processamento para generalizar. Este padrão também se mantém com o \textit{\acrshort{GRU}}, onde a taxa de aprendizado para o modelo que utiliza o conjunto de dados B chegou a ser menor que o utilizado pelo modelo A, mas, da mesma forma que acontece com o \textit{\acrshort{LSTM}}, a quantidade de células necessárias na rede foi o dobro que o utilizado pelo modelo A.
 
 \begin{table}[H]
     \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lll}
     \toprule
      & 
-    \multicolumn{1}{l}{\textbf{Taxa de Aprendizagem}} & 
+    \multicolumn{1}{l}{\textbf{Taxa de Aprendizado}} & 
     \multicolumn{1}{l}{\textbf{Células}} 
     \\
 \midrule

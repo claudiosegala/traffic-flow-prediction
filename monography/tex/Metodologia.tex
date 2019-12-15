@@ -9,7 +9,7 @@ Para os experimentos serão desconsiderados certos cenários em que a captura e 
 
 \section{Pré-Processamento dos Dados}
 
-Nesta etapa serão feitos ajustes no conjunto de dados inicial, como remoções de inconsistências e transformações nos dados mostrados na Tabela \ref{table:data}. Esse ajustes têm como propósito melhorar a aprendizagem dos modelos que serão utilizados. Em seguida, será mostrado como os conjuntos de treino e teste foram criados a partir do conjunto de dados e das variações do modelo. Por fim, é realizado uma exploração da sazonalidade do fluxo.
+Nesta etapa serão feitos ajustes no conjunto de dados inicial, como remoções de inconsistências e transformações nos dados mostrados na Tabela \ref{table:data}. Esse ajustes têm como propósito melhorar o aprendizado dos modelos que serão utilizados. Em seguida, será mostrado como os conjuntos de treino e teste foram criados a partir do conjunto de dados e das variações do modelo. Por fim, é realizado uma exploração da sazonalidade do fluxo.
 
 \subsection{Limpeza dos Dados}
 
@@ -36,7 +36,7 @@ Como visto na literatura, existem algumas maneiras diferentes de se fazer a pred
 
 Sendo assim, o conjunto de dados será transformado de uma série temporal de registros de veículos para uma série temporal de fluxos. Isto é, será calculado a quantidade de veículos que passaram por um local em um determinado intervalo de tempo. Além disso, também foram calculadas a velocidade média e a densidade no mesmo intervalo. Para definir o intervalo que foi utilizado, testou-se os valores de intervalo para 2.5, 5 e 7.5 minutos. Note que foram utilizados intervalos que sejam múltiplos de 15, visto que todos os tempos de predição no futuro serão múltiplos de 15.
 
-É preciso levar em consideração que quando se acumula os registros em um intervalo de tempo muito pequeno, o conjunto de dados apresenta muita oscilação, dificultando a aprendizagem e afetando a qualidade da previsão. Em contrapartida, ao se aumentar o intervalo, o conjunto de dados pode se tornar muito pequeno, o que também pode dificultar a aprendizagem. Para se escolher qual dos intervalos seria o melhor para a predição, o tamanho do intervalo de fluxo será um dos parâmetros a serem escolhidos. Isto é, será realizado uma comparação entre os modelos para ver como que eles reagem. 
+É preciso levar em consideração que quando se acumula os registros em um intervalo de tempo muito pequeno, o conjunto de dados apresenta muita oscilação, dificultando o aprendizado e afetando a qualidade da previsão. Em contrapartida, ao se aumentar o intervalo, o conjunto de dados pode se tornar muito pequeno, o que também pode dificultar o aprendizado. Para se escolher qual dos intervalos seria o melhor para a predição, o tamanho do intervalo de fluxo será um dos parâmetros a serem escolhidos. Isto é, será realizado uma comparação entre os modelos para ver como que eles reagem. 
 
 \begin{table}[H]
     \begin{tabular}{cccccccccc}
@@ -234,7 +234,7 @@ Para \textit{\acrshort{SVM}}, segundo Vladimir Cherkassky et. al. \cite{CHERKASS
     \item \textbf{\(\gamma\)}: \(10^{-2}\), \(10^{0.\overline{3}}\), \(10^{0.\overline{6}}\), \( 10^{2}\), e o padrão da biblioteca; 
 \end{itemize}
 
-O hiper-parâmetro C representa quanto que os erros do ajuste vão influenciar na próxima iteração, funcionando parecido como uma taxa de aprendizagem. Este variando em escala exponencial. Já o hiper-parâmetro \(\gamma\) representa a flexibilidade do \textit{Kernel} de se ajustar aos dados, quanto mais flexível, maior a tendência de sobre-ajustar. Este foi espaçado de forma igual no espaço logarítmico de \(10^{-2}\) a \(10^{2}\).
+O hiper-parâmetro C representa quanto que os erros do ajuste vão influenciar na próxima iteração, funcionando parecido como uma taxa de aprendizado. Este variando em escala exponencial. Já o hiper-parâmetro \(\gamma\) representa a flexibilidade do \textit{Kernel} de se ajustar aos dados, quanto mais flexível, maior a tendência de sobre-ajustar. Este foi espaçado de forma igual no espaço logarítmico de \(10^{-2}\) a \(10^{2}\).
 
 \begin{algorithm}
 \caption{Algoritmo de Treinamento dos Modelos Sem Ajuste de Hiper-Parâmetros}
