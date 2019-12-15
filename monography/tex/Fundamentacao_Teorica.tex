@@ -16,7 +16,7 @@ De acordo com Trevor Hastie et. al. \cite{hastie2005elements}, árvore é uma t�
 
 Árvores utilizam de um algoritmo guloso. Isto é, os melhores resultados locais fazem parte do melhor resultado global. Inicialmente, o algoritmo escolhe uma das características e define uma regra a partir da mesma. Assim, dividindo os dados em dois conjuntos. Por exemplo, considere que uma característica seja idade, uma regra possível seria \texttt{Idade \(\leq\) 40}. Seguindo esta regra o algoritmo divide os dados. Para os conjuntos resultantes, é definido uma nova regra e isso acontece sucessivamente até que não seja mais possível dividir os dados.
 
-Existem algumas formas de decidir qual o melhor par, característica e regra, para um conjunto de dados. Uma das formas possíveis seria: para cada uma das características, ou conjunto de características, determina-se a melhor regra que divide o conjunto de dados no nó atual e compara essas regras para determinar qual o melhor par. Desta forma, é possível comparar os pares resultantes com um custo aceitável. A comparação entre os pares pode ser feita de diversas formas, para classificação pode ser usado o \textit{Gini Index} e para regressão pode ser usado a Soma do Erros Quadráticos. Uma vez construída a árvore, para utilizá-la basta percorrê-la seguindo as regras já definidas, assim como mostrado na Figura \ref{figure:tree}.
+Existem algumas formas de decidir qual o melhor par, característica e regra, para um conjunto de dados. Uma das formas possíveis seria: para cada uma das características, ou conjunto de características, determina-se a melhor regra que divide o conjunto de dados no nó atual e compara essas regras para determinar qual o melhor par. Desta forma, é possível comparar os pares resultantes com um custo aceitável. A comparação entre os pares pode ser feita de diversas formas, para classificação pode ser usado o \textit{Gini Index} e para regressão pode ser usado a Soma do Erros Quadráticos. Uma vez construída a árvore, para utilizá-la basta percorrê-la seguindo as regras já definidas. Figura \ref{figure:tree} mostra um exemplo de uma árvore de decisão dividindo o espaço através de atributos do conjunto de dados.
 
 É importante notar a grande flexibilidade desse modelo de se ajustar ao conjunto de dados, isto é, árvores podem sofrer com o problema do sobre-ajuste (\textit{overfitting}). Por exemplo, é possível que o modelo tenha em cada folha da árvore um elemento do conjunto de dados. Para resolver este problema, é necessário controlar certos aspectos da construção da árvore, como a sua altura máxima, ou o limite mínimo de tamanho necessário para se dividir o conjunto. Trevor Hastie et. al. \cite{hastie2005elements} sugerem utilizar o segundo método, seguido de uma redução da árvore resultante, porém, dependendo dos dados, podem vir a existir modelos de construção melhores.
  
@@ -27,7 +27,7 @@ Existem algumas formas de decidir qual o melhor par, característica e regra, pa
     \caption[Árvore de Regressão Dividindo o Espaço de Resposta]{Árvore de Regressão Dividindo o Espaço de Resposta\footnotemark}
 \end{figure}
 
-\footnotetext{Imagem baseada na Figura publicada por Diego Bortolini \cite{diego_2016}}
+\footnotetext{Imagem extraída do artigo de Diego Bortolini \cite{diego_2016}}
 
 \subsection{\textit{\acrfull{RF}}}
 
@@ -42,7 +42,7 @@ A construção das árvores é feita utilizando o método \textit{Bagging} (\tex
     \caption[Representação do funcionamento de uma \textit{\acrshort{RF}}]{Representação do funcionamento de uma \textit{\acrshort{RF}}\footnotemark}
 \end{figure}
 
-\footnotetext{Imagem vinda da documentação da biblioteca Harp (\url{https://dsc-spidal.github.io/harp/docs/examples/rf/})}
+\footnotetext{Imagem extraída da documentação da biblioteca Harp (\url{https://dsc-spidal.github.io/harp/docs/examples/rf/})}
 
 Porém, diferente de \textit{Bagging}, \textit{\acrshort{RF}} utiliza mais uma técnica para diminuir o sobre-ajuste. Há uma modificação no algoritmo de criação das árvores de decisão limitando a quantidade de características (\textit{features}) do conjunto de dados que vai ser utilizada. O autor sugere limitar a quantidade de características (\textit{q}) para $ \sqrt{q} $, no caso de classificação, ou $ \frac{q}{3} $, no caso de regressão \cite{hastie2005elements}. Além disso, o autor também sugere, no artigo original, que, para selecionar a quantidade ideal de características deve-se utilizar de estimativas \textit{out-of-bag}, explicadas também no artigo.
 
