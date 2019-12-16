@@ -132,17 +132,17 @@ MAE = \frac{1}{n} \times \sum_{i=1}^{n} \quad \abs{y_i - \hat{y_i}}
 RMSE = \sqrt{ \frac{1}{n} \times \sum_{i=1}^{n} \quad (y_i - \hat{y_i}) ^ 2}
 \end{equation}
 
-Além disso, será utilizado uma métrica que seja relativa ao conjunto de dados para que seja possível comparar resultados entre testes que possuam banco de dados diferentes. No caso, a métrica será o \acrfull{NRMSE} (Equação \ref{eq:nrmse}).
+% Além disso, será utilizado uma métrica que seja relativa ao conjunto de dados para que seja possível comparar resultados entre testes que possuam banco de dados diferentes. No caso, a métrica será o \acrfull{NRMSE} (Equação \ref{eq:nrmse}).
 
-\begin{equation}
-\label{eq:sd}
-\sigma = \sqrt{ \frac{1}{n-1} \times \sum_{i=1}^{n} \quad (y_i - \hat{y}) ^ 2}
-\end{equation}
+% \begin{equation}
+% \label{eq:sd}
+% \sigma = \sqrt{ \frac{1}{n-1} \times \sum_{i=1}^{n} \quad (y_i - \hat{y}) ^ 2}
+% \end{equation}
 
-\begin{equation}
-\label{eq:nrmse}
-NRMSE = \frac{RMSE(y, \hat{y})}{\sigma(y, \hat{y})}
-\end{equation}
+% \begin{equation}
+% \label{eq:nrmse}
+% NRMSE = \frac{RMSE(y, \hat{y})}{\sigma(y, \hat{y})}
+% \end{equation}
 
 Adicionalmente, os modelos também serão avaliados quanto a sua capacidade de acertar se o fluxo vai aumentar, ou diminuir em dado momento (15, 30, 45 e 60 minutos no futuro). Visto que a métrica é de acurácia, o trabalho tentará maximar seu valor. Esta é uma métrica proposta por este trabalho e que não é comumente utilizada na literatura de predição de tráfego. Sua definição pode ser vista abaixo:
 

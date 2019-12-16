@@ -77,8 +77,6 @@ Porém, mesmo estes modelos tiveram diferenças pouco significativas se comparad
 
 \subsection{Passado Visível}
 
-A respeito da variação no quanto do passado o modelo tem acesso, é perceptível na Figura \ref{figure:res_past}, onde o eixo das ordenadas representa o valor da métrica \acrshort{RMSE} e o eixo das abscissas representa os valores que foram testados para o variável de passado visível, que quanto mais acesso ao passado o modelo tiver, melhor será sua predição. Percebe-se também que o melhor valor para a quantidade de acesso do passado, dentre os testados, são 480 minutos (ou 8 horas). 
-
 \begin{figure}[htbp]
     \centering
     \includegraphics[scale=0.9]{monography/img/comparisons/comparacao_do_passado_visivel_rmse.png}
@@ -131,6 +129,8 @@ A respeito da variação no quanto do passado o modelo tem acesso, é perceptív
 \end{table}
  
 
+A respeito da variação no quanto do passado o modelo tem acesso, é perceptível na Figura \ref{figure:res_past}, onde o eixo das ordenadas representa o valor da métrica \acrshort{RMSE} e o eixo das abscissas representa os valores que foram testados para o variável de passado visível, que quanto mais acesso ao passado o modelo tiver, melhor será sua predição. Percebe-se também que o melhor valor para a quantidade de acesso do passado, dentre os testados, são 480 minutos (ou 8 horas). 
+
 Porém, é importante ressaltar que mais acesso ao passado também implica em uma quantidade de treino maior, isto é, maior custo computacional, especialmente para modelos de aprendizado profundo, conforme  Figura \ref{figure:passado_visivel_time}, onde o eixo das ordenadas representa o o tempo de treinamento em segundos e o eixo das abscissas representa os valores que foram testados para o variável de passado visível. Dito isso, e considerando que a escala do eixo X é exponencial (Passado visível: 60, 120, 240, 480), pode-se que concluir que para conseguir resultados ainda melhores, seria necessário aumentar de maneira significativa a quantidade de passado visível, o que, talvez, não valesse o aumento do custo computacional, já que, para cada aumento exponencial do eixo X, a qualidade da predição melhora apenas de maneira linear. 
 
 A respeito das bases de comparação, também é claro que o modelo \textit{Naive} não é afetado pela quantidade de tempo de passado visível, mas ainda assim há uma leve mudança no conjunto de dados, pois ao se mudar este parâmetro, o último valor recebido pelo modelo \textit{Naive} é alterado, afetando suas predições e gerando as diferenças vistas na Tabela \ref{table:res_past}. Já o modelo \acrshort{MM} é o único que piora com o tempo. 
@@ -142,7 +142,7 @@ Por exemplo, são 52.992 dados para 2,5 minutos (150 segundos) e 17.664 para 7.5
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.9]{monography/img/comparisons/comparacao_do_tamanho_do_intervalo_do_fluxo_rmse.png}
+    \includegraphics[scale=0.9]{monography/img/comparisons/comparacao_do_tamanho_do_intervalo_do_fluxo_nrmse.png}
     \label{figure:res_flow}
     \caption{Resposta dos modelos à variação dos valores de intervalo de fluxo}
 \end{figure}
@@ -189,6 +189,59 @@ Por exemplo, são 52.992 dados para 2,5 minutos (150 segundos) e 17.664 para 7.5
     \label{table:res_flow}
     \caption{Resultados da Comparação entre os intervalos de fluxo. Melhores médias de cada modelo em negrito.}
 \end{table}
+
+% Para a escolha do intervalo de fluxo será utilizado uma métrica diferente da utilizada nas outras escolhas. Como essa métrica modifica o tamanho do conjunto de dados e seus valores, será utilizado o \textit{\acrshort{NRMSE}}. Pode-se notar na Figura \ref{figure:res_flow} que o tamanho do intervalo do fluxo adotado impacta de maneira significativa a qualidade das predições dos modelos. Esse efeito pode ser justificado pela oscilação do fluxo que tende a aumentar conforme o intervalo de fluxo diminui. Vale notar que as oscilações diminuem, porém a quantidade de dados disponíveis diminui bastante, por exemplo, são 52.992 dados para 2,5 minutos (150 segundos) e 17.664 para 7.5 minutos (450 segundos). O que torna mais extenso o tempo de treinamento. Dos valores testados, 7.5 minutos é o melhor tamanho de intervalo de fluxo para todos os modelo, como pode ser visto na Tabela \ref{table:res_flow}.
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[scale=0.9]{monography/img/comparisons/comparacao_do_tamanho_do_intervalo_do_fluxo_nrmse.png}
+%     \label{figure:res_flow}
+%     \caption{Resposta dos modelos à variação dos valores de intervalo de fluxo}
+% \end{figure}
+
+% \begin{table}[H]
+%     \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}llll}
+%     \toprule
+%      & 
+%     \multicolumn{1}{l}{\textbf{150}} & 
+%     \multicolumn{1}{l}{\textbf{300}} &
+%     \multicolumn{1}{l}{\textbf{450}} \\
+%     \midrule
+%     \textbf{MM} & \textbf{1.068} $\pm$ 0.004 & 1.097 $\pm$ 0.021 & 1.122 $\pm$ 0.035
+%     \\
+%     \midrule
+%     \textbf{Naive} & 0.940 $\pm$ 0.036 & 0.842 $\pm$ 0.112 & \textbf{0.677} $\pm$ 0.095
+%     \\
+%     \midrule
+%     \textbf{RF A} & 0.533 $\pm$ 0.048 & 0.437 $\pm$ 0.022 & \textbf{0.416} $\pm$ 0.073
+%     \\
+%     \midrule
+%     \textbf{RF B} & 0.538 $\pm$ 0.047 & 0.441 $\pm$ 0.019 & \textbf{0.414} $\pm$ 0.065
+%     \\
+%     \midrule
+%     \textbf{SVM A} & 0.545 $\pm$ 0.046 & 0.454 $\pm$ 0.017 & \textbf{0.444} $\pm$ 0.052
+%     \\
+%     \midrule
+%     \textbf{SVM B} & 0.586 $\pm$ 0.032 & 0.497 $\pm$ 0.013 & \textbf{0.476} $\pm$ 0.023
+%     \\
+%     \midrule
+%     \textbf{LSTM A} & 0.617 $\pm$ 0.067 & 0.498 $\pm$ 0.048 & \textbf{0.484} $\pm$ 0.060
+%     \\
+%     \midrule
+%     \textbf{LSTM B} & 0.608 $\pm$ 0.056 & 0.491 $\pm$ 0.049 & \textbf{0.482} $\pm$ 0.066
+%     \\
+%     \midrule
+%     \textbf{GRU A} & 0.608 $\pm$ 0.058 & 0.497 $\pm$ 0.049 & \textbf{0.485} $\pm$ 0.069
+%     \\
+%     \midrule
+%     \textbf{GRU B} & 0.604 $\pm$ 0.051 & 0.482 $\pm$ 0.053 & \textbf{0.459} $\pm$ 0.088
+%     \\
+%     \bottomrule
+%     \end{tabular*}
+%     \label{table:res_flow}
+%     \caption{Resultados da Comparação entre os intervalos de fluxo. Melhores médias de cada modelo em negrito.}
+% \end{table}
+
 
 \section{Comparação dos Resultados Otimizados}
 
@@ -380,7 +433,7 @@ Para o \textit{\acrshort{RF}}, como visto anteriormente, não houve uma melhora 
 %\ref{figure:comparacao_previsao_precisao_30_com_tuning},
 %\ref{figure:comparacao_previsao_precisao_45_com_tuning} e
 
-Nesse trabalho, as predições também foram avaliadas como se, em vez de um problema de regressão, houvesse um problema de classificação. Para isto, avaliou-se se os modelos, mesmo errando as predições, seriam capazes de acertar se o fluxo vai aumentar ou diminuir. Entretanto, utilizando essa métrica, os modelos não alcançaram uma performance satisfatória, ficando com acurácia por volta de 60\%. Com \textit{\acrshort{SVM}} e \textit{\acrshort{RF}} atingindo, às vezes, a casa dos 70\% de acurácia. A grande variância dessa métrica dos modelos pode ter sido causada devido ao grande ruído existente nos dados ao se utilizar o agrupamento de fluxo de 150 segundos, onde em um minuto tem-se s 30 veículos passando e, no minuto seguinte, 0 veículos passando. 
+Nesse trabalho, as predições também foram avaliadas como se, em vez de um problema de regressão, houvesse um problema de classificação. Para isto, avaliou-se se os modelos, mesmo errando as predições, seriam capazes de acertar se o fluxo vai aumentar ou diminuir. Entretanto, utilizando essa métrica, os modelos não alcançaram uma performance satisfatória, ficando com acurácia por volta de 55\%. Com \textit{\acrshort{SVM}} e \textit{\acrshort{RF}} atingindo, às vezes, a casa dos 65\% de acurácia. A grande variância dessa métrica dos modelos pode ter sido causada devido ao grande ruído existente nos dados ao se utilizar o agrupamento de fluxo de 150 segundos, onde em um minuto tem-se s 30 veículos passando e, no minuto seguinte, 0 veículos passando. 
 
 \begin{figure}[H]
     \centering
