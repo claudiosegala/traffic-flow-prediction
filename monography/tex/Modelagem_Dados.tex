@@ -1,14 +1,13 @@
 \label{chapter:data}
 
 Este capítulo tem como objetivo explorar características do tráfego e caracterizar do conjunto de dados utilizado nesse trabalho. Primeiramente, são explicadas as características do tráfego e como ele pode ser modelado. Em seguida, é explicitado como os dados que serão utilizados no capítulo \ref{chapter:methodology} foram adquiridos, assim como suas características. 
-
 \section{Tráfego}
 
 É importante salientar que o tráfego é afetado por diversos fatores, entre eles: temporais, espaciais e exógenos. Entre os fatores temporais estão, por exemplo, o horário do expediente dos trabalhadores que possuem veículos, ou se é ou não final de semana. Entre os fatores espaciais estão, por exemplo, como a malha rodoviária se distribui em uma localização, ou a quantidade de empresas em uma área. Já fatores exógenos são externos as características do tráfego, por exemplo, acidentes que possam vir a ocorrer, ou meteorologia do dia. Sendo assim, modelos de previsões podem ter desempenhos diferentes dependendo de onde e quando os dados forem coletados.
 
 Dessa forma, é comum na literatura optar-se por usar apenas dados com fatores espaciais e temporais \cite{lana_2018}. Ao se desconsiderar os fatores exógenos, é feita uma suposição de que exista uma tendência no fluxo que pode ser prevista e que, embora as variáveis aleatórias possam afetar o fluxo, elas não afetam o bastante para mudar a tendência no longo prazo. Seguindo a literatura, esse trabalho utilizará variáveis temporais e espaciais. 
 
-Além disso, segundo Zainab Abbas et. al. \cite{Zainab_2018}, o tráfego pode ser interpretado de maneiras diferentes. Pode ser interpretado como a quantidade de veículos que passaram por um ponto em um determinado intervalo de tempo, o fluxo de veículos. Também pode ser interpretado como o fluxo dividido pela média de velocidade dos veículos em um certo espaço de tempo, a densidade. Ou pode ser interpretado como uma média de velocidade em um intervalo de tempo, a velocidade média.
+Além disso, das informações registradas acerca do tráfego, podem ser extraídas métricas que ajudam a interpretar a via. Segundo Zainab Abbas et. al. \cite{Zainab_2018} , o fluxo pode ser interpretado calculado-se a quantidade de veículos que passaram em um determinado ponto em um determinado intervalo de tempo. Já a velocidade média é calculada como a velocidade média dos veículos que passaram por este mesmo ponto, no mesmo intervalo de tempo. Por fim, também pode-se calcular a densidade dividindo o fluxo deste intervalo de tempo pela velocidade média dos veículos.
 
 \section{Caracterização do Conjunto de Dados}
 

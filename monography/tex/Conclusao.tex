@@ -28,6 +28,10 @@ Este trabalho possui espaço para melhorias e ajustes que fugiram do escopo inic
     \item Considerar parâmetros não independentes;
     
     Devido a limitação de hardware, a escolha de parâmetros foi feita considerando que os parâmetros eram independentes. Porém seria interessante fazer uma verificação mais formal de independência ou realizar uma busca completa.
+    
+    \item Realizar escolha de parâmetros nas bases de comparação;
+    
+    Fazer como que o modelo \acrshort{MM} escolha qual o melhor intervalo de média e que o \textit{Naive} escolha qualquer dos fluxos.
 
     \item Aplicar os modelos desenvolvidos a um conjunto de dados referente a vias livres;
     
@@ -40,6 +44,14 @@ Este trabalho possui espaço para melhorias e ajustes que fugiram do escopo inic
     \item Utilizar modelos paramétricos;
     
     Devido a limitações de hardware e uma performance inicial ruim, decidiu-se retirar o \textit{\acrfull{ARIMA}} e o \textit{\acrfull{LR}}. Porém, existem outros modelos paramétricos que podem ser mais próprios para conjunto de dados utilizado como \textit{\acrfull{SARIMA}} que, talvez, tenha uma performance melhor.
+    
+    \item Analisar faixa independentemente;
+    
+    Verificar se é possível analisar as faixas da via de forma independente para que servisse em um sistema de carro autônomo. Isto é, o carro poderia mudar de faixa ao perceber que uma está prevista para piorar o fluxo.
+    
+    \item Realizar uma análise mais profunda dos dados;
+    
+    Analisar as condições de trânsito de Brasília e verificar se as mesmas se refletem no conjunto de dados disponível. Além disso, analisar quanto a sazonalidade de forma mais profunda.
     
     \item Incluir modelos não paramétricos mais complexos;
     
