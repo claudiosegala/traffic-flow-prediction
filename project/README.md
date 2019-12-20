@@ -4,7 +4,13 @@ This folder contains the code and the structure of folder used to organize the p
 
 ## Usage
 
-1. Run notebook called `tcc_data_processing.ipynb`, it will generate the pre-processed database needed
-2. Configure the parameters in the global (all caps) varibles in the notebook `tcc.ipynb`
-3. Run`tcc.ipynb`
-4. Configure the parameters in the notebook `tcc_plot.ipynb` to determine which of the files it should extract the results
+1. Upload this folder structure inside a Google Drive account
+2. Unzip `all_data_sorted.csv.zip` 
+3. Run `tcc_data_processing.ipynb` on Google Colab
+   - Don't foget to adjust the past to the folder you placed everything
+   - This will pre-process the dataset
+4. Run `tcc.ipynb` on Google Colab
+   - Don't foget to adjust the past to the folder you placed everything
+   - Don't foget to adjust the global parameters to configure the execution
+5. Run `tcc_plot.ipynb` on Google Colab
+   - Don't foget to update the name of the files from which will extract the plots
