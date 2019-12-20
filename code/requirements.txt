@@ -1,8 +1,0 @@
-wheel
-tensorflow==1.15
-pandas
-matplotlib
-numpy
-sklearn
-keras
-statsmodels
