@@ -190,59 +190,6 @@ Por exemplo, são 52.992 dados para 2,5 minutos (150 segundos) e 17.664 para 7.5
     \caption{Resultados da Comparação entre os intervalos de fluxo. Melhores médias de cada modelo em negrito.}
 \end{table}
 
-% Para a escolha do intervalo de fluxo será utilizado uma métrica diferente da utilizada nas outras escolhas. Como essa métrica modifica o tamanho do conjunto de dados e seus valores, será utilizado o \textit{\acrshort{NRMSE}}. Pode-se notar na Figura \ref{figure:res_flow} que o tamanho do intervalo do fluxo adotado impacta de maneira significativa a qualidade das predições dos modelos. Esse efeito pode ser justificado pela oscilação do fluxo que tende a aumentar conforme o intervalo de fluxo diminui. Vale notar que as oscilações diminuem, porém a quantidade de dados disponíveis diminui bastante, por exemplo, são 52.992 dados para 2,5 minutos (150 segundos) e 17.664 para 7.5 minutos (450 segundos). O que torna mais extenso o tempo de treinamento. Dos valores testados, 7.5 minutos é o melhor tamanho de intervalo de fluxo para todos os modelo, como pode ser visto na Tabela \ref{table:res_flow}.
-
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[scale=0.9]{monography/img/comparisons/comparacao_do_tamanho_do_intervalo_do_fluxo_nrmse.png}
-%     \label{figure:res_flow}
-%     \caption{Resposta dos modelos à variação dos valores de intervalo de fluxo}
-% \end{figure}
-
-% \begin{table}[H]
-%     \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}llll}
-%     \toprule
-%      & 
-%     \multicolumn{1}{l}{\textbf{150}} & 
-%     \multicolumn{1}{l}{\textbf{300}} &
-%     \multicolumn{1}{l}{\textbf{450}} \\
-%     \midrule
-%     \textbf{MM} & \textbf{1.068} $\pm$ 0.004 & 1.097 $\pm$ 0.021 & 1.122 $\pm$ 0.035
-%     \\
-%     \midrule
-%     \textbf{Naive} & 0.940 $\pm$ 0.036 & 0.842 $\pm$ 0.112 & \textbf{0.677} $\pm$ 0.095
-%     \\
-%     \midrule
-%     \textbf{RF A} & 0.533 $\pm$ 0.048 & 0.437 $\pm$ 0.022 & \textbf{0.416} $\pm$ 0.073
-%     \\
-%     \midrule
-%     \textbf{RF B} & 0.538 $\pm$ 0.047 & 0.441 $\pm$ 0.019 & \textbf{0.414} $\pm$ 0.065
-%     \\
-%     \midrule
-%     \textbf{SVM A} & 0.545 $\pm$ 0.046 & 0.454 $\pm$ 0.017 & \textbf{0.444} $\pm$ 0.052
-%     \\
-%     \midrule
-%     \textbf{SVM B} & 0.586 $\pm$ 0.032 & 0.497 $\pm$ 0.013 & \textbf{0.476} $\pm$ 0.023
-%     \\
-%     \midrule
-%     \textbf{LSTM A} & 0.617 $\pm$ 0.067 & 0.498 $\pm$ 0.048 & \textbf{0.484} $\pm$ 0.060
-%     \\
-%     \midrule
-%     \textbf{LSTM B} & 0.608 $\pm$ 0.056 & 0.491 $\pm$ 0.049 & \textbf{0.482} $\pm$ 0.066
-%     \\
-%     \midrule
-%     \textbf{GRU A} & 0.608 $\pm$ 0.058 & 0.497 $\pm$ 0.049 & \textbf{0.485} $\pm$ 0.069
-%     \\
-%     \midrule
-%     \textbf{GRU B} & 0.604 $\pm$ 0.051 & 0.482 $\pm$ 0.053 & \textbf{0.459} $\pm$ 0.088
-%     \\
-%     \bottomrule
-%     \end{tabular*}
-%     \label{table:res_flow}
-%     \caption{Resultados da Comparação entre os intervalos de fluxo. Melhores médias de cada modelo em negrito.}
-% \end{table}
-
-
 \section{Comparação dos Resultados Otimizados}
 
  Por fim, foram realizados testes para otimizar os hiper-parâmetros de cada modelo e garantir as melhores predições. Para alcançar tal objetivo, foi utilizada a técnica de \textit{Grid Search} durante as comparações dos resultados das predições de curto prazo. Abaixo, na figura \ref{figure:pred_no_tuning} podem ser vistos os resultados sem ajuste dos hiper-parâmetros e, na figura \ref{figure:pred_tuning}, com ajuste dos hiper-parâmetros. Os valores exatos dos resultados podem ser vistos nas tabelas  \ref{table:curto_prazo_no_tuning} e \ref{table:curto_prazo_tuning}, para as predições sem e com ajuste, respectivamente. Os valores de parâmetros utilizados para a realização deste teste foram os melhores valores encontrados nos experimentos da seção \ref{section:resultados_parametros}.
