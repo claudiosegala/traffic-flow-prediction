@@ -1,6 +1,6 @@
 # Traffic Flow Prediction
 
-This is the final project of my course in Computer Science. The theme was traffic flow prediction and the result is this monography.
+This is the final project of my course in Computer Science. The theme was traffic flow prediction and the result is this monography. Note: the monography is in portuguese since I'm brazilian.
 
 ## Abstract
 
