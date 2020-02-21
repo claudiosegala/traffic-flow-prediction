@@ -1,6 +1,6 @@
-# Monograph
+# Traffic Flow Prediction
 
-This is the final project of my course in Computer Science. 
+This is the final project of my course in Computer Science. The theme was traffic flow prediction and the result is this monography.
 
 ## Abstract
 
